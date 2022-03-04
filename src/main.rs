@@ -1,50 +1,64 @@
+use rand::{thread_rng, Rng};
+use rand::prelude::SliceRandom;
+
 /* Hello, this program is meant to create random people
  * to Fullfill our SQL base 'ART MARKET'
 */
 
-static FIRST_NAME: &'static [&str] = &["Adrien", "Nelson", "Benoit", "Morgan", "Florian",
+static LIST_FIRST_NAME: &'static [&str] = &["Adrien", "Nelson", "Benoit", "Morgan", "Florian",
 "Thomas", "Maeto", "Clementine", "Stephane"];
 
-static LAST_NAME: &'static [&str] = &["Adrien", "Nelson", "Benoit", "Morgan", "Florian",
+static LIST_LAST_NAME: &'static [&str] = &["Adrien", "Nelson", "Benoit", "Morgan", "Florian",
 "Thomas", "Maeto", "Clementine", "Stephane"];
 
-fn createReputation(numberOfCreation: int, baseReput: int) {
+fn create_reputation(_number_of_creation: i32, _base_reput: i32)->i32 {
+    let mut rng = thread_rng();
     return rng.gen_range(1..2000);
 }
 
-fn createAddress(){
-    return "";
+fn create_address()-> String {
+    return "".to_string();
 }
 
-fn createArtist() {
+fn create_artist()-> String {
 
     let mut rng = thread_rng();
 
-    // let FIRST_NAME = (Adrien, Nelson, Benoit, Morgan, Florian,
-    // Thomas, Maeto, Elebane, Stephane)
 
-    println!("Art is dead !");
-    let first_Name: String = rng.choose(&FIRST_NAME[..0]);
-    let last_Name: String = rng.choose(&LAST_NAME[..0]);
-
-    let address = createAddress();
+    let first_name =
+        match &LIST_FIRST_NAME.choose(&mut rng) {
+            Some(n) => n,
+            None => ""
+        };
+    let last_name =
+        match &LIST_LAST_NAME.choose(&mut rng) {
+            Some(n) => n,
+            None => ""
+        };
+    let address = create_address();
 
     //createReputation(number of creation, base reput)
-    let reputationartiste = createReputation(10, 0);
+    let reputation_artiste = create_reputation(10, 0);
 
-    let request =
-    "INSERT INTO "+
-    "<P1_ARTISTE>(nomartiste, webartiste, reputationartiste, adresseartiste)"+
-    "\n VALUES ('"+first_Name+" "+last_Name+"',"+
-               "'"+first_Name+"-"+last_Name+".org',"+
-               "'"+reputationartiste+"',"+
-               "'"+address+"',"+
-               ")";
+    let request = format!("{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
+                            "INSERT INTO ",
+                            "<P1_ARTISTE>(nomartiste, webartiste, reputationartiste, nationaliteartiste)",
+                            "\n VALUES ('", &first_name, " ", &last_name, "',",
+                            "'",&first_name,"-",&last_name,".org',",
+                            "'",&reputation_artiste.to_string(),"',",
+                            "'",&address,"',",
+                            ")"
+                         );
 
     return request;
 }
 
+fn import_artists() {
+    
+}
+
 fn main() {
-    let request = createArtist();
-    print(request)
+    println!("Art is dead !");
+    let request = create_artist();
+    print!("{}", request)
 }
