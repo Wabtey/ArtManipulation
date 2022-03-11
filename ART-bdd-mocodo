@@ -196,11 +196,80 @@ CREE, 0N P1_ARTISTE, 0N P1_ART
 P1_ARTISTE : idArtiste, nomArtiste, webArtiste, reputationArtiste, nationaliteArtiste
 AIDE, 0N P1_MECENE, 0N P1_ARTISTE
 
+-----------------------
+artworks json example :
+-----------------------
 
+{
+  "title": "Zamaul' III",
+  "artist": [
+    "Various artists",
+    "Vladimir Burliuk",
+    "Pavel Filonov",
+    "Aleksei Kruchenykh",
+    "Il'ia Rogovin"
+  ],
+  "constituent_id": [
+    24409,
+    12001,
+    12124,
+    3263,
+    23615
+  ],
+  "artist_bio": [
+    "Ukrainian, 1886–1917",
+    "Russian, 1883–1941",
+    "Russian, 1886–1969"
+  ],
+  "nationality": [
+    "",
+    "Ukrainian",
+    "",
+    "Russian"
+  ],
+  "begin_date": [
+    0,
+    1886,
+    1883,
+    1886,
+    0
+  ],
+  "end_date": [
+    0,
+    1917,
+    1941,
+    1969,
+    0
+  ],
+  "gender": [
+    "",
+    "Male",
+    "Male",
+    "Male",
+    "Female"
+  ],
+  "date": "1919",
+  "medium": "Book with five hectographed illustrations, letterpress and rubber-stamped typographic designs, and hectographed manuscript text and designs",
+  "dimensions": "page (irreg.): 6 1/2 x 5 13/16\ (16.5 x 14.8 cm)",
+  "credit_line": "Gift of The Judith Rothschild Foundation",
+  "accession_number": "114.2001",
+  "classification": "Illustrated Book",
+  "department": "Drawings & Prints",
+  "date_acquired": "2001-01-24",
+  "cataloged": "Y",
+  "object_id": 11384,
+  "url": "http://www.moma.org/collection/works/11384",
+  "thumbnail_url": "http://www.moma.org/media/W1siZiIsIjIxMjY5NCJdLFsicCIsImNvbnZlcnQiLCItcmVzaXplIDMwMHgzMDBcdTAwM2UiXV0.jpg?sha=7193a69ce29794bf",
+  "height_cm": 16.5,
+  "width_cm": 14.8
+},
 
 -------
 MySQL :
 -------
+
+-- replace varchar limit of title and medium (type) to 1000
+
 
 CREATE DATABASE IF NOT EXISTS `P1_ARTS` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `P1_ARTS`;

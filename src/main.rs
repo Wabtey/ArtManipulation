@@ -34,23 +34,23 @@ struct Artist {
 
 fn convert_artists() -> Result<()>
 {
-    let path = "/private/student/n/in/fepain/R/ArtManipulation/MoMA/Artists-reformed.json";
+    let path = "E:/Code/projects Rust/MoMA/Artists-reformed.json";
 	// the file : E:/Code/projects Rust/MoMA/Artists-reformed.json
 	// the file : /private/student/n/in/fepain/R/ArtManipulation/MoMA/Artists-reformed.json
 
 	let content = fs::read_to_string(path)
 		.expect("Unable to read file");
 
-	println!("-----typed_convert-----");
+	println!("-----read_.json-----");
 	
     let artists: Vec<Artist> = serde_json::from_str(&content).unwrap();
 
 	// println!("{:?}", artists);
 	
-	println!("--------marker---------");
+	println!("--------create_request---------");
 
     let mut foo =
-    "INSERT INTO <P1_ARTISTE>(nomartiste, webartiste, reputationartiste, nationaliteartiste)
+    "INSERT INTO P1_ARTISTE (idartiste, nomartiste, webartiste, reputationartiste, nationaliteartiste)
     \n VALUES ".to_string();
 
     for artist in artists
@@ -60,22 +60,115 @@ fn convert_artists() -> Result<()>
 			Some(s) => s,
 			None => "",
 		};
-        let mut artist_display_name = artist.display_name
-            .replace(" ", ".");
-        artist_display_name.push_str(".org");
+
+        //
+        let mut artist_web = artist.display_name
+            .replace(" ", ".").replace("'", "");
+        artist_web.push_str(".org");
 
         let foobar =
-        "\n ('display_name','site', 'reputation','nationality'),";
-        let mut artist1 = foobar.replace("display_name", &artist.display_name);
-        artist1 = artist1.replace("site", &artist_display_name);
-        artist1 = artist1.replace("reputation", &create_reputation(0,0).to_string());
-        artist1 = artist1.replace("nationality", artist_nationality);
-        foo.push_str(&artist1);
+        "\n (id,'display_name','site', reputation,'nationality')";
+        let mut artist_n = foobar.replace("id", &artist.constituent_id.to_string());
+        artist_n = artist_n.replace("display_name", &artist.display_name.replace("'", " "));
+        artist_n = artist_n.replace("site", &artist_web);
+        artist_n = artist_n.replace("reputation", &create_reputation(0,0).to_string());
+        artist_n = artist_n.replace("nationality", &artist_nationality.replace("'", " "));
+        foo.push_str(&artist_n);
+        
+        foo.push(','); // have to remove the last one
     }
     
-    foo.push(';'); //to end the SQL request
+    foo.push_str(";END"); //to end the SQL request
+    foo = foo.replace(",;END",";");
 
-	fs::write("/private/student/n/in/fepain/R/ArtManipulation/RENDU/insert_artists.txt",
+    println!("--------create_.txt---------");
+
+    // "/private/student/n/in/fepain/R/ArtManipulation/RENDU/insert_artists.txt"
+    // "E:/Code/projects Rust/ArtManipulation/RENDU/insert_artists.txt"
+	fs::write("E:/Code/projects Rust/ArtManipulation/RENDU/insert_artists.txt",
+			 foo)
+		.expect("Unable to write file");
+
+    Ok(())
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Artwork {
+  title: String,
+  artist: Vec<String>,
+  constituent_id: Vec<i32>,
+  artist_bio: Vec<String>,
+  nationality: Vec<String>,
+  begin_date: Vec<i32>,
+  end_date: Vec<i32>,
+  gender: Vec<String>,
+  date: Option<String>,
+  medium: Option<String>,
+  dimensions: Option<String>,
+  credit_line: Option<String>,
+  accession_number: Option<String>,
+  classification: Option<String>,
+  department: Option<String>,
+  date_acquired: Option<String>,
+  cataloged: Option<String>,
+  object_id: i32,
+  url: Option<String>,
+  thumbnail_url: Option<String>,
+//   height_cm: f32,
+//   width_cm: f32
+}
+
+fn convert_artworks() -> Result<()>
+{
+    let path = "E:/Code/projects Rust/MoMA/Artworks-reformed.json";
+	// the file : E:/Code/projects Rust/MoMA/Artists-reformed.json
+	// the file : /private/student/n/in/fepain/R/ArtManipulation/MoMA/Artists-reformed.json
+
+	let content = fs::read_to_string(path)
+		.expect("Unable to read file");
+
+	println!("-----read_.json-----");
+	
+    let artworks: Vec<Artwork> = serde_json::from_str(&content).unwrap();
+
+	// println!("{:?}", artists);
+	
+	println!("--------create_request---------");
+
+    let mut foo =
+    "INSERT INTO P1_ART (idart, titre, type, cote)
+    \n VALUES ".to_string();
+
+    for artwork in artworks
+    {
+        let artwork_medium: &str =
+        match &artwork.medium {
+            Some(s) => s,
+            None => "",
+        };
+
+        let artwork_title = artwork.title.replace("'", " ");
+
+        //TODO : find potential ' and replace them by a space
+
+        let foobar =
+        "\n (id,'title', 'medium', cote)";
+        let mut artwork_n = foobar.replace("id", &artwork.object_id.to_string());
+        artwork_n = artwork_n.replace("title", &artwork_title);
+        artwork_n = artwork_n.replace("medium", &artwork_medium.replace("'", " "));
+        artwork_n = artwork_n.replace("cote", &create_reputation(0,0).to_string());
+        foo.push_str(&artwork_n);
+
+        foo.push(','); // have to remove the last one
+    }
+    
+    foo.push_str(";END"); //to end the SQL request
+    foo = foo.replace(",;END",";");
+
+    println!("--------create_.txt---------");
+
+    // "E:/Code/projects Rust/ArtManipulation/RENDU/insert_artworks.txt"
+	fs::write("E:/Code/projects Rust/ArtManipulation/RENDU/insert_artworks.txt",
 			 foo)
 		.expect("Unable to write file");
 
@@ -86,6 +179,10 @@ fn main() {
     println!("Art is dead !");
 
     convert_artists().unwrap();
+
+    println!("--artworks now--");
+
+    convert_artworks().unwrap();
 
     println!("--End--");
 }
