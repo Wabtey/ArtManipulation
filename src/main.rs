@@ -81,11 +81,11 @@ fn convert_artists() -> Result<()>
     foo.push_str(";END"); //to end the SQL request
     foo = foo.replace(",;END",";");
 
-    println!("--------create_.txt---------");
+    println!("--------create_.sql---------");
 
     // "/private/student/n/in/fepain/R/ArtManipulation/RENDU/insert_artists.txt"
     // "E:/Code/projects Rust/ArtManipulation/RENDU/insert_artists.txt"
-	fs::write("E:/Code/projects Rust/ArtManipulation/RENDU/insert_artists.txt",
+	fs::write("E:/Code/projects Rust/ArtManipulation/RENDU/insert_artists.sql",
 			 foo)
 		.expect("Unable to write file");
 
@@ -132,7 +132,7 @@ fn convert_artworks() -> Result<()>
     let artworks: Vec<Artwork> = serde_json::from_str(&content).unwrap();
 
 	// println!("{:?}", artists);
-	
+
 	println!("--------create_request---------");
 
     let mut foo =
@@ -165,24 +165,98 @@ fn convert_artworks() -> Result<()>
     foo.push_str(";END"); //to end the SQL request
     foo = foo.replace(",;END",";");
 
-    println!("--------create_.txt---------");
+    println!("--------create_.sql---------");
 
     // "E:/Code/projects Rust/ArtManipulation/RENDU/insert_artworks.txt"
-	fs::write("E:/Code/projects Rust/ArtManipulation/RENDU/insert_artworks.txt",
+	fs::write("E:/Code/projects Rust/ArtManipulation/RENDU/insert_artworks.sql",
 			 foo)
 		.expect("Unable to write file");
 
     Ok(())
 }
 
+fn convert_association() -> Result<()>
+{
+    let path_artworks = "E:/Code/projects Rust/MoMA/Artworks-reformed.json";
+
+	let content_artworks = fs::read_to_string(path_artworks)
+		.expect("Unable to read file");
+
+	println!("-----read_.json-----");
+
+    let artworks: Vec<Artwork> = serde_json::from_str(&content_artworks).unwrap();
+
+	// println!("{:?}", artists);
+
+    println!("--association_artists_artworks--");
+
+    let mut association =
+    "INSERT INTO CREE (idartiste, idart)
+    \n VALUES ".to_string();
+
+    println!("--idArt now--");
+
+    for artwork in artworks
+    {
+        let asso_cree =
+        "\n (idartiste, idart)";
+        let mut cree_n = asso_cree.replace("idart", &artwork.object_id.to_string());
+        association.push_str(&cree_n);
+
+        association.push(',');
+    }
+
+    association.push_str(";END"); //to end the SQL request
+    association = association.replace(",;END",";");
+
+    println!("--idArtiste now--");
+
+let path_artists = "E:/Code/projects Rust/MoMA/Artists-reformed.json";
+	// the file : E:/Code/projects Rust/MoMA/Artists-reformed.json
+	// the file : /private/student/n/in/fepain/R/ArtManipulation/MoMA/Artists-reformed.json
+    // the file : /Users/Shared/bureau/2) FLO/R/MoMA/Artists-reformed.json
+
+	let content_artists = fs::read_to_string(path_artists)
+		.expect("Unable to read file");
+
+	println!("-----read_.json-----");
+	
+    let artists: Vec<Artist> = serde_json::from_str(&content_artists).unwrap();
+
+    for artist in artists
+    {
+        association = association.replace("idartiste", &artist.constituent_id.to_string());
+    }
+    
+
+
+    println!("--------create_.sql---------");
+
+    // "E:/Code/projects Rust/ArtManipulation/RENDU/insert_artworks.txt"
+	fs::write("E:/Code/projects Rust/ArtManipulation/RENDU/insert_cree.sql",
+			 association)
+		.expect("Unable to write file");
+
+    Ok(())
+}
+
+
+
+
 fn main() {
     println!("Art is dead !");
 
-    convert_artists().unwrap();
+    println!("--artists now--");
+
+    // convert_artists().unwrap();
 
     println!("--artworks now--");
 
-    convert_artworks().unwrap();
+    // convert_artworks().unwrap();
+
+    println!("--associations now--");
+
+    // convert_association().unwrap();
 
     println!("--End--");
 }
