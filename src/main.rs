@@ -194,39 +194,48 @@ fn convert_association() -> Result<()>
     "INSERT INTO CREE (idartiste, idart)
     \n VALUES ".to_string();
 
+    println!("--idArtiste now--");
+
+    let path_artists = "E:/Code/projects Rust/MoMA/Artists-reformed.json";
+        // the file : E:/Code/projects Rust/MoMA/Artists-reformed.json
+        // the file : /private/student/n/in/fepain/R/ArtManipulation/MoMA/Artists-reformed.json
+        // the file : /Users/Shared/bureau/2) FLO/R/MoMA/Artists-reformed.json
+    
+        let content_artists = fs::read_to_string(path_artists)
+            .expect("Unable to read file");
+    
+        println!("-----read_.json-----");
+        
+        let artists: Vec<Artist> = serde_json::from_str(&content_artists).unwrap();
+        let nb_line = artists.size();
+    
+        let mut count = 0;
+        for artist in artists
+        {
+            let asso_cree =
+            "\n (idartiste, idart)";
+            println!("replace : {}", count); //15221
+            let cree_n = asso_cree.replace("idartiste", &artist.constituent_id.to_string());
+            association.push_str(&cree_n);
+            association.push(',');
+            count+=1;
+        }
+        association.push_str(";END"); //to end the SQL request
+        association = association.replace(",;END",";");
+
     println!("--idArt now--");
 
     for artwork in artworks
     {
         let asso_cree =
         "\n (idartiste, idart)";
-        let mut cree_n = asso_cree.replace("idart", &artwork.object_id.to_string());
-        association.push_str(&cree_n);
+        let cree_n = asso_cree.replace("idart", &artwork.object_id.to_string());
 
-        association.push(',');
     }
 
-    association.push_str(";END"); //to end the SQL request
-    association = association.replace(",;END",";");
 
-    println!("--idArtiste now--");
 
-let path_artists = "E:/Code/projects Rust/MoMA/Artists-reformed.json";
-	// the file : E:/Code/projects Rust/MoMA/Artists-reformed.json
-	// the file : /private/student/n/in/fepain/R/ArtManipulation/MoMA/Artists-reformed.json
-    // the file : /Users/Shared/bureau/2) FLO/R/MoMA/Artists-reformed.json
-
-	let content_artists = fs::read_to_string(path_artists)
-		.expect("Unable to read file");
-
-	println!("-----read_.json-----");
-	
-    let artists: Vec<Artist> = serde_json::from_str(&content_artists).unwrap();
-
-    for artist in artists
-    {
-        association = association.replace("idartiste", &artist.constituent_id.to_string());
-    }
+   
     
 
 
@@ -256,7 +265,7 @@ fn main() {
 
     println!("--associations now--");
 
-    // convert_association().unwrap();
+    convert_association().unwrap();
 
     println!("--End--");
 }
