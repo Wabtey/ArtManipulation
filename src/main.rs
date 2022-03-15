@@ -175,6 +175,13 @@ fn convert_artworks() -> Result<()>
     Ok(())
 }
 
+
+/**
+ * create association between artists and artworks,
+ * based on the Artworks-reformed.json which for
+ * each artwork have 0 or several artists stored
+ * in constituent_id
+ */
 fn convert_association() -> Result<()>
 {
     let path_artworks = "E:/Code/projects Rust/MoMA/Artworks-reformed.json";
@@ -194,50 +201,24 @@ fn convert_association() -> Result<()>
     "INSERT INTO CREE (idartiste, idart)
     \n VALUES ".to_string();
 
-    println!("--idArtiste now--");
-
-    let path_artists = "E:/Code/projects Rust/MoMA/Artists-reformed.json";
-        // the file : E:/Code/projects Rust/MoMA/Artists-reformed.json
-        // the file : /private/student/n/in/fepain/R/ArtManipulation/MoMA/Artists-reformed.json
-        // the file : /Users/Shared/bureau/2) FLO/R/MoMA/Artists-reformed.json
-    
-        let content_artists = fs::read_to_string(path_artists)
-            .expect("Unable to read file");
-    
-        println!("-----read_.json-----");
-        
-        let artists: Vec<Artist> = serde_json::from_str(&content_artists).unwrap();
-        let nb_line = artists.size();
-    
-        let mut count = 0;
-        for artist in artists
-        {
-            let asso_cree =
-            "\n (idartiste, idart)";
-            println!("replace : {}", count); //15221
-            let cree_n = asso_cree.replace("idartiste", &artist.constituent_id.to_string());
-            association.push_str(&cree_n);
-            association.push(',');
-            count+=1;
-        }
-        association.push_str(";END"); //to end the SQL request
-        association = association.replace(",;END",";");
-
     println!("--idArt now--");
 
     for artwork in artworks
     {
-        let asso_cree =
-        "\n (idartiste, idart)";
-        let cree_n = asso_cree.replace("idart", &artwork.object_id.to_string());
+        
+        for artists_id in artwork.constituent_id{
+            let foobar =
+            "\n (idartiste, idart)";
+            let mut cree_n = foobar.replace("idartiste", &artists_id.to_string());
+            cree_n = cree_n.replace("idart", &artwork.object_id.to_string());
+            association.push_str(&cree_n);
+            association.push(',');
+        }
+        
 
     }
-
-
-
-   
-    
-
+    association.push_str(";END"); //to end the SQL request
+    association = association.replace(",;END",";");
 
     println!("--------create_.sql---------");
 
