@@ -206,6 +206,13 @@ fn convert_association() -> Result<()>
     for artwork in artworks
     {
         
+        /**
+         * for each artwork we going through the constituent_id: Vec<i32>
+         * if the artwork had none, it go over to the next artwork
+         * if there is more than one constituent_id (id_artiste)
+         *      create a new line to associate it with the current
+         *      artwork_id
+         */
         for artists_id in artwork.constituent_id{
             let foobar =
             "\n (idartiste, idart)";
