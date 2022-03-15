@@ -29,7 +29,7 @@ Musee :
 
 https://github.com/MuseumofModernArt/collection
 
-Nous avons utilisé seulement quelque informations contenues dans la base de données MoMA :
+Nous avons utilisé seulement quelque informations contenues dans la base de données MoMA :  
 	- Pour les artistes :  
 		- DisplayName (leur nom)  
 		- Nationality (leur origine)  
