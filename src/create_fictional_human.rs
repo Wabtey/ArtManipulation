@@ -46,13 +46,54 @@ fn create_reputation(_number_of_creation: i32, _base_reput: i32)->i32 {
     return rng.gen_range(1..2000);
 }
 
+fn create_name() -> String {
+    let mut rng = thread_rng();
+
+    let mut first_name: String =
+        match &LIST_FIRST_NAME.choose(&mut rng) {
+        Some(n) => n.to_string(),
+            None => "Foo".to_string()
+        };
+    let last_name: String =
+        match &LIST_LAST_NAME.choose(&mut rng) {
+            Some(n) => n.to_string(),
+            None => "Bar".to_string()
+        };
+
+    first_name.push_str(" ");
+    first_name.push_str(&last_name);
+
+    first_name
+}
+
+fn create_nationality() -> String {
+    let mut rng = thread_rng();
+
+    let nationality =
+        match &LIST_NATIONALITY.choose(&mut rng) {
+            Some(n) => n,
+            None => "nationality unknown"
+        };
+    
+    nationality.to_string()
+}
+
+fn create_type() -> String {
+    let mut rng = thread_rng();
+
+    let art_type: String = 
+        match &LIST_ARTWORK_TYPE.choose(&mut rng) {
+            Some(n) => n.to_string(),
+            None => "Undefined".to_string()
+        };
+
+    art_type
+}
+
 pub fn create_human() // -> Result<()>
 {
 
     let mut rng = thread_rng();
-
-    //createReputation(number of creation, base reput)
-    let reputation_artiste = create_reputation(10, 0);
 
     let mut request: String = "".to_string();
 
@@ -67,31 +108,15 @@ pub fn create_human() // -> Result<()>
 
     for i in 0..50 {
 
-        let mut first_name: String =
-            match &LIST_FIRST_NAME.choose(&mut rng) {
-                Some(n) => n.to_string(),
-                None => "Foo".to_string()
-            };
-        let last_name: String =
-            match &LIST_LAST_NAME.choose(&mut rng) {
-                Some(n) => n.to_string(),
-                None => "Bar".to_string()
-            };
+        let name = create_name();
 
-        first_name.push_str(" ");
-        first_name.push_str(&last_name);
-
-        let nationality =
-            match &LIST_NATIONALITY.choose(&mut rng) {
-                Some(n) => n,
-                None => "nationality unknown"
-            };
+        let nationality = create_nationality();
         
         let foobar =
         "\n (id, 'display_name', 'nationality')";
         let mut human_n = foobar.replace("id", &i.to_string());
-        human_n = human_n.replace("display_name", &first_name);
-        human_n = human_n.replace("nationality", nationality);
+        human_n = human_n.replace("display_name", &name);
+        human_n = human_n.replace("nationality", &nationality);
         insert_comm.push_str(&human_n);
         insert_comm.push_str(",");
 
@@ -112,35 +137,19 @@ pub fn create_human() // -> Result<()>
 
     for i in 0..50 {
 
-        let mut first_name: String =
-            match &LIST_FIRST_NAME.choose(&mut rng) {
-                Some(n) => n.to_string(),
-                None => "Foo".to_string()
-            };
-        let last_name: String =
-            match &LIST_LAST_NAME.choose(&mut rng) {
-                Some(n) => n.to_string(),
-                None => "Bar".to_string()
-            };
-
-        first_name.push_str(" ");
-        first_name.push_str(&last_name);
+        let name = create_name();
 
         let capital: i128 = rng.gen_range(1..5000000)+1000000;
 
-        let nationality =
-            match &LIST_NATIONALITY.choose(&mut rng) {
-                Some(n) => n,
-                None => "nationality unknown"
-            };
+        let nationality = create_nationality();
         
         let foobar =
         "\n (id, 'display_name', reput, capital, 'nationality')";
         let mut human_n = foobar.replace("id", &i.to_string());
-        human_n = human_n.replace("display_name", &first_name);
+        human_n = human_n.replace("display_name", &name);
         human_n = human_n.replace("reput", &create_reputation(0,0).to_string());
         human_n = human_n.replace("capital", &capital.to_string());
-        human_n = human_n.replace("nationality", nationality);
+        human_n = human_n.replace("nationality", &nationality);
         insert_mecene.push_str(&human_n);
         insert_mecene.push_str(",");
 
@@ -161,41 +170,20 @@ pub fn create_human() // -> Result<()>
 
     for i in 0..50 {
 
-        let mut first_name: String =
-            match &LIST_FIRST_NAME.choose(&mut rng) {
-                Some(n) => n.to_string(),
-                None => "Foo".to_string()
-            };
-        let last_name: String =
-            match &LIST_LAST_NAME.choose(&mut rng) {
-                Some(n) => n.to_string(),
-                None => "Bar".to_string()
-            };
+        let name = create_name();
 
-        first_name.push_str(" ");
-        first_name.push_str(&last_name);
+        let rest_type = create_type();
 
-        let rest_type: String = 
-            match &LIST_ARTWORK_TYPE.choose(&mut rng) {
-                Some(n) => n.to_string(),
-                None => "Undefined".to_string()
-            };
-
-
-        let nationality =
-            match &LIST_NATIONALITY.choose(&mut rng) {
-                Some(n) => n,
-                None => "nationality unknown"
-            };
+        let nationality = create_nationality();
         
         let foobar =
-        "\n (id, 'display_name', type, 'nationality')";
+        "\n (id, 'display_name', 'type', 'nationality')";
         let mut human_n = foobar.replace("id", &i.to_string());
-        human_n = human_n.replace("display_name", &first_name);
+        human_n = human_n.replace("display_name", &name);
         human_n = human_n.replace("type", &rest_type);
-        human_n = human_n.replace("nationality", nationality);
-        insert_mecene.push_str(&human_n);
-        insert_mecene.push_str(",");
+        human_n = human_n.replace("nationality", &nationality);
+        insert_restaurateur.push_str(&human_n);
+        insert_restaurateur.push_str(",");
 
         number_of_creation+=1;
         
@@ -207,6 +195,37 @@ pub fn create_human() // -> Result<()>
     request.push_str(&insert_restaurateur);
 
 //--CRITIQUE------------------------------------------------------------------------------------
+
+    let mut insert_critique =
+        "INSERT INTO P1_CRITIQUE (idcritique, nomcritique, reputationcritique, nationalitecritique)
+        \n VALUES ".to_string();
+
+        for i in 0..50 {
+
+            let name = create_name();
+
+            let reputation = create_reputation(0,0);
+
+            let nationality = create_nationality();
+
+            let foobar =
+            "\n (id, 'display_name', reput, 'nationality')";
+            let mut human_n = foobar.replace("id", &i.to_string());
+            human_n = human_n.replace("display_name", &name);
+            human_n = human_n.replace("reput", &reputation.to_string());
+            human_n = human_n.replace("nationality", &nationality);
+            insert_critique.push_str(&human_n);
+            insert_critique.push_str(",");
+
+            number_of_creation+=1;
+
+        }
+
+        insert_critique.push_str(";END");
+        insert_critique = insert_critique.replace(",;END","; \n \n");
+
+        request.push_str(&insert_critique);
+
 //--CREANCIER-----------------------------------------------------------------------------------
 //--EXPERT--------------------------------------------------------------------------------------
 //--GALERIE-------------------------------------------------------------------------------------
