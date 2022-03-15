@@ -4,9 +4,13 @@ use std::fs;
 use serde_json::{Result};
 use serde::{Deserialize, Serialize};
 
+mod create_fictional_human;
+
 /* Hello, this program is meant to create random people
  * to Fullfill our SQL base 'ART MARKET'
 */
+
+//TODO : turn each of those method into a executable to avoid comment in main
 
 /*
  * reference : 
@@ -36,7 +40,7 @@ fn convert_artists() -> Result<()>
 {
     let path = "E:/Code/projects Rust/MoMA/Artists-reformed.json";
 	// the file : E:/Code/projects Rust/MoMA/Artists-reformed.json
-	// the file : /private/student/n/in/fepain/R/ArtManipulation/MoMA/Artists-reformed.json
+	// the file : /private/student/n/in/fepain/R/art-manipulation/MoMA/Artists-reformed.json
 
 	let content = fs::read_to_string(path)
 		.expect("Unable to read file");
@@ -83,9 +87,9 @@ fn convert_artists() -> Result<()>
 
     println!("--------create_.sql---------");
 
-    // "/private/student/n/in/fepain/R/ArtManipulation/RENDU/insert_artists.txt"
-    // "E:/Code/projects Rust/ArtManipulation/RENDU/insert_artists.txt"
-	fs::write("E:/Code/projects Rust/ArtManipulation/RENDU/insert_artists.sql",
+    // "/private/student/n/in/fepain/R/art-manipulation/RENDU/insert_artists.txt"
+    // "E:/Code/projects Rust/art-manipulation/RENDU/insert_artists.txt"
+	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/insert_artists.sql",
 			 foo)
 		.expect("Unable to write file");
 
@@ -122,7 +126,7 @@ fn convert_artworks() -> Result<()>
 {
     let path = "E:/Code/projects Rust/MoMA/Artworks-reformed.json";
 	// the file : E:/Code/projects Rust/MoMA/Artists-reformed.json
-	// the file : /private/student/n/in/fepain/R/ArtManipulation/MoMA/Artists-reformed.json
+	// the file : /private/student/n/in/fepain/R/art-manipulation/MoMA/Artists-reformed.json
 
 	let content = fs::read_to_string(path)
 		.expect("Unable to read file");
@@ -167,8 +171,8 @@ fn convert_artworks() -> Result<()>
 
     println!("--------create_.sql---------");
 
-    // "E:/Code/projects Rust/ArtManipulation/RENDU/insert_artworks.txt"
-	fs::write("E:/Code/projects Rust/ArtManipulation/RENDU/insert_artworks.sql",
+    // "E:/Code/projects Rust/art-manipulation/RENDU/insert_artworks.txt"
+	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/insert_artworks.sql",
 			 foo)
 		.expect("Unable to write file");
 
@@ -181,6 +185,12 @@ fn convert_artworks() -> Result<()>
  * based on the Artworks-reformed.json which for
  * each artwork have 0 or several artists stored
  * in constituent_id
+ * 
+ * for each artwork we going through the constituent_id: Vec<i32>
+ * if there is more than one constituent_id (id_artiste)
+ * if the artwork had none, it go over to the next artwork
+ *      create a new line to associate it with the current
+ *      artwork_id
  */
 fn convert_association() -> Result<()>
 {
@@ -206,8 +216,7 @@ fn convert_association() -> Result<()>
     for artwork in artworks
     {
         
-        /**
-         * for each artwork we going through the constituent_id: Vec<i32>
+        /* for each artwork we going through the constituent_id: Vec<i32>
          * if the artwork had none, it go over to the next artwork
          * if there is more than one constituent_id (id_artiste)
          *      create a new line to associate it with the current
@@ -229,12 +238,65 @@ fn convert_association() -> Result<()>
 
     println!("--------create_.sql---------");
 
-    // "E:/Code/projects Rust/ArtManipulation/RENDU/insert_artworks.txt"
-	fs::write("E:/Code/projects Rust/ArtManipulation/RENDU/insert_cree.sql",
+    // "E:/Code/projects Rust/art-manipulation/RENDU/insert_artworks.txt"
+	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/insert_cree.sql",
 			 association)
 		.expect("Unable to write file");
 
     Ok(())
+}
+
+
+/**
+ * create a semi data base of all nationality into a Vec<&str>
+ */
+fn create_vec_nationality() -> Result<()>
+{
+
+    let path = "E:/Code/projects Rust/MoMA/Artists-reformed.json";
+	
+	let content = fs::read_to_string(path)
+		.expect("Unable to read file");
+
+	println!("-----read_.json-----");
+	
+    let artists: Vec<Artist> = serde_json::from_str(&content).unwrap();
+	
+	println!("--------create_request---------");
+
+    let mut foo =
+    "static LIST_NATIONALITY: &'static [&str] = &[".to_string();
+
+    //pb : doublon
+    for artist in artists
+    {
+        let artist_nationality: &str=
+		match &artist.nationality {
+			Some(s) => s,
+			None => "",
+		};
+
+        
+        if !foo.contains(&artist_nationality){
+            let foobar = "nationality";
+            let nat_n = foobar.replace("nationality", &artist_nationality.replace("'", " "));
+            foo.push_str(&nat_n);
+            foo.push_str(", "); // have to remove the last one
+        }
+        
+    }
+    
+    foo.push_str(";END"); //to end the Vec<&str>
+    foo = foo.replace(", ;END","];");
+
+    println!("--------create_.txt---------");
+
+	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/nationality.txt",
+			 foo)
+		.expect("Unable to write file");
+
+    Ok(())
+
 }
 
 
@@ -253,7 +315,15 @@ fn main() {
 
     println!("--associations now--");
 
-    convert_association().unwrap();
+    // convert_association().unwrap();
+
+    println!("--nationality data base--");
+
+    // create_vec_nationality();
+
+    println!("--creation_human--");
+
+    create_fictional_human::create_human();
 
     println!("--End--");
 }
