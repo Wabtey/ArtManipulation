@@ -3,15 +3,46 @@
 
 TODO : 
 A supp pour le schéma : P1_ -->(le _ va poser pb)--
---DONE Garder une trace de qui a posseder quoi quand
+-- DONE Garder une trace de qui a posseder quoi quand
 Mecene = personne ou entreprise
 Trouver un mot entre SUBVENTIONNE et AIDE
---DONE add expert
+-- DONE add expert
 
 changer possede into possede with 2 foreing key 
---remplacer datePoss into dateDebut dateFin dans possede
---supprimer nomArtiste dans P1_ART
-	--cas interessant de clé étrangère remplacé par une relation 'cree'
+-- remplacer datePoss into dateDebut dateFin dans possede
+-- supprimer nomArtiste dans P1_ART
+	-- cas interessant de clé étrangère remplacé par une relation 'cree'
+
+replace etudeExpert by type
+
+peuplage table :
+  -- ARTISTE
+  -- ART
+  -- Mecene
+  -- P1_COMMISSAIRES
+  -- RESTAURATEUR
+  P1_CRITIQUE
+  P1_CREANCIER
+  P1_EXPERT
+
+    -- ORGA
+  GALERIE
+  MARCHE
+  MUSEE
+
+peuplage relation :
+  -- CREE
+  DIRIGE
+  PARTICIPE
+  VEND
+  POSSEDE
+  EXPERTISE
+  JUGE
+  EXPOSE
+  PRET
+  AIDE
+  RESTAURE
+
 
 ---------
 Auteurs :
@@ -197,8 +228,37 @@ P1_ARTISTE : idArtiste, nomArtiste, webArtiste, reputationArtiste, nationaliteAr
 AIDE, 0N P1_MECENE, 0N P1_ARTISTE
 
 -----------------------
-artworks json example :
+'artist' json example : 
 -----------------------
+
+{
+  "constituent_id": 7626,
+  "display_name": "Patrick Ireland",
+  "artist_bio": "Irish, 1972–2008",
+  "nationality": "Irish",
+  "gender": "Male",
+  "begin_date": 1972,
+  "end_date": 2008,
+  "wiki_qid": "Q3777954",
+  "ulan": "500079431"
+},
+
+-- this json can contain organisation, not all are human being
+{
+  "constituent_id": 7636,
+  "display_name": "IBM Corporation",
+  "artist_bio": "American, founded 1911",
+  "nationality": "American",
+  "gender": null,
+  "begin_date": 1911,
+  "end_date": 0,
+  "wiki_qid": null,
+  "ulan": null
+},
+
+----------------------
+artwork json example :
+----------------------
 
 {
   "title": "Zamaul' III",
