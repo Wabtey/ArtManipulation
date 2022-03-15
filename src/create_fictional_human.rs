@@ -98,6 +98,54 @@ fn create_capital() -> i128 {
     capital
 }
 
+fn create_request_insertion_v2(name: String, number: i128
+                               rest_type: Boolean, specialite: Boolean,
+                               capital: Boolean, reputation: Boolean)
+{
+    let mut request =
+    "INSERT INTO P1_NAME (idname, nomname, nationalitename)
+    \n VALUES"
+        .to_string()
+        .replace("NAME", name.to_uppercase())
+        .replace("name", name.to_lowercase());
+
+    let mut i: i32 =0;
+    for i in 0..number {
+
+        let name = create_name();
+
+        let nationality = create_nationality();
+
+        let mut foobar =
+        "\n (id, 'display_name',";
+        if(reputation)
+            foobar.push_str("'reputation', ");
+        if(specialite | rest_type) 
+            foobar.push_str("'type', ");
+
+        foobar.push_str("'nationality')");
+
+        let mut human_n = foobar.replace("id", &i.to_string());
+        human_n = human_n.replace("display_name", &name);
+
+        if(specialite) {
+            let specialite_type = create_type();
+            human_n = human_n.replace("type", &specialite_type);
+        }
+
+        human_n = human_n.replace("nationality", &nationality);
+        request.push_str(&human_n);
+        request.push_str(",");
+
+        number_of_creation+=1;
+
+    }
+
+    request.push_str(";END");
+    request = request.replace(",;END","; \n \n");
+
+}
+
 pub fn create_human() // -> Result<()>
 {
 
