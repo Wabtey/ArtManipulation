@@ -217,7 +217,7 @@ P1_MARCHE : idMarche, dateMarche, prixEntryMarche, adresseMarche
 VEND, 0N P1_CREANCIER, 01 P1_ART : prixVente, dateDeVente
 P1_ART : idArt, titre, type, cote
 EXPERTISE, 1N P1_EXPERT, 0N P1_ART
-P1_EXPERT : idExpert, nomExpert, etudeExpert, nationaliteExpert
+P1_EXPERT : idExpert, nomExpert, specialiteExpert, nationaliteExpert
 P1_MECENE : idMecene, nomMecene, reputationMecene, capitalMecene, nationaliteMecene
 
 PARTICIPE, 01 P1_CREANCIER, 0N P1_MARCHE : OeuvreAchetee, OeuvreVendue
