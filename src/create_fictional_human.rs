@@ -90,6 +90,14 @@ fn create_type() -> String {
     art_type
 }
 
+fn create_capital() -> i128 {
+    let mut rng = thread_rng();
+    
+    let capital: i128 = rng.gen_range(1..5000000)+1000000;
+
+    capital
+}
+
 pub fn create_human() // -> Result<()>
 {
 
@@ -139,7 +147,7 @@ pub fn create_human() // -> Result<()>
 
         let name = create_name();
 
-        let capital: i128 = rng.gen_range(1..5000000)+1000000;
+        let capital = create_capital();
 
         let nationality = create_nationality();
         
@@ -227,7 +235,69 @@ pub fn create_human() // -> Result<()>
         request.push_str(&insert_critique);
 
 //--CREANCIER-----------------------------------------------------------------------------------
+
+    let mut insert_creancier =
+        "INSERT INTO P1_CREANCIER (idcreancier, nomcreancier, capitalcreancier, nationalitecreancier)
+        \n VALUES ".to_string();
+
+        for i in 0..50 {
+
+            let name = create_name();
+
+            let capital = create_capital();
+
+            let nationality = create_nationality();
+
+            let foobar =
+            "\n (id, 'display_name', capital, 'nationality')";
+            let mut human_n = foobar.replace("id", &i.to_string());
+            human_n = human_n.replace("display_name", &name);
+            human_n = human_n.replace("capital", &capital.to_string());
+            human_n = human_n.replace("nationality", &nationality);
+            insert_creancier.push_str(&human_n);
+            insert_creancier.push_str(",");
+
+            number_of_creation+=1;
+
+        }
+
+        insert_creancier.push_str(";END");
+        insert_creancier = insert_creancier.replace(",;END","; \n \n");
+
+    request.push_str(&insert_creancier);
+
 //--EXPERT--------------------------------------------------------------------------------------
+
+    let mut insert_expert =
+    "INSERT INTO P1_EXPERT (idexpert, nomexpert, specialiteexpert, nationaliteexpert)
+    \n VALUES ".to_string();
+
+    for i in 0..50 {
+
+        let name = create_name();
+
+        let specialite = create_type();
+
+        let nationality = create_nationality();
+
+        let foobar =
+        "\n (id, 'display_name', 'type', 'nationality')";
+        let mut human_n = foobar.replace("id", &i.to_string());
+        human_n = human_n.replace("display_name", &name);
+        human_n = human_n.replace("type", &specialite);
+        human_n = human_n.replace("nationality", &nationality);
+        insert_expert.push_str(&human_n);
+        insert_expert.push_str(",");
+
+        number_of_creation+=1;
+
+    }
+
+    insert_expert.push_str(";END");
+    insert_expert = insert_expert.replace(",;END","; \n \n");
+
+    request.push_str(&insert_expert);
+
 //--GALERIE-------------------------------------------------------------------------------------
 //--MARCHE--------------------------------------------------------------------------------------
 //--GALERIE-------------------------------------------------------------------------------------
@@ -240,19 +310,11 @@ pub fn create_human() // -> Result<()>
 
     println!("--------create_.txt---------");
 
-	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/humans.txt",
+    // /private/student/n/in/fepain/R/art-manipulation
+    // E:/Code/projects Rust/art-manipulation/RENDU/humans.txt
+	fs::write("/private/student/n/in/fepain/R/art-manipulation/RENDU/humans.txt",
 			  request)
 		.expect("Unable to write file");
-
-    // let request = format!("{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
-    //                         "INSERT INTO ",
-    //                         "<P1_ARTISTE>(nomartiste, webartiste, reputationartiste, nationaliteartiste)",
-    //                         "\n VALUES ('", &first_name, " ", &last_name, "',",
-    //                         "'",&first_name,"-",&last_name,".org',",
-    //                         "'",&reputation_artiste.to_string(),"',",
-    //                         "'",&address,"',",
-    //                         ")"
-    //                      );
 }
 
 
