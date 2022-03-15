@@ -192,7 +192,7 @@ pub fn create_human() // -> Result<()>
         "\n (id, 'display_name', type, 'nationality')";
         let mut human_n = foobar.replace("id", &i.to_string());
         human_n = human_n.replace("display_name", &first_name);
-        human_n = human_n.replace("type", rest_type)
+        human_n = human_n.replace("type", &rest_type);
         human_n = human_n.replace("nationality", nationality);
         insert_mecene.push_str(&human_n);
         insert_mecene.push_str(",");
