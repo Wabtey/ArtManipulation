@@ -323,7 +323,7 @@ fn main() {
 
     println!("--creation_human--");
 
-    create_fictional_human::create_human(500);
+    create_fictional_human::create_humans(500);
 
     println!("--End--");
 }
