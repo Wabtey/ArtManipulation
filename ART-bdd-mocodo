@@ -4,7 +4,8 @@
 TODO : 
 A supp pour le schéma : P1_ -->(le _ va poser pb)--
 -- DONE Garder une trace de qui a posseder quoi quand
-Mecene = personne ou entreprise
+-- Mecene = personne ou entreprise
+  -- une organisation mecene sera portée par son directeur (personne)
 Trouver un mot entre SUBVENTIONNE et AIDE
 -- DONE add expert
 
@@ -27,7 +28,7 @@ peuplage table :
 
     -- ORGA
   GALERIE
-  MARCHE
+  MARCHE -- > are galleries where art is used to be sell
   MUSEE
 
 peuplage relation :
@@ -200,10 +201,10 @@ MCD FINALE :
 --find adresse_ replace by ville or nationalite
 
 P1_COMMISSAIRES-PRISEURS : idCommissaire, nomCommissaire, nationaliteCommissaire
-P1_RESTAURATEUR : idRestaurateur, nomRestaurateur, type, nationaliteRestaurateur
+P1_RESTAURATEUR : idRestaurateur, nomRestaurateur, typeRestaurateur, nationaliteRestaurateur
 P1_MUSEE : idMusee, nomMusee, dateDeCreation, adresseMusee
 EXPOSE, 01 P1_ART, NN P1_GALERIE : dureeExpo
-P1_GALERIE : idGalerie, dateExpo, prixEntryExpo, association, adresseGalerie
+P1_GALERIE : idGalerie, nomGalerie, dateExpo, prixEntryExpo, association, adresseGalerie
 :
 
 DIRIGE, 01 P1_COMMISSAIRES-PRISEURS, 11 P1_MARCHE
@@ -217,7 +218,7 @@ P1_MARCHE : idMarche, dateMarche, prixEntryMarche, adresseMarche
 VEND, 0N P1_CREANCIER, 01 P1_ART : prixVente, dateDeVente
 P1_ART : idArt, titre, type, cote
 EXPERTISE, 1N P1_EXPERT, 0N P1_ART
-P1_EXPERT : idExpert, nomExpert, specialiteExpert, nationaliteExpert
+P1_EXPERT : idExpert, nomExpert, typeExpert, nationaliteExpert
 P1_MECENE : idMecene, nomMecene, reputationMecene, capitalMecene, nationaliteMecene
 
 PARTICIPE, 01 P1_CREANCIER, 0N P1_MARCHE : OeuvreAchetee, OeuvreVendue
