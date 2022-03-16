@@ -98,269 +98,208 @@ fn create_capital() -> i128 {
     capital
 }
 
-fn create_request_insertion_v2(name: String, number: i128
-                               rest_type: Boolean, specialite: Boolean,
-                               capital: Boolean, reputation: Boolean)
+/**
+ * past : post==false | pre==true
+ */
+fn create_date(past: bool) -> String{
+    let mut rng = thread_rng();
+
+    let mut date = "month/year".to_string();
+    let month = rng.gen_range(0..12);
+    let mut year = 1445;
+    if past {
+        year = rng.gen_range(2003..2021);
+    }
+    else {
+        year = rng.gen_range(2022..2030);
+    }
+    date = date.replace("month", &month.to_string());
+    date = date.replace("year", &year.to_string());
+
+    date.to_string()
+}
+
+/**
+ * 0 | 5 | 15 | 30 | 100 | 500 | 1000 | 5000 | 10 000 | 50 000
+ */
+fn create_price() {}
+
+fn create_association(){}
+
+/**
+ * create a sql request  to insert a good amount of data in your database
+ * respect my current sql structure
+ * should be great to import a example of struct with all table to auto all of this
+ */
+fn create_request(table_name: &str, amount: i32, art_type: bool,
+                  reputation: bool, capital: bool) -> String 
 {
-    let mut request =
-    "INSERT INTO P1_NAME (idname, nomname, nationalitename)
-    \n VALUES"
-        .to_string()
-        .replace("NAME", name.to_uppercase())
-        .replace("name", name.to_lowercase());
+    let mut request: String =
+    "INSERT INTO P1_NAME (idname, nomname, "
+        .to_string();
+    if art_type {
+        request.push_str("typename, ");
+    }
+    if reputation {
+        request.push_str("reputationname, ");
+    }
+    if capital {
+        request.push_str("capitalname, ");
+    }
+    
+    request.push_str("nationalitename) \n VALUES");
+    request = request
+        .replace("NAME", &table_name.to_uppercase())
+        .replace("name", &table_name.to_lowercase());
 
     let mut i: i32 =0;
-    for i in 0..number {
+    for i in 0..amount {
 
         let name = create_name();
 
         let nationality = create_nationality();
 
-        let mut foobar =
-        "\n (id, 'display_name',";
-        if(reputation)
-            foobar.push_str("'reputation', ");
-        if(specialite | rest_type) 
-            foobar.push_str("'type', ");
-
-        foobar.push_str("'nationality')");
+        let foobar =
+        "\n (id, 'display_name', ".to_string();
 
         let mut human_n = foobar.replace("id", &i.to_string());
         human_n = human_n.replace("display_name", &name);
 
-        if(specialite) {
-            let specialite_type = create_type();
-            human_n = human_n.replace("type", &specialite_type);
+        if art_type{
+            human_n.push_str("'type', ");
+            human_n = human_n.replace("type", &create_type());
+        }
+        if reputation{
+            human_n.push_str("reputation, ");
+            human_n = human_n.replace("reputation", &create_reputation(0,0).to_string());
+        }
+        if capital{
+            human_n.push_str("capital, ");
+            human_n = human_n.replace("capital", &create_capital().to_string());
         }
 
+        human_n.push_str("'nationality')");
         human_n = human_n.replace("nationality", &nationality);
+        
         request.push_str(&human_n);
         request.push_str(",");
-
-        number_of_creation+=1;
 
     }
 
     request.push_str(";END");
     request = request.replace(",;END","; \n \n");
 
+    request
+
 }
 
-pub fn create_human() // -> Result<()>
+pub fn create_human(amount_of_each: i32) // -> Result<()>
 {
 
     let mut rng = thread_rng();
 
     let mut request: String = "".to_string();
 
+    let mut i: i32 =0;
+    let mut number_of_creation: i32 = 0;
+
 //--COMM-PRISEURS-------------------------------------------------------------------------------
 
-    let mut insert_comm =
-    "INSERT INTO P1_COMMISSAIRES-PRISEURS (idcommisaire, nomcommisaire, nationalitecommisaire)
-    \n VALUES ".to_string();
-
-    let mut i: i32 =0;
-    let mut number_of_creation = 0;
-
-    for i in 0..50 {
-
-        let name = create_name();
-
-        let nationality = create_nationality();
-        
-        let foobar =
-        "\n (id, 'display_name', 'nationality')";
-        let mut human_n = foobar.replace("id", &i.to_string());
-        human_n = human_n.replace("display_name", &name);
-        human_n = human_n.replace("nationality", &nationality);
-        insert_comm.push_str(&human_n);
-        insert_comm.push_str(",");
-
-        number_of_creation+=1;
-        
-    }
-
-    insert_comm.push_str(";END");
-    insert_comm = insert_comm.replace(",;END","; \n \n");
-
-    request.push_str(&insert_comm);
+    let commissaire = create_request("commissaires-priseurs", amount_of_each, false, false, false);
+    number_of_creation +=amount_of_each;
+    request.push_str(&commissaire);
 
 //--MECENE--------------------------------------------------------------------------------------
+    
+    let mecene = create_request("mecene", amount_of_each, false, true, true);
+    number_of_creation +=amount_of_each;
+    request.push_str(&mecene);
 
-    let mut insert_mecene =
-    "INSERT INTO P1_MECENE (idmecene, nommecene, reputationmecene, capitalmecene, nationalitemecene)
-    \n VALUES ".to_string();
+//--RESTAURATEUR--------------------------------------------------------------------------------
 
-    for i in 0..50 {
-
-        let name = create_name();
-
-        let capital = create_capital();
-
-        let nationality = create_nationality();
-        
-        let foobar =
-        "\n (id, 'display_name', reput, capital, 'nationality')";
-        let mut human_n = foobar.replace("id", &i.to_string());
-        human_n = human_n.replace("display_name", &name);
-        human_n = human_n.replace("reput", &create_reputation(0,0).to_string());
-        human_n = human_n.replace("capital", &capital.to_string());
-        human_n = human_n.replace("nationality", &nationality);
-        insert_mecene.push_str(&human_n);
-        insert_mecene.push_str(",");
-
-        number_of_creation+=1;
-        
-    }
-
-    insert_mecene.push_str(";END");
-    insert_mecene = insert_mecene.replace(",;END","; \n \n");
-
-    request.push_str(&insert_mecene);
-
-//--RESTAURATEUR------------------------------------------------------------------------------------
-
-    let mut insert_restaurateur =
-    "INSERT INTO P1_RESTAURATEUR (idrestaurateur, nomrestaurateur, type, nationaliterestaurateur)
-    \n VALUES ".to_string();
-
-    for i in 0..50 {
-
-        let name = create_name();
-
-        let rest_type = create_type();
-
-        let nationality = create_nationality();
-        
-        let foobar =
-        "\n (id, 'display_name', 'type', 'nationality')";
-        let mut human_n = foobar.replace("id", &i.to_string());
-        human_n = human_n.replace("display_name", &name);
-        human_n = human_n.replace("type", &rest_type);
-        human_n = human_n.replace("nationality", &nationality);
-        insert_restaurateur.push_str(&human_n);
-        insert_restaurateur.push_str(",");
-
-        number_of_creation+=1;
-        
-    }
-
-    insert_restaurateur.push_str(";END");
-    insert_restaurateur = insert_restaurateur.replace(",;END","; \n \n");
-
-    request.push_str(&insert_restaurateur);
+    let restaurateur = create_request("restaurateur", amount_of_each, true, false, false);
+    number_of_creation +=amount_of_each;
+    request.push_str(&restaurateur);
 
 //--CRITIQUE------------------------------------------------------------------------------------
 
-    let mut insert_critique =
-        "INSERT INTO P1_CRITIQUE (idcritique, nomcritique, reputationcritique, nationalitecritique)
-        \n VALUES ".to_string();
-
-        for i in 0..50 {
-
-            let name = create_name();
-
-            let reputation = create_reputation(0,0);
-
-            let nationality = create_nationality();
-
-            let foobar =
-            "\n (id, 'display_name', reput, 'nationality')";
-            let mut human_n = foobar.replace("id", &i.to_string());
-            human_n = human_n.replace("display_name", &name);
-            human_n = human_n.replace("reput", &reputation.to_string());
-            human_n = human_n.replace("nationality", &nationality);
-            insert_critique.push_str(&human_n);
-            insert_critique.push_str(",");
-
-            number_of_creation+=1;
-
-        }
-
-        insert_critique.push_str(";END");
-        insert_critique = insert_critique.replace(",;END","; \n \n");
-
-        request.push_str(&insert_critique);
+    let critique = create_request("critique", amount_of_each, false, true, false);
+    number_of_creation +=amount_of_each;
+    request.push_str(&critique);
 
 //--CREANCIER-----------------------------------------------------------------------------------
 
-    let mut insert_creancier =
-        "INSERT INTO P1_CREANCIER (idcreancier, nomcreancier, capitalcreancier, nationalitecreancier)
-        \n VALUES ".to_string();
-
-        for i in 0..50 {
-
-            let name = create_name();
-
-            let capital = create_capital();
-
-            let nationality = create_nationality();
-
-            let foobar =
-            "\n (id, 'display_name', capital, 'nationality')";
-            let mut human_n = foobar.replace("id", &i.to_string());
-            human_n = human_n.replace("display_name", &name);
-            human_n = human_n.replace("capital", &capital.to_string());
-            human_n = human_n.replace("nationality", &nationality);
-            insert_creancier.push_str(&human_n);
-            insert_creancier.push_str(",");
-
-            number_of_creation+=1;
-
-        }
-
-        insert_creancier.push_str(";END");
-        insert_creancier = insert_creancier.replace(",;END","; \n \n");
-
-    request.push_str(&insert_creancier);
+    let creancier = create_request("creancier", amount_of_each, false, false, true);
+    number_of_creation +=amount_of_each;
+    request.push_str(&creancier);
 
 //--EXPERT--------------------------------------------------------------------------------------
 
-    let mut insert_expert =
-    "INSERT INTO P1_EXPERT (idexpert, nomexpert, specialiteexpert, nationaliteexpert)
+    let expert = create_request("expert", amount_of_each, true, false, false);
+    number_of_creation +=amount_of_each;
+    request.push_str(&expert);
+
+    /*
+
+//--GALERIE-------------------------------------------------------------------------------------
+
+    let mut insert_galerie =
+    "INSERT INTO P1_GALERIE (idgalerie, nomgalerie, dateexpo, prixentryexpo, association, adressegalerie)
     \n VALUES ".to_string();
 
     for i in 0..50 {
 
         let name = create_name();
 
-        let specialite = create_type();
+        let date = create_date();
+
+        //0 | 5 | 15 | 30 | 100 | 500 | 1000 | 5000
+        let price = create_price();
+
+        let association = create_association();
 
         let nationality = create_nationality();
 
         let foobar =
-        "\n (id, 'display_name', 'type', 'nationality')";
+        "\n (id, 'display_name', dateexpo, price, 'association', 'country')";
         let mut human_n = foobar.replace("id", &i.to_string());
         human_n = human_n.replace("display_name", &name);
-        human_n = human_n.replace("type", &specialite);
-        human_n = human_n.replace("nationality", &nationality);
-        insert_expert.push_str(&human_n);
-        insert_expert.push_str(",");
+        human_n = human_n.replace("dateexpo", &date);
+        human_n = human_n.replace("price", &price);
+        human_n = human_n.replace("association", &association);
+        human_n = human_n.replace("country", &nationality);
+        insert_galerie.push_str(&human_n);
+        insert_galerie.push_str(",");
 
         number_of_creation+=1;
 
     }
 
-    insert_expert.push_str(";END");
-    insert_expert = insert_expert.replace(",;END","; \n \n");
+    insert_galerie.push_str(";END");
+    insert_galerie = insert_galerie.replace(",;END","; \n \n");
 
-    request.push_str(&insert_expert);
+    request.push_str(&insert_galerie);
 
-//--GALERIE-------------------------------------------------------------------------------------
 //--MARCHE--------------------------------------------------------------------------------------
-//--GALERIE-------------------------------------------------------------------------------------
+//--MUSEE-------------------------------------------------------------------------------------
 
-//--RELATIONS-------------------------------------------------------------------------------------
+    */
 
-    println!("humans created: {}", number_of_creation);
+    
+//--RELATIONS-----------------------------------------------------------------------------------
 
     
 
+    
+
+//--WRITING------------------------------------------------------------------------------------
+    
+    println!("humans created: {}", number_of_creation);
     println!("--------create_.txt---------");
 
-    // /private/student/n/in/fepain/R/art-manipulation
+    // /private/student/n/in/fepain/R/art-manipulation/RENDU/humans.txt
     // E:/Code/projects Rust/art-manipulation/RENDU/humans.txt
-	fs::write("/private/student/n/in/fepain/R/art-manipulation/RENDU/humans.txt",
+	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/humansV2.txt",
 			  request)
 		.expect("Unable to write file");
 }
