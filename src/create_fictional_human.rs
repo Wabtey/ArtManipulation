@@ -28,6 +28,8 @@ static LIST_ARTWORK_TYPE: &'static [&str] = &["Sculture", "Paint", "Ceramics", "
 "Jewellery Art", "Metalwork Art", "Mosaic Art", "Photography", "Architecture", "Religious Art", "Rock Art",
 "Stained Glass Art"];
 
+static LIST_ASSOCIATION &'static [&str] = &[""];
+
 /*
  * cste to keep the unique propriety of id sql
  * no more than 99 human aloid for each 
@@ -122,9 +124,21 @@ fn create_date(past: bool) -> String{
 /**
  * 0 | 5 | 15 | 30 | 100 | 500 | 1000 | 5000 | 10 000 | 50 000
  */
-fn create_price() {}
+fn create_price() {
+    
+}
 
-fn create_association(){}
+fn create_association(){
+    let mut rng = thread_rng();
+
+    let association: String = 
+        match &LIST_ASSOCIATION.choose(&mut rng) {
+            Some(n) => n.to_string(),
+            None => "Undefined".to_string()
+        };
+
+    association
+}
 
 /**
  * create a sql request  to insert a good amount of data in your database
@@ -193,7 +207,11 @@ fn create_request(table_name: &str, amount: i32, art_type: bool,
 
 }
 
-pub fn create_human(amount_of_each: i32) // -> Result<()>
+fn create_organisation() {
+
+}
+
+pub fn create_humans(amount_of_each: i32) // -> Result<()>
 {
 
     let mut rng = thread_rng();
