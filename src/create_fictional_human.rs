@@ -12,7 +12,7 @@ static LIST_LAST_NAME: &'static [&str] = &["Strömholm", "Strömholm", "Rusten",
 "Burckhardt", "Martin", "Pinney", "Neusüss", "Goldes", "Charlesworth", "Bernsten", "Appelt", "Cohen",
 "McCarthy", "Wagner", "Van Toorn", "Mol", "Lynch", "Bell", "Cassell", "Schönthal", "Kammerer", "Hoppe",
 "De Vringer", "Faydherbe", "Marqués", "Nobert", "Smith", "Knoll", "Rizzatto", "Tetrarc", "Wanders",
-"van der Meulen", "Joestar", "Abitbol"];
+"van der Meulen", "Joestar", "Abitbol", "Zepelli", "Speedwagon"];
 
 static LIST_NATIONALITY: &'static [&str] = &["nationality unknown", "American", "Spanish", "Danish", "Italian", "French", "Estonian", "Mexican", "Swedish", "Israeli", "British", 
 "Finnish", "Polish", "Palestinian", "Japanese", "Guatemalan", "Colombian", "Romanian", "Russian", "German", "Argentine", "Kuwaiti", "Belgian", "Dutch", "Norwegian", 
@@ -101,12 +101,14 @@ fn create_capital() -> i128 {
 }
 
 /**
- * past : post==false | pre==true
+ * @param past : 'a future date' -> false | 'a past date' -> true
+ * format : AAAA-MM-JJ
  */
 fn create_date(past: bool) -> String{
     let mut rng = thread_rng();
 
-    let mut date = "month/year".to_string();
+    let mut date = "year-month-day".to_string();
+    let day = rng.gen_range(0..31); // dc about 31/02 or 31/04
     let month = rng.gen_range(0..12);
     let mut year = 1445;
     if past {
@@ -125,7 +127,10 @@ fn create_date(past: bool) -> String{
  * 0 | 5 | 15 | 30 | 100 | 500 | 1000 | 5000 | 10 000 | 50 000
  */
 fn create_price() {
-    
+    let mut rng = thread_rng();
+    // placeholder
+    let price = rng.gen_range(0..50000);
+    price
 }
 
 fn create_association(){
@@ -192,11 +197,10 @@ fn create_request(table_name: &str, amount: i32, art_type: bool,
             human_n = human_n.replace("capital", &create_capital().to_string());
         }
 
-        human_n.push_str("'nationality')");
+        human_n.push_str("'nationality'),");
         human_n = human_n.replace("nationality", &nationality);
         
         request.push_str(&human_n);
-        request.push_str(",");
 
     }
 
@@ -207,8 +211,68 @@ fn create_request(table_name: &str, amount: i32, art_type: bool,
 
 }
 
-fn create_organisation() {
+/**
+ * if creation_date and rdv_date are true only creation_date will effect
+ * you can't bassicaly have those two attributs
+ */
+fn create_organisation(table_name: String, amount: i32, creation_date: bool,
+                       rdv_date: bool, price: bool, association: bool) -> String
+{
+    let mut request: String =
+    "INSERT INTO P1_NAME (idname, nomname, "
+        .to_string();
+    if creation_date {
+        request.push_str("datedecreation, ");
+    }
+    // careful about this else which can conflict
+    // with future change on mocodoStructre
+    else if rdv_date { 
+        request.push_str("datename, ");
+    }
+    if price {
+        request.push_str("prixentryname, ");
+    }
+    request.push_str("adressename) \n VALUES");
+    request = request
+        .replace("NAME", &table_name.to_uppercase())
+        .replace("name", &table_name.to_lowercase());
 
+    let mut i: i32 =0;
+    for i in 0..amount {
+
+        let name = create_name();
+
+        let country = create_nationality();
+
+        let foobar =
+        "\n (id, 'display_name', ".to_string();
+
+        let mut orga_n = foobar.replace("id", &i.to_string());
+        orga_n = orga_n.replace("display_name", &name);
+        if creation_date | rdv_date {
+            //if rdv_date means !creation_date
+            
+            orga_n.push_str("date, ");   // same care here
+            orga_n = orga_n.replace("date", &create_date(creation_date));
+        }
+        if price{
+            orga_n.push_str("price, ");
+            orga_n = orga_n.replace("price", &create_price().to_string());
+        }
+        if association{
+            orga_n.push_str("association, ");
+            orga_n = orga_n.replace("association", &create_association());
+        }
+        orga_n.push_str("'country'),");
+        orga_n = orga_n.replace("country", &country);
+        
+        request.push_str(&orga_n);
+    }
+
+    request.push_str(";END");
+    request = request.replace(",;END","; \n \n");
+
+    request
 }
 
 pub fn create_humans(amount_of_each: i32) // -> Result<()>
@@ -218,7 +282,6 @@ pub fn create_humans(amount_of_each: i32) // -> Result<()>
 
     let mut request: String = "".to_string();
 
-    let mut i: i32 =0;
     let mut number_of_creation: i32 = 0;
 
 //--COMM-PRISEURS-------------------------------------------------------------------------------
@@ -257,55 +320,91 @@ pub fn create_humans(amount_of_each: i32) // -> Result<()>
     number_of_creation +=amount_of_each;
     request.push_str(&expert);
 
-    /*
 
 //--GALERIE-------------------------------------------------------------------------------------
 
-    let mut insert_galerie =
-    "INSERT INTO P1_GALERIE (idgalerie, nomgalerie, dateexpo, prixentryexpo, association, adressegalerie)
-    \n VALUES ".to_string();
+    // all these galleries are past, non temporary, permanent
+    let gallery = create_organisation("galerie", amount_of_each,
+                                      true, false, true, true);
+    // gallery.push_str(create_organisation("galerie", amount_of_each/2,
+    //                                      false, true, true, true));
+    number_of_creation +=amount_of_each;
+    request.push_str(&gallery);
 
-    for i in 0..50 {
-
-        let name = create_name();
-
-        let date = create_date();
-
-        //0 | 5 | 15 | 30 | 100 | 500 | 1000 | 5000
-        let price = create_price();
-
-        let association = create_association();
-
-        let nationality = create_nationality();
-
-        let foobar =
-        "\n (id, 'display_name', dateexpo, price, 'association', 'country')";
-        let mut human_n = foobar.replace("id", &i.to_string());
-        human_n = human_n.replace("display_name", &name);
-        human_n = human_n.replace("dateexpo", &date);
-        human_n = human_n.replace("price", &price);
-        human_n = human_n.replace("association", &association);
-        human_n = human_n.replace("country", &nationality);
-        insert_galerie.push_str(&human_n);
-        insert_galerie.push_str(",");
-
-        number_of_creation+=1;
-
-    }
-
-    insert_galerie.push_str(";END");
-    insert_galerie = insert_galerie.replace(",;END","; \n \n");
-
-    request.push_str(&insert_galerie);
 
 //--MARCHE--------------------------------------------------------------------------------------
-//--MUSEE-------------------------------------------------------------------------------------
 
-    */
+    let marche = create_organisation("marche", amount_of_each,
+                                     false, true, true, false);
+    number_of_creation +=amount_of_each;
+    request.push_str(&marche);
 
+//--MUSEE---------------------------------------------------------------------------------------
+
+    let museum = create_organisation("musee", amount_of_each,
+                                     true, false, true, false);
+    number_of_creation +=amount_of_each;
+    request.push_str(&museum);
     
 //--RELATIONS-----------------------------------------------------------------------------------
 
+
+    //--AIDE---------------------------------------------------------------------
+    let mut relations: String =
+    "INSERT INTO P1_AIDE (idmecene, idartist) \n VALUES".to_string();
+    let mut i: i32 =0;
+    for i in 0..amount_of_each {
+        //only 1/8 or less (if amount_of_each < 9) artists are assisted by a mecene
+        if i%8==0 {
+            let foobar =
+            "\n (idmecene, idartist),".to_string();
+            // pb : only 1/8 of all mecene  will provide 'help' / be active
+            let mut aide_n = foobar.replace("idmecene", i);
+            aide_n = aide_n.replace("idartist", i);
+        }
+    }
+    relations.push_str(";END");
+    relations = relations.replace(",;END","; \n \n");
+
+    //--DIRIGE-------------------------------------------------------------------
+    relations.push_str(
+        "INSERT INTO P1_DIRIGE (idcommissaires-priseurs, idmarche) \n VALUES");
+
+    for i in 0..amount_of_each {
+        // all commissaires-priseurs DIRIGE one and only one MARCHE
+        let foobar = "\n (idcommissaires-priseurs, idmarche),".to_string();
+        let mut aide_n = foobar.replace("idcommissaires-priseurs", i);
+        aide_n = aide_n.replace("idmarche", i);
+    }
+    relations.push_str(";END");
+    relations = relations.replace(",;END","; \n \n");
+
+    //--PARTICIPE----------------------------------------------------------------
+    /*
+    relations.push_str("INSERT INTO P1_PARTICIPE (idcreancier, idamarche) \n VALUES");
+
+    for i in 0..amount_of_each {
+        //only 1/8 or less (if amount_of_each < 9) artists are assisted by a mecene
+        if i%8==0 {
+            let foobar =
+            "\n (idmecene, idartist),".to_string();
+            //pb : only 1/8 of all mecene  will provide 'help' / be active
+            let mut aide_n = foobar.replace("idmecene", i);
+            aide_n = aide_n.replace("idartist", i);
+        }
+    }
+    relations.push_str(";END");
+    relations = relations.replace(",;END","; \n \n");
+    */
+    //--VEND---------------------------------------------------------------------
+    //--POSSEDE------------------------------------------------------------------
+    //--RESTAURE-----------------------------------------------------------------
+    //--PRET---------------------------------------------------------------------
+    //--EXPOSE-------------------------------------------------------------------
+    //--EXPERTISE----------------------------------------------------------------
+    //--JUGE---------------------------------------------------------------------
+    
+    
     
 
     
