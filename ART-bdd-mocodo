@@ -145,9 +145,9 @@ WHERE dateMarche > --dateActuelle
 			  
 	--Les Marches d'art dont leur billet d'entree sont en dessous de la moyenne
 	
-SELECT idMarche --nomMarche serait mieux
+SELECT nomMarche
 FROM P1_MARCHE
-WHERE dateMarche > --dateActuelle
+WHERE dateMarche > -- dateActuelle
       prixEntryMarche < (SELECT AVG(prixEntryMarche)
 			  FROM P1_MARCHE
 			  WHERE dateMarche > --dateActuelle)
@@ -155,7 +155,7 @@ WHERE dateMarche > --dateActuelle
 
 -- Une Différence : Les artistes qui n'ont rien créé
 
-SELECT nomArtiste --DISTINCT non nécéssaire
+SELECT nomArtiste -- DISTINCT non nécéssaire
 FROM P1_ARTISTE
 WHERE nomArtiste NOT IN (SELECT DISTINCT nomArtiste
                          FROM P1_ART)
@@ -176,14 +176,14 @@ WHERE (SELECT COUNT(DISTINCT *)
 
 -- Un Group By :
 
-	--Nombre d'artistes par ville
+	-- Nombre d'artistes par ville
 
 SELECT villeArtiste, COUNT(*)
 FROM P1_ARTISTE
 GROUP BY villeArtiste
 ;
 
-	--Donner pour chaque artiste sa cote moyenne (de ses oeuvres)
+	-- Donner pour chaque artiste sa cote moyenne (de ses oeuvres)
 	
 SELECT nomArtiste, AVG(cote)
 FROM P1_ARTISTE Join P1_ART
@@ -195,16 +195,16 @@ GROUP BY nomArtiste
 MCD FINALE :
 ------------
 
---nomArtiste de P1_ART est une reférence à nomArtiste de P1_ARTISTE
---or une oeuvre peut etre créée par plusieurs artistes
+-- nomArtiste de P1_ART est une reférence à nomArtiste de P1_ARTISTE
+-- or une oeuvre peut etre créée par plusieurs artistes
 
---find adresse_ replace by ville or nationalite
+-- find adresse_ replace by ville or nationalite
 
 P1_COMMISSAIRES-PRISEURS : idCommissaire, nomCommissaire, nationaliteCommissaire
 P1_RESTAURATEUR : idRestaurateur, nomRestaurateur, typeRestaurateur, nationaliteRestaurateur
 P1_MUSEE : idMusee, nomMusee, dateDeCreation, adresseMusee
 EXPOSE, 01 P1_ART, NN P1_GALERIE : dureeExpo
-P1_GALERIE : idGalerie, nomGalerie, dateExpo, prixEntryExpo, association, adresseGalerie
+P1_GALERIE : idGalerie, nomGalerie, dateGalerie, prixEntryExpo, association, adresseGalerie
 :
 
 DIRIGE, 01 P1_COMMISSAIRES-PRISEURS, 11 P1_MARCHE
@@ -214,19 +214,20 @@ JUGE, 01 P1_CRITIQUE, 0N P1_ART : coteDonnee
 P1_CRITIQUE : idCritique, nomCritique, reputationCritique, nationaliteCritique
 :
 
-P1_MARCHE : idMarche, dateMarche, prixEntryMarche, adresseMarche
+P1_MARCHE : idMarche, nomMarche, dateMarche, prixEntryMarche, adresseMarche
 VEND, 0N P1_CREANCIER, 01 P1_ART : prixVente, dateDeVente
-P1_ART : idArt, titre, type, cote
-EXPERTISE, 1N P1_EXPERT, 0N P1_ART
+P1_ART : idArt, titre, type, cote, date
+EXPERTISE, 1N P1_EXPERT, 0N P1_ART -- don't give any info about, though
 P1_EXPERT : idExpert, nomExpert, typeExpert, nationaliteExpert
 P1_MECENE : idMecene, nomMecene, reputationMecene, capitalMecene, nationaliteMecene
 
 PARTICIPE, 01 P1_CREANCIER, 0N P1_MARCHE : OeuvreAchetee, OeuvreVendue
 P1_CREANCIER : idCreancier, nomCreancier, capitalCreancier, nationaliteCreancier
-P1_POSSEDE, 0N P1_CREANCIER, 0N P1_ART : dateDebut, dateFin
+POSSEDE, 0N P1_CREANCIER, 0N P1_ART : dateDebut, dateFin
 CREE, 0N P1_ARTISTE, 0N P1_ART
 P1_ARTISTE : idArtiste, nomArtiste, webArtiste, reputationArtiste, nationaliteArtiste
 AIDE, 0N P1_MECENE, 0N P1_ARTISTE
+
 
 -----------------------
 'artist' json example : 
