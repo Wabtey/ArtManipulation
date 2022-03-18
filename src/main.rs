@@ -1,5 +1,3 @@
-use rand::{thread_rng, Rng};
-
 use std::fs;
 use serde_json::{Result};
 use serde::{Deserialize, Serialize};
@@ -11,17 +9,6 @@ mod create_fictional_human;
 */
 
 //TODO : turn each of those method into a executable to avoid comment in main
-
-/*
- * reference : 
- * https://doc.rust-lang.org/std/string/struct.String.html#method.push_str
- */
-
-fn create_reputation(_number_of_creation: i32, _base_reput: i32)->i32 {
-    let mut rng = thread_rng();
-    return rng.gen_range(1..2000);
-}
-
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Artist {
@@ -75,7 +62,7 @@ fn convert_artists() -> Result<()>
         let mut artist_n = foobar.replace("id", &artist.constituent_id.to_string());
         artist_n = artist_n.replace("display_name", &artist.display_name.replace("'", " "));
         artist_n = artist_n.replace("site", &artist_web);
-        artist_n = artist_n.replace("reputation", &create_reputation(0,0).to_string());
+        artist_n = artist_n.replace("reputation", &create_fictional_human::create_reputation(0,0).to_string());
         artist_n = artist_n.replace("nationality", &artist_nationality.replace("'", " "));
         foo.push_str(&artist_n);
         
@@ -160,7 +147,7 @@ fn convert_artworks() -> Result<()>
         let mut artwork_n = foobar.replace("id", &artwork.object_id.to_string());
         artwork_n = artwork_n.replace("title", &artwork_title);
         artwork_n = artwork_n.replace("medium", &artwork_medium.replace("'", " "));
-        artwork_n = artwork_n.replace("cote", &create_reputation(0,0).to_string());
+        artwork_n = artwork_n.replace("cote", &create_fictional_human::create_reputation(0,0).to_string());
         foo.push_str(&artwork_n);
 
         foo.push(','); // have to remove the last one
@@ -249,6 +236,7 @@ fn convert_association() -> Result<()>
 
 /**
  * create a semi data base of all nationality into a Vec<&str>
+ * from the artists.json
  */
 fn create_vec_nationality() -> Result<()>
 {
@@ -323,7 +311,7 @@ fn main() {
 
     println!("--creation_human--");
 
-    create_fictional_human::create_humans(500);
+    create_fictional_human::create_requests(500);
 
     println!("--End--");
 }
