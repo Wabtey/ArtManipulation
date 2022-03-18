@@ -28,7 +28,7 @@ static LIST_ARTWORK_TYPE: &'static [&str] = &["Sculture", "Paint", "Ceramics", "
 "Jewellery Art", "Metalwork Art", "Mosaic Art", "Photography", "Architecture", "Religious Art", "Rock Art",
 "Stained Glass Art"];
 
-static LIST_ASSOCIATION &'static [&str] = &[""];
+static LIST_ASSOCIATION: &'static [&str] = &["", ""];
 
 /*
  * cste to keep the unique propriety of id sql
@@ -110,13 +110,15 @@ fn create_date(past: bool) -> String{
     let mut date = "year-month-day".to_string();
     let day = rng.gen_range(0..31); // dc about 31/02 or 31/04
     let month = rng.gen_range(0..12);
-    let mut year = 1445;
+    let year; //= 1445;
     if past {
         year = rng.gen_range(2003..2021);
     }
     else {
         year = rng.gen_range(2022..2030);
     }
+    
+    date = date.replace("day", &day.to_string());
     date = date.replace("month", &month.to_string());
     date = date.replace("year", &year.to_string());
 
@@ -126,14 +128,14 @@ fn create_date(past: bool) -> String{
 /**
  * 0 | 5 | 15 | 30 | 100 | 500 | 1000 | 5000 | 10 000 | 50 000
  */
-fn create_price() {
+fn create_price() -> i32{
     let mut rng = thread_rng();
     // placeholder
-    let price = rng.gen_range(0..50000);
+    let price: i32 = rng.gen_range(0..50000);
     price
 }
 
-fn create_association(){
+fn create_association() -> String{
     let mut rng = thread_rng();
 
     let association: String = 
@@ -171,7 +173,6 @@ fn create_request(table_name: &str, amount: i32, art_type: bool,
         .replace("NAME", &table_name.to_uppercase())
         .replace("name", &table_name.to_lowercase());
 
-    let mut i: i32 =0;
     for i in 0..amount {
 
         let name = create_name();
@@ -237,7 +238,6 @@ fn create_organisation(table_name: String, amount: i32, creation_date: bool,
         .replace("NAME", &table_name.to_uppercase())
         .replace("name", &table_name.to_lowercase());
 
-    let mut i: i32 =0;
     for i in 0..amount {
 
         let name = create_name();
@@ -275,11 +275,50 @@ fn create_organisation(table_name: String, amount: i32, creation_date: bool,
     request
 }
 
+/**
+ * frequence: if 0 -> no condition (no filter),
+ *            if 8 -> condition 1/8 (only 1/8 will be associate)
+ */
+fn create_relation(relation_name:String, table_name1: String,
+                   table_name2: String, amount: i32, frequence: i32) -> String
+{
+    let mut request: String =
+    "INSERT INTO P1_NAME (idname1, idname2) \n VALUES".to_string();
+    request = request
+        .replace("NAME",  &relation_name.to_uppercase())
+        .replace("name1", &table_name1.to_lowercase())
+        .replace("name2", &table_name2.to_lowercase());
+    for i in 0..amount {
+        
+        if frequence != 0{
+        // only 1/frequence of all name1 and name2 will be associate
+            if i%frequence==0 {
+                let foo =
+                "\n (idname1, idname2),".to_string();
+                let mut foobar = foo.replace("idname1", &i.to_string());
+                foobar = foobar.replace("idname2", &i.to_string());
+                request.push_str(&foobar);
+            }
+        }
+        else {
+            let foo =
+            "\n (idname1, idname2),".to_string();
+            let mut foobar = foo.replace("idname1", &i.to_string());
+            foobar = foobar.replace("idname2", &i.to_string());
+            request.push_str(&foobar);
+        }
+        
+    }
+    // end the request with a ';' and
+    // remove the last ',' which cause error
+    request.push_str(";END");
+    request = request.replace(",;END","; \n \n");
+
+    request
+}
+
 pub fn create_humans(amount_of_each: i32) // -> Result<()>
 {
-
-    let mut rng = thread_rng();
-
     let mut request: String = "".to_string();
 
     let mut number_of_creation: i32 = 0;
@@ -324,7 +363,7 @@ pub fn create_humans(amount_of_each: i32) // -> Result<()>
 //--GALERIE-------------------------------------------------------------------------------------
 
     // all these galleries are past, non temporary, permanent
-    let gallery = create_organisation("galerie", amount_of_each,
+    let gallery = create_organisation("galerie".to_string(), amount_of_each,
                                       true, false, true, true);
     // gallery.push_str(create_organisation("galerie", amount_of_each/2,
     //                                      false, true, true, true));
@@ -334,14 +373,14 @@ pub fn create_humans(amount_of_each: i32) // -> Result<()>
 
 //--MARCHE--------------------------------------------------------------------------------------
 
-    let marche = create_organisation("marche", amount_of_each,
+    let marche = create_organisation("marche".to_string(), amount_of_each,
                                      false, true, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&marche);
 
 //--MUSEE---------------------------------------------------------------------------------------
 
-    let museum = create_organisation("musee", amount_of_each,
+    let museum = create_organisation("musee".to_string(), amount_of_each,
                                      true, false, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&museum);
@@ -350,56 +389,51 @@ pub fn create_humans(amount_of_each: i32) // -> Result<()>
 
 
     //--AIDE---------------------------------------------------------------------
-    let mut relations: String =
-    "INSERT INTO P1_AIDE (idmecene, idartist) \n VALUES".to_string();
-    let mut i: i32 =0;
-    for i in 0..amount_of_each {
-        //only 1/8 or less (if amount_of_each < 9) artists are assisted by a mecene
-        if i%8==0 {
-            let foobar =
-            "\n (idmecene, idartist),".to_string();
-            // pb : only 1/8 of all mecene  will provide 'help' / be active
-            let mut aide_n = foobar.replace("idmecene", i);
-            aide_n = aide_n.replace("idartist", i);
-        }
-    }
-    relations.push_str(";END");
-    relations = relations.replace(",;END","; \n \n");
+    let help = create_relation("aide".to_string(), "mecene".to_string(),
+                               "artist".to_string(), amount_of_each, 8);
+    number_of_creation +=amount_of_each;
+    request.push_str(&help);
 
     //--DIRIGE-------------------------------------------------------------------
-    relations.push_str(
-        "INSERT INTO P1_DIRIGE (idcommissaires-priseurs, idmarche) \n VALUES");
-
-    for i in 0..amount_of_each {
-        // all commissaires-priseurs DIRIGE one and only one MARCHE
-        let foobar = "\n (idcommissaires-priseurs, idmarche),".to_string();
-        let mut aide_n = foobar.replace("idcommissaires-priseurs", i);
-        aide_n = aide_n.replace("idmarche", i);
-    }
-    relations.push_str(";END");
-    relations = relations.replace(",;END","; \n \n");
+    let dirige = create_relation("dirige".to_string(), "commissaires-priseurs".to_string(),
+                               "marche".to_string(), amount_of_each, 0);
+    number_of_creation +=amount_of_each;
+    request.push_str(&dirige);
 
     //--PARTICIPE----------------------------------------------------------------
-    /*
-    relations.push_str("INSERT INTO P1_PARTICIPE (idcreancier, idamarche) \n VALUES");
+    let participe = create_relation("participe".to_string(), "creancier".to_string(),
+                               "marche".to_string(), amount_of_each, 4);
+    number_of_creation +=amount_of_each;
+    request.push_str(&participe);
 
-    for i in 0..amount_of_each {
-        //only 1/8 or less (if amount_of_each < 9) artists are assisted by a mecene
-        if i%8==0 {
-            let foobar =
-            "\n (idmecene, idartist),".to_string();
-            //pb : only 1/8 of all mecene  will provide 'help' / be active
-            let mut aide_n = foobar.replace("idmecene", i);
-            aide_n = aide_n.replace("idartist", i);
-        }
-    }
-    relations.push_str(";END");
-    relations = relations.replace(",;END","; \n \n");
-    */
     //--VEND---------------------------------------------------------------------
+    
+    // TODO : CONFLICT with possede
+    let sell = create_relation("vend".to_string(), "creancier".to_string(),
+                               "art".to_string(), amount_of_each, 9);
+    number_of_creation +=amount_of_each;
+    request.push_str(&sell);
+
     //--POSSEDE------------------------------------------------------------------
+    
+    // TODO : CONFLICT with vend
+    let own = create_relation("possede".to_string(), "creancier".to_string(),
+                               "art".to_string(), amount_of_each, 2);
+    number_of_creation +=amount_of_each;
+    request.push_str(&own);
+
     //--RESTAURE-----------------------------------------------------------------
+    let restore = create_relation("restaure".to_string(), "restaurateur".to_string(),
+                               "art".to_string(), amount_of_each, 18);
+    number_of_creation +=amount_of_each;
+    request.push_str(&restore);
+
     //--PRET---------------------------------------------------------------------
+    let loan = create_relation("pret".to_string(), "musee".to_string(),
+                               "art".to_string(), amount_of_each, 6);
+    number_of_creation +=amount_of_each;
+    request.push_str(&loan);
+
     //--EXPOSE-------------------------------------------------------------------
     //--EXPERTISE----------------------------------------------------------------
     //--JUGE---------------------------------------------------------------------
