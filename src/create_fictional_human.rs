@@ -42,8 +42,11 @@ static LIST_ASSOCIATION: &'static [&str] = &["", ""];
 // static cst_mecene: i32 = 500;
 // static cst_galerie: i32 = 400;
 
-
-fn create_reputation(_number_of_creation: i32, _base_reput: i32)->i32 {
+/*
+ * reference : 
+ * https://doc.rust-lang.org/std/string/struct.String.html#method.push_str
+ */
+pub fn create_reputation(_number_of_creation: i32, _base_reput: i32)->i32 {
     let mut rng = thread_rng();
     return rng.gen_range(1..2000);
 }
@@ -152,7 +155,7 @@ fn create_association() -> String{
  * respect my current sql structure
  * should be great to import a example of struct with all table to auto all of this
  */
-fn create_request(table_name: &str, amount: i32, art_type: bool,
+fn create_insert_humans(table_name: &str, amount: i32, art_type: bool,
                   reputation: bool, capital: bool) -> String 
 {
     let mut request: String =
@@ -216,7 +219,7 @@ fn create_request(table_name: &str, amount: i32, art_type: bool,
  * if creation_date and rdv_date are true only creation_date will effect
  * you can't bassicaly have those two attributs
  */
-fn create_organisation(table_name: String, amount: i32, creation_date: bool,
+fn create_insert_organisations(table_name: String, amount: i32, creation_date: bool,
                        rdv_date: bool, price: bool, association: bool) -> String
 {
     let mut request: String =
@@ -279,7 +282,7 @@ fn create_organisation(table_name: String, amount: i32, creation_date: bool,
  * frequence: if 0 -> no condition (no filter),
  *            if 8 -> condition 1/8 (only 1/8 will be associate)
  */
-fn create_relation(relation_name:String, table_name1: String,
+fn create_insert_relations(relation_name:String, table_name1: String,
                    table_name2: String, amount: i32, frequence: i32) -> String
 {
     let mut request: String =
@@ -317,91 +320,94 @@ fn create_relation(relation_name:String, table_name1: String,
     request
 }
 
-pub fn create_humans(amount_of_each: i32) // -> Result<()>
+pub fn create_requests(amount_of_each: i32) // -> Result<()>
 {
     let mut request: String = "".to_string();
 
     let mut number_of_creation: i32 = 0;
 
-//--COMM-PRISEURS-------------------------------------------------------------------------------
+//--HUMANS------------------------------------------------------------------------------------------
 
-    let commissaire = create_request("commissaires-priseurs", amount_of_each, false, false, false);
+    //--COMM-PRISEURS-------------------------------------------------------------------------------
+
+    let commissaire = create_insert_humans("commissaires-priseurs", amount_of_each, false, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&commissaire);
 
-//--MECENE--------------------------------------------------------------------------------------
+    //--MECENE--------------------------------------------------------------------------------------
     
-    let mecene = create_request("mecene", amount_of_each, false, true, true);
+    let mecene = create_insert_humans("mecene", amount_of_each, false, true, true);
     number_of_creation +=amount_of_each;
     request.push_str(&mecene);
 
-//--RESTAURATEUR--------------------------------------------------------------------------------
+    //--RESTAURATEUR--------------------------------------------------------------------------------
 
-    let restaurateur = create_request("restaurateur", amount_of_each, true, false, false);
+    let restaurateur = create_insert_humans("restaurateur", amount_of_each, true, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&restaurateur);
 
-//--CRITIQUE------------------------------------------------------------------------------------
+    //--CRITIQUE------------------------------------------------------------------------------------
 
-    let critique = create_request("critique", amount_of_each, false, true, false);
+    let critique = create_insert_humans("critique", amount_of_each, false, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&critique);
 
-//--CREANCIER-----------------------------------------------------------------------------------
+    //--CREANCIER-----------------------------------------------------------------------------------
 
-    let creancier = create_request("creancier", amount_of_each, false, false, true);
+    let creancier = create_insert_humans("creancier", amount_of_each, false, false, true);
     number_of_creation +=amount_of_each;
     request.push_str(&creancier);
 
-//--EXPERT--------------------------------------------------------------------------------------
+    //--EXPERT--------------------------------------------------------------------------------------
 
-    let expert = create_request("expert", amount_of_each, true, false, false);
+    let expert = create_insert_humans("expert", amount_of_each, true, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&expert);
 
+//--ORGANISATIONS-----------------------------------------------------------------------------------
 
-//--GALERIE-------------------------------------------------------------------------------------
+    //--GALERIE-------------------------------------------------------------------------------------
 
     // all these galleries are past, non temporary, permanent
-    let gallery = create_organisation("galerie".to_string(), amount_of_each,
+    let gallery = create_insert_organisations("galerie".to_string(), amount_of_each,
                                       true, false, true, true);
-    // gallery.push_str(create_organisation("galerie", amount_of_each/2,
+    // gallery.push_str(create_insert_organisations("galerie", amount_of_each/2,
     //                                      false, true, true, true));
     number_of_creation +=amount_of_each;
     request.push_str(&gallery);
 
 
-//--MARCHE--------------------------------------------------------------------------------------
+    //--MARCHE--------------------------------------------------------------------------------------
 
-    let marche = create_organisation("marche".to_string(), amount_of_each,
+    let marche = create_insert_organisations("marche".to_string(), amount_of_each,
                                      false, true, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&marche);
 
-//--MUSEE---------------------------------------------------------------------------------------
+    //--MUSEE---------------------------------------------------------------------------------------
 
-    let museum = create_organisation("musee".to_string(), amount_of_each,
+    let museum = create_insert_organisations("musee".to_string(), amount_of_each,
                                      true, false, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&museum);
     
-//--RELATIONS-----------------------------------------------------------------------------------
+//--RELATIONS---------------------------------------------------------------------------------------
 
 
     //--AIDE---------------------------------------------------------------------
-    let help = create_relation("aide".to_string(), "mecene".to_string(),
+    let help = create_insert_relations("aide".to_string(), "mecene".to_string(),
                                "artist".to_string(), amount_of_each, 8);
     number_of_creation +=amount_of_each;
     request.push_str(&help);
 
     //--DIRIGE-------------------------------------------------------------------
-    let dirige = create_relation("dirige".to_string(), "commissaires-priseurs".to_string(),
+    let dirige = create_insert_relations("dirige".to_string(), "commissaires-priseurs".to_string(),
                                "marche".to_string(), amount_of_each, 0);
     number_of_creation +=amount_of_each;
     request.push_str(&dirige);
 
     //--PARTICIPE----------------------------------------------------------------
-    let participe = create_relation("participe".to_string(), "creancier".to_string(),
+    let participe = create_insert_relations("participe".to_string(), "creancier".to_string(),
                                "marche".to_string(), amount_of_each, 4);
     number_of_creation +=amount_of_each;
     request.push_str(&participe);
@@ -409,7 +415,7 @@ pub fn create_humans(amount_of_each: i32) // -> Result<()>
     //--VEND---------------------------------------------------------------------
     
     // TODO : CONFLICT with possede
-    let sell = create_relation("vend".to_string(), "creancier".to_string(),
+    let sell = create_insert_relations("vend".to_string(), "creancier".to_string(),
                                "art".to_string(), amount_of_each, 9);
     number_of_creation +=amount_of_each;
     request.push_str(&sell);
@@ -417,31 +423,41 @@ pub fn create_humans(amount_of_each: i32) // -> Result<()>
     //--POSSEDE------------------------------------------------------------------
     
     // TODO : CONFLICT with vend
-    let own = create_relation("possede".to_string(), "creancier".to_string(),
+    let own = create_insert_relations("possede".to_string(), "creancier".to_string(),
                                "art".to_string(), amount_of_each, 2);
     number_of_creation +=amount_of_each;
     request.push_str(&own);
 
     //--RESTAURE-----------------------------------------------------------------
-    let restore = create_relation("restaure".to_string(), "restaurateur".to_string(),
+    let restore = create_insert_relations("restaure".to_string(), "restaurateur".to_string(),
                                "art".to_string(), amount_of_each, 18);
     number_of_creation +=amount_of_each;
     request.push_str(&restore);
 
     //--PRET---------------------------------------------------------------------
-    let loan = create_relation("pret".to_string(), "musee".to_string(),
-                               "art".to_string(), amount_of_each, 6);
+    let loan = create_insert_relations("pret".to_string(), "musee".to_string(),
+                               "art".to_string(), amount_of_each, 20);
     number_of_creation +=amount_of_each;
     request.push_str(&loan);
 
     //--EXPOSE-------------------------------------------------------------------
-    //--EXPERTISE----------------------------------------------------------------
-    //--JUGE---------------------------------------------------------------------
-    
-    
-    
+    let expose = create_insert_relations("expose".to_string(), "galerie".to_string(),
+                               "art".to_string(), amount_of_each, 25);
+    number_of_creation +=amount_of_each;
+    request.push_str(&expose);
 
-    
+    //--EXPERTISE----------------------------------------------------------------
+    let expertise = create_insert_relations("expertise".to_string(), "expert".to_string(),
+                                    "art".to_string(), amount_of_each, 4);
+    number_of_creation +=amount_of_each;
+    request.push_str(&expertise);
+
+    //--JUGE---------------------------------------------------------------------
+    let juge = create_insert_relations("juge".to_string(), "critique".to_string(),
+                               "art".to_string(), amount_of_each, 2);
+    number_of_creation +=amount_of_each;
+    request.push_str(&juge);
+
 
 //--WRITING------------------------------------------------------------------------------------
     
