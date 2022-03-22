@@ -295,19 +295,19 @@ fn main() {
 
     println!("--artists now--");
 
-    // convert_artists().unwrap();
+    convert_artists().unwrap();
 
     println!("--artworks now--");
 
-    // convert_artworks().unwrap();
+    convert_artworks().unwrap();
 
     println!("--associations now--");
 
-    // convert_association().unwrap();
+    convert_association().unwrap();
 
     println!("--nationality data base--");
 
-    // create_vec_nationality();
+    create_vec_nationality().unwrap();
 
     println!("--creation_human--");
 
