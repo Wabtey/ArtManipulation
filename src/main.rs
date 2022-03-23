@@ -3,7 +3,6 @@ use serde_json::{Result};
 use serde::{Deserialize, Serialize};
 
 mod create_fictional_human;
-mod html_creator;
 
 /* Hello, this program is meant to create random people
  * to Fullfill our SQL base 'ART MARKET'
@@ -296,27 +295,23 @@ fn main() {
 
     println!("--artists now--");
 
-    // convert_artists().unwrap();
+    convert_artists().unwrap();
 
     println!("--artworks now--");
 
-    // convert_artworks().unwrap();
+    convert_artworks().unwrap();
 
     println!("--associations now--");
 
-    // convert_association().unwrap();
+    convert_association().unwrap();
 
     println!("--nationality data base--");
 
-    // create_vec_nationality().unwrap();
+    create_vec_nationality().unwrap();
 
     println!("--creation_human--");
 
-    // create_fictional_human::create_requests(500);
-
-    println!("--create arstist table--");
-
-    html_creator::create_table_artists().unwrap();
+    create_fictional_human::create_requests(500);
 
     println!("--End--");
 }
