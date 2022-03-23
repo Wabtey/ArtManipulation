@@ -1,0 +1,31 @@
+<!ELEMENT body(documentation | personne)*>
+
+<!ELEMENT documentation(#PCDATA | lien)*>
+<!ELEMENT texte(#PCDATA)>
+<!ELEMENT lien(#PCDATA)> -- same as texte -->
+
+<!ELEMENT personne(id, nom, site-web?, reputation?, capital?, type?, nationalite)>
+<!ATTLIST personne
+	date CDATA #REQUIRED
+>
+
+<!ELEMENT id EMPTY>
+<!ATTLIST id 
+	num ID #REQUIRED
+>
+<!ELEMENT nom(#PCDATA)>
+
+<!ELEMENT site-web(lien)>
+<!ELEMENT reputation(EMPTY)>
+<!ATTLIST reputation 
+	num ID #REQUIRED
+>
+<!ELEMENT capital(EMPTY)>
+<!ATTLIST capital 
+	num ID #REQUIRED
+>
+<!ELEMENT type(#PCDATA)>
+<!ELEMENT nationalite(#PCDATA)>
+
+
+
