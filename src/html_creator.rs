@@ -89,7 +89,7 @@ pub fn create_table_artists() -> Result<()>
 
     // "/private/student/n/in/fepain/R/art-manipulation/RENDU/insert_artists.txt"
     // "E:/Code/projects Rust/art-manipulation/RENDU/insert_artists.txt"
-	fs::write("/private/student/n/in/fepain/R/art-manipulation/Part2/artists.html",
+	fs::write("/private/student/n/in/fepain/public_html/artists.html",
 			 foo)
 		.expect("Unable to write file");
 
