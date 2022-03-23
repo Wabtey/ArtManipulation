@@ -1,5 +1,5 @@
 [package]
-name = "ArtManipulation"
+name = "art-manipulation"
 version = "0.1.0"
 edition = "2021"
 
