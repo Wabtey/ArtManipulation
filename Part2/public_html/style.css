@@ -1,0 +1,17 @@
+body {
+	background:#5f5f5f ;
+}
+p {
+		margin-left:40pt;
+		margin-right:40pt ; 
+		text-align:justify ;
+		font-family:Arial, sans-serif ;
+}
+table
+{
+    border-collapse: collapse;
+}
+td, th
+{
+    border: 1px solid black;
+}
