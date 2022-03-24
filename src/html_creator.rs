@@ -41,7 +41,7 @@ pub fn create_table_artists() -> Result<()>
 	println!("--------create_request---------");
 
     let mut foo =
-    "<a href=\"http://testcgi.istic.univ-rennes1.fr/~fepain/artist.html\">HOME PAGE</a>
+    "<a href=\"http://testcgi.istic.univ-rennes1.fr/~fepain/Q9-HTMPL.html\">HOME PAGE</a>
     <table>
     \n    <tr> 
     \n         <th>Constituent ID</th> 
