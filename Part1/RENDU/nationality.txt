@@ -1,9 +1,0 @@
-static LIST_NATIONALITY: &'static [&str] = &[nationality unknown, American, Spanish, Danish, Italian, French, Estonian, Mexican, Swedish, Israeli, British, 
-Finnish, Polish, Palestinian, Japanese, Guatemalan, Colombian, Romanian, Russian, German, Argentine, Kuwaiti, Belgian, Dutch, Norwegian, 
-Chilean, Swiss, Costa Rican, Czech, Brazilian, Austrian, Canadian, Australian, Ukrainian, Hungarian, Haitian, Congolese, 
-Bolivian, Cuban, Yugoslav, Portuguese, Indian, Peruvian, Icelandic, Irish, Guyanese, Uruguayan, Slovak, Croatian, Greek, Chinese, Venezuelan, 
-Turkish, Panamanian, Algerian, Ecuadorian, South African, Iranian, Korean, Canadian Inuit, Paraguayan, Luxembourgish, Nicaraguan, Zimbabwean, 
-Moroccan, Slovenian, Tanzanian, Bulgarian, Tunisian, Sudanese, Taiwanese, Ethiopian, Scottish, Latvian, Senegalese, Thai, New Zealander, Lithuanian, 
-Pakistani, Bahamian, Bosnian, Malian, Czechoslovakian, Georgian, Egyptian, Kenyan, Emirati, Nigerian, Cypriot, Albanian, Azerbaijani, Ivorian, Malaysian, 
-Serbian, Singaporean, Namibian, Cambodian, Ghanaian, Afghan, Native American, Lebanese, Kyrgyzstani, Vietnamese, Ugandan, Cameroonian, Welsh, Macedonian, 
-Puerto Rican, Catalan, Filipino, Sahrawi, Bangladeshi, Coptic, Persian, Burkinabe, Beninese, Sierra Leonean, Salvadoran];
