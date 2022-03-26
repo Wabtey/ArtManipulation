@@ -279,7 +279,7 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
 }
 
 /**
- * frequence: if 0 -> no condition (no filter),
+ * frequence: if 0 -> no condition whatsoever (no filter),
  *            if 8 -> condition 1/8 (only 1/8 will be associate)
  */
 fn create_insert_relations(relation_name:String, table_name1: String,
@@ -412,14 +412,6 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
     number_of_creation +=amount_of_each;
     request.push_str(&participe);
 
-    //--VEND---------------------------------------------------------------------
-    
-    // TODO : CONFLICT with possede
-    let sell = create_insert_relations("vend".to_string(), "creancier".to_string(),
-                               "art".to_string(), amount_of_each, 9);
-    number_of_creation +=amount_of_each;
-    request.push_str(&sell);
-
     //--POSSEDE------------------------------------------------------------------
     
     // TODO : CONFLICT with vend
@@ -466,7 +458,7 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
 
     // /private/student/n/in/fepain/R/art-manipulation/RENDU/humans.txt
     // E:/Code/projects Rust/art-manipulation/RENDU/humans.txt
-	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/humansV2.txt",
+	fs::write("/Users/Shared/bureau/2) FLO/R/art-manipulation/Part1/requestINSERTbasicHumanRELATION.sql",
 			  request)
 		.expect("Unable to write file");
 }
