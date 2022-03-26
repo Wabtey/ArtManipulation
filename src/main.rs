@@ -128,7 +128,7 @@ fn convert_artworks() -> Result<()>
 	println!("--------create_request---------");
 
     let mut foo =
-    "INSERT INTO P1_ART (idart, titre, type, cote)
+    "INSERT INTO P1_ART (idart, titre, typeArt, cote, dateCreation)
     \n VALUES ".to_string();
 
     for artwork in artworks
@@ -139,16 +139,26 @@ fn convert_artworks() -> Result<()>
             None => "",
         };
 
+        let artwork_date: &str =
+        match &artwork.date {
+            Some(s) => {
+                s.to_string().push_str("-01-01");
+                s
+            },
+            None => "",
+        };
+
         let artwork_title = artwork.title.replace("'", " ");
 
         //TODO : find potential ' and replace them by a space
 
         let foobar =
-        "\n (id,'title', 'medium', cote)";
+        "\n (id,'title', 'medium', cote, date)";
         let mut artwork_n = foobar.replace("id", &artwork.object_id.to_string());
         artwork_n = artwork_n.replace("title", &artwork_title);
         artwork_n = artwork_n.replace("medium", &artwork_medium.replace("'", " "));
         artwork_n = artwork_n.replace("cote", &create_fictional_human::create_reputation(0,0).to_string());
+        artwork_n = artwork_n.replace("date", &artwork_date.to_string());
         foo.push_str(&artwork_n);
 
         foo.push(','); // have to remove the last one
@@ -312,11 +322,11 @@ fn main() {
 
     println!("--creation_human--");
 
-    // create_fictional_human::create_requests(500);
+    create_fictional_human::create_requests(500);
 
     println!("--create arstist table--");
 
-    html_creator::create_table_artists().unwrap();
+    // html_creator::create_table_artists().unwrap();
 
     println!("--End--");
 }
