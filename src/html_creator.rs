@@ -89,7 +89,7 @@ pub fn create_table_artists() -> Result<()>
     println!("--------create_.html---------");
 
     // "/private/student/n/in/fepain/R/art-manipulation/RENDU/artists.html"
-    // "E:/Code/projects_rust/art-manipulation/RENDU/artists.html"
+    // "E:/Code/projects_rust/art-manipulation/RENDU/artists.html<"
 	fs::write("/private/student/n/in/fepain/public_html/artists.html",
 			 foo)
 		.expect("Unable to write file");
