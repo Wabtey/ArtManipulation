@@ -112,8 +112,8 @@ struct Artwork {
 
 fn convert_artworks() -> Result<()>
 {
-    let path = "E:/Code/projects Rust/MoMA/Artworks-reformed.json";
-	// the file : E:/Code/projects Rust/MoMA/Artists-reformed.json
+    let path = "E:/Code/projects_rust/MoMA/Artworks-reformed.json";
+	// the file : E:/Code/projects_rust/MoMA/Artists-reformed.json
 	// the file : /private/student/n/in/fepain/R/art-manipulation/MoMA/Artists-reformed.json
 
 	let content = fs::read_to_string(path)
@@ -170,8 +170,7 @@ fn convert_artworks() -> Result<()>
 
     println!("--------create_.sql---------");
 
-    // "E:/Code/projects Rust/art-manipulation/RENDU/insert_artworks.txt"
-	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/insert_artworks.sql",
+	fs::write("E:/Code/projects_rust/art-manipulation/RENDU/insert_artworks.sql",
 			 foo)
 		.expect("Unable to write file");
 

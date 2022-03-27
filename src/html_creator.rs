@@ -26,7 +26,7 @@ struct Artist {
 pub fn create_table_artists() -> Result<()>
 {
     let path = "/private/student/n/in/fepain/R/art-manipulation/MoMA/Artists-reformed.json";
-	// the file : E:/Code/projects Rust/MoMA/Artists-reformed.json
+	// the file : E:/Code/projects_rust/MoMA/Artists-reformed.json
 	// the file : /private/student/n/in/fepain/R/art-manipulation/MoMA/Artists-reformed.json
 
 	let content = fs::read_to_string(path)
@@ -88,8 +88,8 @@ pub fn create_table_artists() -> Result<()>
 
     println!("--------create_.html---------");
 
-    // "/private/student/n/in/fepain/R/art-manipulation/RENDU/insert_artists.txt"
-    // "E:/Code/projects Rust/art-manipulation/RENDU/insert_artists.txt"
+    // "/private/student/n/in/fepain/R/art-manipulation/RENDU/artists.html"
+    // "E:/Code/projects_rust/art-manipulation/RENDU/artists.html"
 	fs::write("/private/student/n/in/fepain/public_html/artists.html",
 			 foo)
 		.expect("Unable to write file");

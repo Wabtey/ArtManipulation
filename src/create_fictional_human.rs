@@ -457,7 +457,7 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
     println!("--------create_.txt---------");
 
     // /private/student/n/in/fepain/R/art-manipulation/RENDU/humans.txt
-    // E:/Code/projects Rust/art-manipulation/RENDU/humans.txt
+    // E:/Code/projects_rust/art-manipulation/RENDU/humans.txt
 	fs::write("/Users/Shared/bureau/2) FLO/R/art-manipulation/Part1/requestINSERTbasicHumanRELATION.sql",
 			  request)
 		.expect("Unable to write file");
