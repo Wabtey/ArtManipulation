@@ -1,0 +1,27 @@
+P1_COMMISSAIRES-PRISEURS : idCommissaire, nomCommissaire, nationaliteCommissaire
+P1_RESTAURATEUR : idRestaurateur, nomRestaurateur, typeRestaurateur, nationaliteRestaurateur
+P1_MUSEE : idMusee, nomMusee, dateDeCreation, adresseMusee
+EXPOSE, 0N P1_ART, NN P1_GALERIE : dureeExpo
+P1_GALERIE : idGalerie, nomGalerie, dateGalerie, prixEntryExpo, association, adresseGalerie
+:
+
+DIRIGE, 01 P1_COMMISSAIRES-PRISEURS, 11 P1_MARCHE
+RESTAURE, 1N P1_RESTAURATEUR, 0N P1_ART : prixRestauration
+PRET, 0N P1_ART, NN P1_MUSEE : dureePret
+JUGE, 0N P1_CRITIQUE, 0N P1_ART : coteDonnee
+P1_CRITIQUE : idCritique, nomCritique, reputationCritique, nationaliteCritique
+:
+
+P1_MARCHE : idMarche, nomMarche, dateMarche, prixEntryMarche, adresseMarche
+VEND, 0N P1_CREANCIER, 0N P1_ART : prixVente, dateDeVente
+P1_ART : idArt, titre, type, cote, date
+EXPERTISE, 1N P1_EXPERT, 0N P1_ART 
+P1_EXPERT : idExpert, nomExpert, typeExpert, nationaliteExpert
+P1_MECENE : idMecene, nomMecene, reputationMecene, capitalMecene, nationaliteMecene
+
+PARTICIPE, 0N P1_CREANCIER, 0N P1_MARCHE : OeuvreAchetee, OeuvreVendue
+P1_CREANCIER : idCreancier, nomCreancier, capitalCreancier, nationaliteCreancier
+POSSEDE, 0N P1_CREANCIER, 0N P1_ART : dateDebut, dateFin
+CREE, 0N P1_ARTISTE, 0N P1_ART
+P1_ARTISTE : idArtiste, nomArtiste, webArtiste, reputationArtiste, nationaliteArtiste
+AIDE, 0N P1_MECENE, 0N P1_ARTISTE

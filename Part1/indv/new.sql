@@ -1,186 +1,223 @@
-CREATE DATABASE IF NOT EXISTS `MERISE` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `MERISE`;
+DROP TABLE IF EXISTS P1_POSSEDE;
+DROP TABLE IF EXISTS P1_CREE;
+DROP TABLE IF EXISTS P1_PARTICIPE;
+DROP TABLE IF EXISTS P1_EXPOSE;
+DROP TABLE IF EXISTS P1_RESTAURE;
+DROP TABLE IF EXISTS P1_PRET;
+DROP TABLE IF EXISTS P1_JUGE;
+DROP TABLE IF EXISTS P1_EXPERTISE;
+DROP TABLE IF EXISTS P1_AIDE;
+DROP TABLE IF EXISTS P1_CRITIQUE;
+DROP TABLE IF EXISTS P1_EXPERT;
+DROP TABLE IF EXISTS P1_ARTISTE;
+DROP TABLE IF EXISTS P1_MECENE;
+DROP TABLE IF EXISTS P1_RESTAURATEUR;
+DROP TABLE IF EXISTS P1_MUSEE;
+DROP TABLE IF EXISTS P1_GALERIE;
+DROP TABLE IF EXISTS P1_ART;
+DROP TABLE IF EXISTS P1_CREANCIER;
+DROP TABLE IF EXISTS P1_MARCHE;
+DROP TABLE IF EXISTS P1_COMMISSAIRE_PRISEUR;
 
-CREATE TABLE `P1_COMMISSAIRES-PRISEURS` (
-  `idcommissaire` VARCHAR(42),
-  `nomcommissaire` VARCHAR(42),
-  `nationalitecommissaire` VARCHAR(42),
-  PRIMARY KEY (`idcommissaire`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_ART (
+  idart INT NOT NULL,
+  titre VARCHAR(1000),
+  typeArt VARCHAR(1000),
+  cote VARCHAR(1000),
+  dateCreation VARCHAR(1000),
+  PRIMARY KEY (idart)
+);
 
-CREATE TABLE `P1_RESTAURATEUR` (
-  `idrestaurateur` VARCHAR(42),
-  `nomrestaurateur` VARCHAR(42),
-  `typerestaurateur` VARCHAR(42),
-  `nationaliterestaurateur` VARCHAR(42),
-  PRIMARY KEY (`idrestaurateur`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_ARTISTE (
+  idartiste INT NOT NULL,
+  nomartiste VARCHAR(1000),
+  webartiste VARCHAR(1000),
+  reputationartiste INT,
+  nationaliteartiste VARCHAR(1000),
+  PRIMARY KEY (idartiste)
+);
 
-CREATE TABLE `P1_MUSEE` (
-  `idmusee` VARCHAR(42),
-  `nommusee` VARCHAR(42),
-  `datedecreation` VARCHAR(42),
-  `adressemusee` VARCHAR(42),
-  PRIMARY KEY (`idmusee`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_COMMISSAIRE_PRISEUR (
+  idcommissaire INT NOT NULL,
+  nomcommissaire VARCHAR(1000) NOT NULL,
+  nationalitecommissaire VARCHAR(1000),
+  PRIMARY KEY (idcommissaire)
+);
 
-CREATE TABLE `EXPOSE` (
-  `idart` VARCHAR(42),
-  `idgalerie` VARCHAR(42),
-  `dureeexpo` VARCHAR(42),
-  PRIMARY KEY (`idart`, `idgalerie`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_MARCHE (
+  idmarche INT NOT NULL,
+  nommarche VARCHAR(1000) NOT NULL,
+  datemarche DATE NOT NULL,
+  prixentrymarche VARCHAR(1000),
+  adressemarche VARCHAR(1000) NOT NULL,
+  idcommissaire INT NOT NULL,
+  PRIMARY KEY (idmarche),
+  FOREIGN KEY (idcommissaire)
+  REFERENCES P1_COMMISSAIRE_PRISEUR(idcommissaire)
+);
 
-CREATE TABLE `P1_GALERIE` (
-  `idgalerie` VARCHAR(42),
-  `nomgalerie` VARCHAR(42),
-  `dategalerie` VARCHAR(42),
-  `prixentryexpo` VARCHAR(42),
-  `association` VARCHAR(42),
-  `adressegalerie` VARCHAR(42),
-  PRIMARY KEY (`idgalerie`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `RESTAURE` (
-  `idrestaurateur` VARCHAR(42),
-  `idart` VARCHAR(42),
-  `prixrestauration` VARCHAR(42),
-  PRIMARY KEY (`idrestaurateur`, `idart`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_RESTAURATEUR (
+  idrestaurateur INT NOT NULL,
+  nomrestaurateur VARCHAR(1000) NOT NULL,
+  typerestaurateur VARCHAR(100) NOT NULL,
+  nationaliterestaurateur VARCHAR(1000),
+  PRIMARY KEY (idrestaurateur)
+);
 
-CREATE TABLE `PRET` (
-  `idart` VARCHAR(42),
-  `idmusee` VARCHAR(42),
-  `dureepret` VARCHAR(42),
-  PRIMARY KEY (`idart`, `idmusee`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_MUSEE (
+  idmusee INT NOT NULL,
+  nommusee VARCHAR(1000) NOT NULL,
+  datedecreation DATE NOT NULL,
+  adressemusee VARCHAR(1000) NOT NULL,
+  PRIMARY KEY (idmusee)
+);
 
-CREATE TABLE `JUGE` (
-  `idcritique` VARCHAR(42),
-  `idart` VARCHAR(42),
-  `cotedonnee` VARCHAR(42),
-  PRIMARY KEY (`idcritique`, `idart`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_GALERIE (
+  idgalerie INT NOT NULL,
+  nomgalerie VARCHAR(1000) NOT NULL,
+  dategalerie DATE NOT NULL,
+  prixentryexpo INT,
+  association VARCHAR(1000),
+  adressegalerie VARCHAR(1000) NOT NULL,
+  PRIMARY KEY (idgalerie)
+);
 
-CREATE TABLE `P1_CRITIQUE` (
-  `idcritique` VARCHAR(42),
-  `nomcritique` VARCHAR(42),
-  `reputationcritique` VARCHAR(42),
-  `nationalitecritique` VARCHAR(42),
-  PRIMARY KEY (`idcritique`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_CRITIQUE (
+  idcritique INT NOT NULL,
+  nomcritique VARCHAR(1000) NOT NULL,
+  reputationcritique INT,
+  nationalitecritique VARCHAR(1000),
+  PRIMARY KEY (idcritique)
+);
 
-CREATE TABLE `P1_MARCHE` (
-  `idmarche` VARCHAR(42),
-  `nommarche` VARCHAR(42),
-  `datemarche` VARCHAR(42),
-  `prixentrymarche` VARCHAR(42),
-  `adressemarche` VARCHAR(42),
-  `idcommissaire` VARCHAR(42),
-  PRIMARY KEY (`idmarche`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_EXPERT (
+  idexpert INT NOT NULL,
+  nomexpert VARCHAR(1000) NOT NULL,
+  typeexpert VARCHAR(1000) NOT NULL,
+  nationaliteexpert VARCHAR(1000),
+  PRIMARY KEY (idexpert)
+);
 
-CREATE TABLE `VEND` (
-  `idcreancier` VARCHAR(42),
-  `idart` VARCHAR(42),
-  `prixvente` VARCHAR(42),
-  `datedevente` VARCHAR(42),
-  PRIMARY KEY (`idcreancier`, `idart`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_MECENE (
+  idmecene INT NOT NULL,
+  nommecene VARCHAR(1000) NOT NULL,
+  reputationmecene INT,
+  capitalmecene INT,
+  nationalitemecene VARCHAR(1000),
+  PRIMARY KEY (idmecene)
+);
 
-CREATE TABLE `P1_ART` (
-  `idart` VARCHAR(42),
-  `titre` VARCHAR(42),
-  `type` VARCHAR(42),
-  `cote` VARCHAR(42),
-  `date` VARCHAR(42),
-  PRIMARY KEY (`idart`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_CREANCIER (
+  idcreancier INT NOT NULL,
+  nomcreancier VARCHAR(1000) NOT NULL,
+  capitalcreancier INT,
+  nationalitecreancier VARCHAR(1000),
+  PRIMARY KEY (idcreancier)
+);
 
-CREATE TABLE `EXPERTISE` (
-  `idexpert` VARCHAR(42),
-  `idart` VARCHAR(42),
-  PRIMARY KEY (`idexpert`, `idart`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `P1_EXPERT` (
-  `idexpert` VARCHAR(42),
-  `nomexpert` VARCHAR(42),
-  `typeexpert` VARCHAR(42),
-  `nationaliteexpert` VARCHAR(42),
-  PRIMARY KEY (`idexpert`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `P1_MECENE` (
-  `idmecene` VARCHAR(42),
-  `nommecene` VARCHAR(42),
-  `reputationmecene` VARCHAR(42),
-  `capitalmecene` VARCHAR(42),
-  `nationalitemecene` VARCHAR(42),
-  PRIMARY KEY (`idmecene`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `PARTICIPE` (
-  `idcreancier` VARCHAR(42),
-  `idmarche` VARCHAR(42),
-  `oeuvreachetee` VARCHAR(42),
-  `oeuvrevendue` VARCHAR(42),
-  PRIMARY KEY (`idcreancier`, `idmarche`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_POSSEDE (
+  idcreancier INT NOT NULL,
+  idart INT NOT NULL,
+  prixAchat INT,
+  prixVente INT,
+  datedebut DATE NOT NULL,
+  datefin DATE,
+  PRIMARY KEY (idcreancier, idart),
+  FOREIGN KEY (idart)
+  REFERENCES P1_ART(idart),
+  FOREIGN KEY (idcreancier)
+  REFERENCES P1_CREANCIER(idcreancier)
+);
 
-CREATE TABLE `P1_CREANCIER` (
-  `idcreancier` VARCHAR(42),
-  `nomcreancier` VARCHAR(42),
-  `capitalcreancier` VARCHAR(42),
-  `nationalitecreancier` VARCHAR(42),
-  PRIMARY KEY (`idcreancier`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_CREE (
+  idartiste INT NOT NULL,
+  idart INT NOT NULL,
+  PRIMARY KEY (idartiste, idart),
+  FOREIGN KEY (idart)
+  REFERENCES P1_ART(idart),
+  FOREIGN KEY (idartiste)
+  REFERENCES P1_ARTISTE(idartiste)
+);
 
-CREATE TABLE `POSSEDE` (
-  `idcreancier` VARCHAR(42),
-  `idart` VARCHAR(42),
-  `datedebut` VARCHAR(42),
-  `datefin` VARCHAR(42),
-  PRIMARY KEY (`idcreancier`, `idart`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_PARTICIPE (
+  idcreancier INT NOT NULL,
+  idmarche INT NOT NULL,
+  oeuvreachetee INT,
+  oeuvrevendue INT,
+  PRIMARY KEY (idcreancier, idmarche),
+  FOREIGN KEY (idcreancier)
+  REFERENCES P1_CREANCIER(idcreancier),
+  FOREIGN KEY (idcreancier)
+  REFERENCES P1_MARCHE(idmarche),
+    FOREIGN KEY (oeuvreachetee)
+  REFERENCES P1_ART(idart),
+    FOREIGN KEY (oeuvrevendue)
+  REFERENCES P1_ART(idart)
+);
 
-CREATE TABLE `CREE` (
-  `idartiste` VARCHAR(42),
-  `idart` VARCHAR(42),
-  PRIMARY KEY (`idartiste`, `idart`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_EXPOSE (
+  idart INT NOT NULL,
+  idgalerie INT NOT NULL,
+  dureeexpo DATE NOT NULL,
+  PRIMARY KEY (idart, idgalerie),
+  FOREIGN KEY (idart)
+  REFERENCES P1_ART(idart),
+  FOREIGN KEY (idgalerie)
+  REFERENCES P1_GALERIE(idgalerie)
+);
 
-CREATE TABLE `P1_ARTISTE` (
-  `idartiste` VARCHAR(42),
-  `nomartiste` VARCHAR(42),
-  `webartiste` VARCHAR(42),
-  `reputationartiste` VARCHAR(42),
-  `nationaliteartiste` VARCHAR(42),
-  PRIMARY KEY (`idartiste`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_RESTAURE (
+  idrestaurateur INT NOT NULL,
+  idart INT NOT NULL,
+  prixrestauration INT,
+  PRIMARY KEY (idrestaurateur, idart),
+  FOREIGN KEY (idart)
+  REFERENCES P1_ART(idart),
+  FOREIGN KEY (idrestaurateur)
+  REFERENCES P1_RESTAURATEUR(idrestaurateur)
+);
+CREATE TABLE P1_PRET (
+  idart INT NOT NULL,
+  idmusee INT NOT NULL,
+  dureepret DATE NOT NULL,
+  PRIMARY KEY (idart, idmusee),
+  FOREIGN KEY (idart)
+  REFERENCES P1_ART(idart),
+  FOREIGN KEY (idmusee)
+  REFERENCES P1_MUSEE(idmusee)
+);
 
-CREATE TABLE `AIDE` (
-  `idmecene` VARCHAR(42),
-  `idartiste` VARCHAR(42),
-  PRIMARY KEY (`idmecene`, `idartiste`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE P1_JUGE (
+  idcritique INT NOT NULL,
+  idart INT NOT NULL,
+  cotedonnee INT NOT NULL,
+  PRIMARY KEY (idcritique, idart),
+  FOREIGN KEY (idart)
+  REFERENCES P1_ART(idart),
+  FOREIGN KEY (idcritique)
+  REFERENCES P1_CRITIQUE(idcritique)
+);
 
-ALTER TABLE `EXPOSE` ADD FOREIGN KEY (`idgalerie`) REFERENCES `P1_GALERIE` (`idgalerie`);
-ALTER TABLE `EXPOSE` ADD FOREIGN KEY (`idart`) REFERENCES `P1_ART` (`idart`);
-ALTER TABLE `RESTAURE` ADD FOREIGN KEY (`idart`) REFERENCES `P1_ART` (`idart`);
-ALTER TABLE `RESTAURE` ADD FOREIGN KEY (`idrestaurateur`) REFERENCES `P1_RESTAURATEUR` (`idrestaurateur`);
-ALTER TABLE `PRET` ADD FOREIGN KEY (`idmusee`) REFERENCES `P1_MUSEE` (`idmusee`);
-ALTER TABLE `PRET` ADD FOREIGN KEY (`idart`) REFERENCES `P1_ART` (`idart`);
-ALTER TABLE `JUGE` ADD FOREIGN KEY (`idart`) REFERENCES `P1_ART` (`idart`);
-ALTER TABLE `JUGE` ADD FOREIGN KEY (`idcritique`) REFERENCES `P1_CRITIQUE` (`idcritique`);
-ALTER TABLE `P1_MARCHE` ADD FOREIGN KEY (`idcommissaire`) REFERENCES `P1_COMMISSAIRES-PRISEURS` (`idcommissaire`);
-ALTER TABLE `EXPERTISE` ADD FOREIGN KEY (`idart`) REFERENCES `P1_ART` (`idart`);
-ALTER TABLE `EXPERTISE` ADD FOREIGN KEY (`idexpert`) REFERENCES `P1_EXPERT` (`idexpert`);
-ALTER TABLE `PARTICIPE` ADD FOREIGN KEY (`idmarche`) REFERENCES `P1_MARCHE` (`idmarche`);
-ALTER TABLE `PARTICIPE` ADD FOREIGN KEY (`idcreancier`) REFERENCES `P1_CREANCIER` (`idcreancier`);
-ALTER TABLE `POSSEDE` ADD FOREIGN KEY (`idart`) REFERENCES `P1_ART` (`idart`);
-ALTER TABLE `POSSEDE` ADD FOREIGN KEY (`idcreancier`) REFERENCES `P1_CREANCIER` (`idcreancier`);
-ALTER TABLE `CREE` ADD FOREIGN KEY (`idart`) REFERENCES `P1_ART` (`idart`);
-ALTER TABLE `CREE` ADD FOREIGN KEY (`idartiste`) REFERENCES `P1_ARTISTE` (`idartiste`);
-ALTER TABLE `AIDE` ADD FOREIGN KEY (`idartiste`) REFERENCES `P1_ARTISTE` (`idartiste`);
-ALTER TABLE `AIDE` ADD FOREIGN KEY (`idmecene`) REFERENCES `P1_MECENE` (`idmecene`);
+CREATE TABLE P1_EXPERTISE (
+  idexpert INT NOT NULL,
+  idart INT NOT NULL,
+  PRIMARY KEY (idexpert, idart),
+  FOREIGN KEY (idart)
+  REFERENCES P1_ART(idart),
+  FOREIGN KEY (idexpert)
+  REFERENCES P1_EXPERT(idexpert)
+);
+
+CREATE TABLE P1_AIDE (
+  idmecene INT NOT NULL,
+  idartiste INT NOT NULL,
+  PRIMARY KEY (idmecene, idartiste),
+  FOREIGN KEY (idartiste)
+  REFERENCES P1_ARTISTE(idartiste),
+  FOREIGN KEY (idmecene)
+  REFERENCES P1_MECENE(idmecene)
+);
