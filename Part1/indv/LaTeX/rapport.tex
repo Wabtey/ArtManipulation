@@ -8,13 +8,17 @@
 % Set page size and margins
 \usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
+% item
+\usepackage{enumitem}
+
 % Useful packages
-\usepackage{amsmath}
+\usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage[export]{adjustbox}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{multicol}
 \usepackage{listings}
+\usepackage{minted}
 
 %\title{La Manipulation du Marché de l'Art}
 %\title{Rapport DSB}
@@ -62,6 +66,9 @@
 
 \tableofcontents
 \clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Introduction}
 
 Nous avons choisi de représenter la 'discrimination' des artistes dans le marché de l'art et le principe d'évaluation d'une oeuvre d'art.
@@ -105,38 +112,71 @@ Contre-intuitivement, d'ultra-riche individus peuvent gagner en rentabilité en 
 
 \paragraph{L'art n'est plus un exercice de compétence, c'est celui d'une marque.}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Modèle conceptuel}
 
-Nous avons omis les conservateurs de musée, propriétaire de gallerie et d'autres acteurs dans l'équation de l'évaluation du prix d'une oeuvre. Les rrelations de connaisance entre les différents humains, leur contact, leur société écran, etc. Ce procédé reste complexe et non exhaustivement représenté par cette base de donnée. Il s'agit surtout d'une ébauche.
-\\
+
+Nous avons omis les conservateurs de musée, propriétaire de gallerie et d'autres acteurs dans l'équation de l'évaluation du prix d'une oeuvre. 
+Les relations de connaisance entre les différents humains, leur contact, leur société écran, \emph{etc.} 
+Ce procédé reste complexe et non exhaustivement représenté par cette base de donnée.
+Il s'agit surtout d'une ébauche.
+
+\subsection{Description du modèle}
 
 L'art est au milieu de tout ce système. 
-Ce Marché se compose de plusieurs acteurs, ces acteurs vont influencer sur la valeur que l'oeuvre porte.
-\\
+Ce marché se compose de plusieurs acteurs, chacun influence la valeur de l'oeuvre.
+Comme représenté sur ce shéma mocodo : \ref{fig:MCD_last}
 
-Une pièce d'oeuvre d'art possède un numéro d'objet (unique), un titre, un medium (type) et une cote (la valeur estimée de l'oeuvre).
+Une pièce d'oeuvre d'art possède:
+\begin{itemize}[label=\(\blacktriangleright\)]
+    \item un numéro d'objet (unique);
+    \item un titre;
+    \item un medium (type);
+    \item une cote (la valeur estimée de l'oeuvre).
+\end{itemize}
 Nous avons décidé de séparer le créateur de la pièce, étant donné que son créateur peut etre inconnu ou en avoir plusieurs.
-\\
 
 
-\begin{multicols}{2}
-[
-Nombreuses tables représentent des humains, pour pouvoir les différencier nous les avons séparé en plusisuers tables.
-Ces humains possèdent tous ces \emph{attributs fixes}: \newline
-    Un ID unique, un nom et une nationalité.
-Certains d'entre peuvent avoir comme attribut un capital, une spécialité, un site web ou une réputation.
-]
-Les artistes ont un ConstituentID unique,
-puisqu'on créé le profil artiste si l'on sait qu'il existe par la seule création d'une oeuvre, celui ci peut etre complètement inconnu et ne pas avoir de nom, de site web, de réputation, d'orgine (nationalité). \newline
-    On associe les artistes avec les artworks par la relation CREE.
+\begin{multicols}{2}[]
+Nombreuses tables représentent des humains, pour pouvoir les différencier nous les avons séparé en plusieurs tables.
+Ces humains possèdent tous ces \emph{attributs fixes}:
+\begin{itemize}[label=\(\blacktriangleright\)]
+    \item un identifiant unique*;
+    \item un nom;
+    \item une nationalité.
+\end{itemize}
+
+Certains d'entre eux peuvent avoir comme attribut :
+\begin{itemize}[label=\(\blacktriangleright\)]
+    \item un capital;
+    \item une spécialité;
+    \item un site web;
+    \item une réputation.
+\end{itemize}
+\end{multicols}
+
+
+Les attributs des artistes sont tous facultatifs sauf leur identifiant qui lui est unique.
+En effet, on va créer un profil artiste lorsqu'on retrouve une collection d'oeuvre à l'artiste inconnu, on les regroupe par un artiste 'fantôme'.
+Ils possèdent potentiellement un site-web -un contact- et une réputation.
+Cette réputation est positive, un artiste avec une réputation :
+\begin{itemize}[label=\(\blacktriangleright\)]
+    \item = 0 est inconnu;
+    \item > 1000 est connu localement;
+    \item > 2000 est connu à l'internationale;
+    \item > 10000 est une figure historique.
+\end{itemize}
+
+On associe les artistes avec les artworks par la relation CREE.
 Un Artwork peut etre créé par personne ou plusieurs artistes. Et un artiste peut ne rien avoir créé ou avoir une multitude de création.
 
-    Les Mecenes sont peu majoritaire dans le marche de l'art,
-il s'agit surtout de créancier qui achetent directement à l'artiste. Ils possèdent les attributs humains fixes, une réputation et leur patrimoine supposé (capital). \newline
-Ces Mecènes peuvent ou pas AIDE un ou des artistes, représenté par une somme d'argent : montantAide \newline
- \newline
-\end{multicols}
+
+Les Mecenes sont peu majoritaire dans le marche de l'art,
+il s'agit surtout de créancier qui achetent directement à l'artiste. 
+Ils possèdent les attributs humains fixes, une réputation (même ordre que celle des les artistes) et leur patrimoine supposé (capital).
+Ces Mecènes peuvent ou pas AIDE un ou des artistes, représenté par une somme d'argent : montantAide 
+
     
 \begin{multicols}{2}[]
 Les Créanciers sont principalement des commerciaux plutôt que des collectionneurs d'art. 
@@ -157,22 +197,32 @@ Ils sont en contact direct avec les oeuvres (relation RESTAURE: pour un certain 
 Ils jouent un rôle important dans la monter de prix des oeuvres (relation JUGE: en donnant une cote -coteDonnee-).
 \end{multicols}
 
-    Enfin les Experts sont des chercheurs, en Histoire, en Matière, en Technique.
-Leur collaboration avec le corps des galeries et créanciers est essentielle pour l'authentification d'oeuvre d'art.
-Prouver qu'une pièce est l'original peut faire grimper sa cote de plusieurs millions.\cite{Christ's_Portrait}
-\\
-
-\begin{multicols}{2}
-    Ce Marché devra être dirigé par un commissaire-priseur et peut avoir aucun ou plusieurs créanciers participant.
-\newline Il s'agit de galerie privée, où le prix d'entrée vise à resteindre les acheteurs (n'avoir que la même 'clientèle'). Ils sont unique et ne durent que le jour dateMarche.
-\newline Il se déroule à un certain moment, rendez vous à ne pas manquer pour repérer les fluctuations de prix et certaines oeuvres qui peuvent se rentabiliser.
-\\
-
-    Les Galeries et les Musées sont des organismes présentant des oeuvres (EXPOSE et PRET resp), elles ne peuvent pas ouvrir si ces organismes n'ont pas assez d'oeuvres à exposer.
-\\ \\ \\ \\ \\ \\ \\
-\end{multicols}
-
 \clearpage
+
+Enfin les Experts sont des chercheurs, en Histoire, en Matière, en Technique.
+Leur collaboration avec le corps des galeries et créanciers est essentielle pour l'authentification d'oeuvre d'art.
+Prouver qu'une pièce est l'original peut faire grimper sa cote de plusieurs millions. \cite{Christ's_Portrait}
+\\
+
+Le marché devra être dirigé par un commissaire-priseur et peut avoir aucun ou plusieurs créanciers participant.
+Il s'agit de galerie privée, où le prix d'entrée (prixEntryMarche) vise à resteindre les acheteurs (n'avoir que la même 'clientèle').
+Ils sont unique et ne durent que le jour dateMarche*.
+Ces marchés peuvent être heberger par des organismes privés ou avoir des locaux fixes comme \href{https://fr.wikipedia.org/wiki/Christie's}{Christies's} ou \href{https://fr.wikipedia.org/wiki/Sotheby's}{Sotheby's}.
+Il se déroule à un certain moment (dateMarche), rendez vous à ne pas manquer pour repérer les fluctuations de prix et certaines oeuvres qui peuvent se rentabiliser.
+\\
+
+Les Galeries et les Musées sont des organismes présentant des oeuvres (EXPOSE et PRET resp),
+elles ne peuvent pas ouvrir si ces organismes n'ont pas assez d'oeuvres à exposer.
+
+\href{https://fr.wikipedia.org/wiki/Musée}{D'après l'ICOM}, un musée est une institution permanente sans but lucratif au service de la société et de son développement ouverte au public, qui acquiert, conserve, étudie, expose et transmet le patrimoine matériel et immatériel de l’humanité et de son environnement à des fins d'études, d'éducation et de délectation. 
+Le musée doit avoir une dateCreation* et une adresseMusee*.
+
+Une galerie à une date de creation ou date d'evenement pour les galeries temporaires (dateGalerie).
+Un prixEntryExpo, pouvant dépassant les centaines de milliers de dollars.
+Une galerie peut reverser les gains à une association. (smiley qui sourit)
+Une galerie peut être à l'extérieur, à l'intérieur dans des locaux fixes ou mobiles.
+
+
 
 %\begin{figure}[htp]
 %\centering \includegraphics[width=1\textwidth]{mocodo_old.png} \caption{\label{fig:MCD_old}Ancien Schéma Mocodo.}
@@ -184,15 +234,10 @@ Prouver qu'une pièce est l'original peut faire grimper sa cote de plusieurs mil
 \caption{\label{fig:MCD_last}Schéma Mocodo Revisité.}
 \end{figure}
 
-\begin{figure}[htp]
-\centering
-\includegraphics[width=0.9\linewidth]{MCD_DSCP.png}
-\caption{\label{fig:MCD_DSCP}Description du modèle conceptuel pour Mocodo}
-\end{figure}
 
 \clearpage
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Modèle relationnel}
 \subsection{Application règle 1}
@@ -248,7 +293,8 @@ AIDE(\underline{\underline{idMecene}}*, \underline{\underline{idArtiste}}*, mont
 \begin{multicols}{2}
 
 
-\begin{lstlisting}[language=SQL]
+\begin{minted}
+{sql}
 CREATE DATABASE IF NOT EXISTS `MERISE`
 DEFAULT CHARACTER SET utf8
 COLLATE utf8_general_ci;
@@ -479,14 +525,38 @@ CREATE TABLE AIDE (
   FOREIGN KEY (idmecene)
   REFERENCES MECENE(idmecene)
 );
-\end{lstlisting}
+\end{minted}
 \end{multicols}
 
 \restoregeometry
 
 \section{Peuplement des tables uwu}
 
+\href{https://github.com/MuseumofModernArt/collection}{Github: Museum of Modern Art}
+
+Nous avons utilisé seulement quelque informations contenues dans la base de données MoMA :
+\\Pour les artistes :
+\begin{itemize}[label=\(\blacktriangleright\)]
+    \item DisplayName (leur nom);
+    \item Nationality (leur origine).
+\end{itemize}
+Pour les oeuvres d'art :
+\begin{itemize}[label=\(\blacktriangleright\)]
+    \item Title;
+    \item Artist;
+    \item Medium;
+    \item Date de création.
+\end{itemize}
+
+Toutes les autres informations contenues dans notre base de données
+n'est que pure supposition et imagination (cote d'une oeuvre / reputation d un artiste / \emph{etc})
+
+
 \subsection{Artistes}
+
+On importe
+\hyperref[]{}{}
+
 \subsection{Artworks}
 \subsection{Humains Qquonque}
 \subsection{Relations}
@@ -529,6 +599,83 @@ We hope you find Overleaf useful, and do take a look at our \href{https://www.ov
 \subsection{Division}
 
 \subsection{Group By}
+
+\section{Code}
+
+\subsection{convert\_artists()}
+\begin{minted}
+{rust}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Artist {
+	constituent_id: i128,
+	display_name: String,
+	artist_bio: Option<String>,
+	nationality: Option<String>,
+	gender: Option<String>,
+	begin_date: i16,
+	end_date: i16,
+	wiki_qid: Option<String>, 
+	ulan: Option<String>
+}
+
+fn convert_artists() -> Result<()>
+{
+    let path = "E:/Code/projects Rust/MoMA/Artists-reformed.json";
+
+    let content = fs::read_to_string(path)
+        .expect("Unable to read file");
+
+    println!("-----read_.json-----");
+	
+    let artists: Vec<Artist> = serde_json::from_str(&content).unwrap();
+
+    println!("--------create_request---------");
+
+    let mut foo =
+    "INSERT INTO P1_ARTISTE (idartiste, nomartiste, webartiste, reputationartiste, nationaliteartiste)
+    \n VALUES ".to_string();
+
+    for artist in artists
+    {
+        let artist_nationality: &str=
+		match &artist.nationality {
+			Some(s) => s,
+			None => "",
+		};
+
+        //
+        let mut artist_web = artist.display_name
+            .replace(" ", ".").replace("'", "").replace(",","");
+        artist_web.push_str(".org");
+
+        let foobar =
+        "\n (id,'display_name','site', reputation,'nationality')";
+        let mut artist_n = foobar.replace("id", &artist.constituent_id.to_string());
+        artist_n = artist_n.replace("display_name", &artist.display_name.replace("'", " "));
+        artist_n = artist_n.replace("site", &artist_web);
+        artist_n = artist_n.replace("reputation", &create_fictional_human::create_reputation(0,0).to_string());
+        artist_n = artist_n.replace("nationality", &artist_nationality.replace("'", " "));
+        foo.push_str(&artist_n);
+        
+        foo.push(','); // have to remove the last one
+    }
+    
+    foo.push_str(";END"); //to end the SQL request
+    foo = foo.replace(",;END",";");
+
+    println!("--------create_.sql---------");
+
+    // "/private/student/n/in/fepain/R/art-manipulation/RENDU/insert_artists.txt"
+    // "E:/Code/projects Rust/art-manipulation/RENDU/insert_artists.txt"
+	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/insert_artists.sql",
+			 foo)
+		.expect("Unable to write file");
+
+    Ok(())
+}
+
+\end{minted}
 
 \bibliographystyle{alpha}
 \bibliography{sample}
