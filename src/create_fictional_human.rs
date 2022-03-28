@@ -331,7 +331,7 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
  */
 fn create_insert_relations(relation_name:String, table_name1: String,
                     table_name2: String, amount: i32, frequence: i32,
-                    price: bool, duree: bool, possede: bool) -> String
+                    price: bool, duree: bool) -> String
 {
     let mut request: String =
     "INSERT INTO P1_NAME (idname1, idname2".to_string();
@@ -342,7 +342,7 @@ fn create_insert_relations(relation_name:String, table_name1: String,
         .replace("name2", &table_name2.to_lowercase());
     if price {
 
-        if possede {
+        if relation_name=="possede" {
             request.push_str(", prixAchat");
             request.push_str(", prixVente");
         }else {
@@ -365,7 +365,7 @@ fn create_insert_relations(relation_name:String, table_name1: String,
 
 
         if price {
-            if possede {
+            if relation_name=="possede" {
                 foo.push_str(", prixAchat, prixVente");
                 foo = foo.replace("prixAchat", &create_price().to_string());
                 // I use the frequence to also choose whenever a art is still owned or selled atm : 1/1
@@ -385,7 +385,7 @@ fn create_insert_relations(relation_name:String, table_name1: String,
         if duree {
             foo.push_str(", dateD, dateF");
             foo = foo.replace("dateD", &create_date(true).to_string());
-            if possede {
+            if relation_name=="possede" {
                 // 1/1 des oeuvres ont déja été vendu
                 if (i%frequence)==0 { 
                     // make it after dureeD but not in the FUTURE
@@ -535,7 +535,7 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
 
     //--AIDE---------------------------------------------------------------------
     let help = create_insert_relations("aide".to_string(), "mecene".to_string(),
-                               "artiste".to_string(), amount_of_each, 8, true, false, false);
+                               "artiste".to_string(), amount_of_each, 8, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&help);
 
@@ -547,44 +547,44 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
 
     //--PARTICIPE----------------------------------------------------------------
     let participe = create_insert_relations("participe".to_string(), "creancier".to_string(),
-                               "marche".to_string(), amount_of_each, 4, false, false, false);
+                               "marche".to_string(), amount_of_each, 4, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&participe);
 
     //--POSSEDE------------------------------------------------------------------
     
     let own = create_insert_relations("possede".to_string(), "creancier".to_string(),
-                             "art".to_string(), amount_of_each, 2, true, true, true);
+                             "art".to_string(), amount_of_each, 2, true, true);
     number_of_creation +=amount_of_each;
     request.push_str(&own);
 
     //--RESTAURE-----------------------------------------------------------------
     let restore = create_insert_relations("restaure".to_string(), "restaurateur".to_string(),
-                               "art".to_string(), amount_of_each, 18, true, false, false);
+                               "art".to_string(), amount_of_each, 18, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&restore);
 
     //--PRET---------------------------------------------------------------------
     let loan = create_insert_relations("pret".to_string(), "musee".to_string(),
-                               "art".to_string(), amount_of_each, 20, false, true, false);
+                               "art".to_string(), amount_of_each, 20, false, true);
     number_of_creation +=amount_of_each;
     request.push_str(&loan);
 
     //--EXPOSE-------------------------------------------------------------------
     let expose = create_insert_relations("expose".to_string(), "galerie".to_string(),
-                               "art".to_string(), amount_of_each, 25, false, true, false);
+                               "art".to_string(), amount_of_each, 25, false, true);
     number_of_creation +=amount_of_each;
     request.push_str(&expose);
 
     //--EXPERTISE----------------------------------------------------------------
     let expertise = create_insert_relations("expertise".to_string(), "expert".to_string(),
-                                    "art".to_string(), amount_of_each, 4, false, false, false);
+                                    "art".to_string(), amount_of_each, 4, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&expertise);
 
     //--JUGE---------------------------------------------------------------------
     let juge = create_insert_relations("juge".to_string(), "critique".to_string(),
-                               "art".to_string(), amount_of_each, 1, true, false, false);
+                               "art".to_string(), amount_of_each, 1, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&juge);
 
