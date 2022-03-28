@@ -183,13 +183,15 @@ Les Créanciers sont principalement des commerciaux plutôt que des collectionne
 Ils ont les attributs fixes et un capital.
 Ils peuvent vendre de l'art, à un certain prix (prixVente), à un certain moment (dateDeVente).
 Ils peuvent participer à un seul marché à la fois, dans lequel ils peuvent acheter/vendre des oeuvres répertoriée dans la relation PARTICIPE
-Pour les achats de crénacier à créancier privé (sans marché public) on passe par vend et possede.
-\\
+Pour les achats de crénacier à créancier privé (sans marché public) on passe par possede.
+\\ \\
 
-    Les Commissaires-priseurs ont seulement les attributs fixes.
-Ils peuvent diriger un marché. 
+Les Commissaires-priseurs ont seulement les attributs fixes.
+Ils peuvent diriger un marché.
 
-    Pour qu'une oeuvre monte en valeur, et s'affiche mieux dans un immense salon, les Restaurateurs travaillent avec les Musées, les galeries et les collectionneurs d'art (créancier).
+Pour qu'une oeuvre monte en valeur, et s'affiche mieux dans un immense salon,
+les Restaurateurs travaillent avec les Musées, les galeries et les collectionneurs d'art (créancier).
+Ils ont une spécialité (typeRestaurateur) sur laquelle ils travaillent un medium
 Ils sont en contact direct avec les oeuvres (relation RESTAURE: pour un certain prix (prixRestauration)).
 \\
 
@@ -212,7 +214,11 @@ Il se déroule à un certain moment (dateMarche), rendez vous à ne pas manquer 
 \\
 
 Les Galeries et les Musées sont des organismes présentant des oeuvres (EXPOSE et PRET resp),
-elles ne peuvent pas ouvrir si ces organismes n'ont pas assez d'oeuvres à exposer.
+elles ne peuvent pas ouvrir si ces organismes n'ont pas assez d'oeuvres à exposer. 
+(cardinalité N N).
+Une oeuvre peut etre exposée / pretée plusieurs fois, pour garder l'historique.
+Les attributs dureedebut / dureefin (dureedebutExpo/dureefinExpo et dureedebutPret/dureefinPret resp) correspond à deux DATEs entre laquelle la galerie ou le musée dispose de l'oeuvre.
+
 
 \href{https://fr.wikipedia.org/wiki/Musée}{D'après l'ICOM}, un musée est une institution permanente sans but lucratif au service de la société et de son développement ouverte au public, qui acquiert, conserve, étudie, expose et transmet le patrimoine matériel et immatériel de l’humanité et de son environnement à des fins d'études, d'éducation et de délectation. 
 Le musée doit avoir une dateCreation* et une adresseMusee*.
@@ -267,27 +273,26 @@ MARCHE ( \underline{idMarche}, nomMarche*, dateMarche*, prixEntryMarche, adresse
 Ces relations deviennent des tables contenant des clés étrangères pour permettre à toutes informations de pouvoir être accèder sans ambiguité.
 Et les relations inutiles sont supprimées 
 \\
-PARTCIPE(\underline{\underline{idMarche}}*, \underline{\underline{idCreancier}}*, OeuvreAchetee, OeuvreVendue) \newline
-
-OeuvreAch, et OeuvreVend correspondent à des idArt \newline
+PARTCIPE(\underline{\underline{idMarche}}*, \underline{\underline{idCreancier}}*)
 \\
-POSSEDE(\underline{\underline{idCreancier}}*, \underline{\underline{idArt}}*, prixAchat, prixVente, dateDebut*, dateFin) \newline
+POSSEDE(\underline{\underline{idCreancier}}*, \underline{\underline{idArt}}*, prixAchat, prixVente, dateDebutPossede*, dateFinPossede) \newline
 
 Les deux relation POSSEDE et VEND sont fusionné afin d'éviter les conflits \newline
 Le prix peut etre privé (sans trop d'interet dans le milieu de la spéculation) \newline
 \\
-RESTAURE(\underline{\underline{idRestaurateur}}*, \underline{\underline{idArt}}*, prixRestauration) \newline
-PRET(\underline{\underline{idMusee}}*, \underline{\underline{idArt}}*, dureePret*) \newline
-EXPOSE(\underline{\underline{idGalerie}}*, \underline{\underline{idArt}}*, dureeExpo*) \newline
-JUGE(\underline{\underline{idCritique}}*, \underline{\underline{idArt}}*, coteDonnee*) \newline
+RESTAURE(\underline{\underline{idRestaurateur}}*, \underline{\underline{idArt}}*, prixRestaure) \newline
+PRET(\underline{\underline{idMusee}}*, \underline{\underline{idArt}}*, dureedebutPret*, dureefinPret*) \newline
+EXPOSE(\underline{\underline{idGalerie}}*, \underline{\underline{idArt}}*, dureedebutExpose*, dureefinExpose*) \newline
+JUGE(\underline{\underline{idCritique}}*, \underline{\underline{idArt}}*, prixJuge*) \newline
 EXPERTISE(\underline{\underline{idExpert}}*, \underline{\underline{idArt}}*) \newline
-CREE(\underline{\underline{idArtiste}}*, \underline{\underline{idArt}}*, dureeCreation) \newline
-AIDE(\underline{\underline{idMecene}}*, \underline{\underline{idArtiste}}*, montantAide) \newline
+CREE(\underline{\underline{idArtiste}}*, \underline{\underline{idArt}}*) \newline
+AIDE(\underline{\underline{idMecene}}*, \underline{\underline{idArtiste}}*, prixAide) \newline
 
 
 \clearpage
 
 \newgeometry{left=0.5cm,right=0.5cm,top=0.5cm,bottom=1.5cm}
+
 \section{Schéma physique}
 
 \begin{multicols}{2}
@@ -369,7 +374,8 @@ CREATE TABLE RESTAURATEUR (
 CREATE TABLE MUSEE (
   idmusee INT NOT NULL,
   nommusee VARCHAR(1000) NOT NULL,
-  datedecreation DATE NOT NULL,
+  datemusee DATE NOT NULL,
+  prixentrymusee INT,
   adressemusee VARCHAR(1000) NOT NULL,
   PRIMARY KEY (idmusee)
 );
@@ -378,7 +384,7 @@ CREATE TABLE GALERIE (
   idgalerie INT NOT NULL,
   nomgalerie VARCHAR(1000) NOT NULL,
   dategalerie DATE NOT NULL,
-  prixentryexpo INT,
+  prixentrygalerie INT,
   association VARCHAR(1000),
   adressegalerie VARCHAR(1000) NOT NULL,
   PRIMARY KEY (idgalerie)
@@ -426,8 +432,8 @@ CREATE TABLE POSSEDE (
   idart INT NOT NULL,
   prixAchat INT,
   prixVente INT,
-  datedebut DATE NOT NULL,
-  datefin DATE,
+  datedebutPossede DATE NOT NULL,
+  datefinPossede DATE,
   PRIMARY KEY (idcreancier, idart),
   FOREIGN KEY (idart)
   REFERENCES ART(idart),
@@ -448,23 +454,18 @@ CREATE TABLE CREE (
 CREATE TABLE PARTICIPE (
   idcreancier INT NOT NULL,
   idmarche INT NOT NULL,
-  oeuvreachetee INT,
-  oeuvrevendue INT,
   PRIMARY KEY (idcreancier, idmarche),
   FOREIGN KEY (idcreancier)
   REFERENCES CREANCIER(idcreancier),
   FOREIGN KEY (idcreancier)
-  REFERENCES MARCHE(idmarche),
-    FOREIGN KEY (oeuvreachetee)
-  REFERENCES ART(idart),
-    FOREIGN KEY (oeuvrevendue)
-  REFERENCES ART(idart)
+  REFERENCES MARCHE(idmarche)
 );
 
 CREATE TABLE EXPOSE (
   idart INT NOT NULL,
   idgalerie INT NOT NULL,
-  dureeexpo DATE NOT NULL,
+  dureedebutexpose DATE NOT NULL,
+  dureefinexpose DATE NOT NULL,
   PRIMARY KEY (idart, idgalerie),
   FOREIGN KEY (idart)
   REFERENCES ART(idart),
@@ -473,10 +474,17 @@ CREATE TABLE EXPOSE (
 );
 
 
+
+
+
+
+
+
+
 CREATE TABLE RESTAURE (
   idrestaurateur INT NOT NULL,
   idart INT NOT NULL,
-  prixrestauration INT,
+  prixrestaure INT,
   PRIMARY KEY (idrestaurateur, idart),
   FOREIGN KEY (idart)
   REFERENCES ART(idart),
@@ -487,7 +495,8 @@ CREATE TABLE RESTAURE (
 CREATE TABLE PRET (
   idart INT NOT NULL,
   idmusee INT NOT NULL,
-  dureepret DATE NOT NULL,
+  dureedebutpret DATE NOT NULL,
+  dureefinpret DATE NOT NULL,
   PRIMARY KEY (idart, idmusee),
   FOREIGN KEY (idart)
   REFERENCES ART(idart),
@@ -498,7 +507,7 @@ CREATE TABLE PRET (
 CREATE TABLE JUGE (
   idcritique INT NOT NULL,
   idart INT NOT NULL,
-  cotedonnee INT NOT NULL,
+  prixJuge INT NOT NULL,
   PRIMARY KEY (idcritique, idart),
   FOREIGN KEY (idart)
   REFERENCES ART(idart),
@@ -519,6 +528,7 @@ CREATE TABLE EXPERTISE (
 CREATE TABLE AIDE (
   idmecene INT NOT NULL,
   idartiste INT NOT NULL,
+  prixAide INT,
   PRIMARY KEY (idmecene, idartiste),
   FOREIGN KEY (idartiste)
   REFERENCES ARTISTE(idartiste),
@@ -554,56 +564,336 @@ n'est que pure supposition et imagination (cote d'une oeuvre / reputation d un a
 
 \subsection{Artistes}
 
-On importe
-\hyperref[]{}{}
+On importe depuis le .json du MoMA, la table artiste contenant 133038 individus/organismes.
+On utilise le code convert\_artists() (\hyperref[sec:convArtists]{section 7.1})
+Deux exemples d'artiste : 
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{json}
+{
+  "constituent_id": 7626,
+  "display_name": "Patrick Ireland",
+  "artist_bio": "Irish, 1972–2008",
+  "nationality": "Irish",
+  "gender": "Male",
+  "begin_date": 1972,
+  "end_date": 2008,
+  "wiki_qid": "Q3777954",
+  "ulan": "500079431"
+},
+
+{
+  "constituent_id": 7636,
+  "display_name": "IBM Corporation",
+  "artist_bio": "American, founded 1911",
+  "nationality": "American",
+  "gender": null,
+  "begin_date": 1911,
+  "end_date": 0,
+  "wiki_qid": null,
+  "ulan": null
+},
+\end{minted}
+
 
 \subsection{Artworks}
-\subsection{Humains Qquonque}
+
+On importe depuis le .json du MoMA, la table artwork contenant 419289 pièces d'art.
+On utilise le code convert\_artworks() (\hyperref[sec:convArtworks]{section 7.2})
+Toutes les dates vont etre à 0 ou null car la base de donnée MoMA insere des phrases (Option<String>) dans l'attribut date de l'artwork.
+
+\newgeometry{left=1cm,right=0.5cm,top=0.5cm,bottom=1.5cm}
+Un exemple d'artwork : 
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{json}
+{
+  "title": "Zamaul' III",
+  "artist": [
+    "Various artists",
+    "Vladimir Burliuk",
+    "Pavel Filonov",
+    "Aleksei Kruchenykh",
+    "Il'ia Rogovin"
+  ],
+  "constituent_id": [
+    24409,
+    12001,
+    12124,
+    3263,
+    23615
+  ],
+  "artist_bio": [
+    "Ukrainian, 1886–1917",
+    "Russian, 1883–1941",
+    "Russian, 1886–1969"
+  ],
+  "nationality": [
+    "",
+    "Ukrainian",
+    "",
+    "Russian"
+  ],
+  "begin_date": [
+    0,
+    1886,
+    1883,
+    1886,
+    0
+  ],
+  "end_date": [
+    0,
+    1917,
+    1941,
+    1969,
+    0         ],
+  "gender":   [
+    "",
+    "Male",
+    "Male",
+    "Male",
+    "Female" ],
+  "date": "1919",
+  "medium": "Book with five hectographed illustrations,
+  letterpress and rubber-stamped typographic designs, and hectographed manuscript text and designs",
+  "dimensions": "page (irreg.): 6 1/2 x 5 13/16\ (16.5 x 14.8 cm)",
+  "credit_line": "Gift of The Judith Rothschild Foundation",
+  "accession_number": "114.2001",
+  "classification": "Illustrated Book",
+  "department": "Drawings & Prints",
+  "date_acquired": "2001-01-24",
+  "cataloged": "Y",
+  "object_id": 11384,
+  "url": "http://www.moma.org/collection/works/11384",
+  "thumbnail_url": "http://www.moma.org/media/W1siZiIsIjIxMjY5NCJdLFsicCIsImNvbnZlcnQiLCItcmVzaXplIDMwMHgzMDBcdTAwM2UiXV0.jpg?sha=7193a69ce29794bf",
+  "height_cm": 16.5,
+  "width_cm": 14.8
+},
+\end{minted}
+
+\restoregeometry
+
+\subsection{Humains}
+
+À partir d'ici, nous n'avons plus de base de donnée à importer alors nous allons créer des humains.
+
+On créé deux tableaux contenant des prénoms et noms.
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+static LIST_FIRST_NAME: &'static [&str] = &["Adrien", "Nelson", "Benoit", "Morgan",
+"Florian", "Thomas", "Maeto", "Clementine", "Stephane", "Otto", "Jan", "Patrick",
+"Rudolf", "Pietra", "Lex", "Nancy", "Waltercio", "Peter", "George", "Jotaro",
+"Joseph", "Jonathan", "Joe", "Maria", "Laurence", "Emil", "Usul", "Wout", "Montse",
+"Bent", "Nobert", "Marcel", "Arian", "Hella"];
+
+static LIST_LAST_NAME: &'static [&str] = &["Strömholm", "Strömholm", "Rusten",
+"Russomagno", "Biddle", "Burckhardt", "Martin", "Pinney", "Neusüss", "Goldes",
+"Charlesworth", "Bernsten", "Appelt", "Cohen", "McCarthy", "Wagner", "Van Toorn",
+"Mol", "Lynch", "Bell", "Cassell", "Schönthal", "Kammerer", "Hoppe", "De Vringer",
+"Faydherbe", "Marqués", "Nobert", "Smith", "Knoll", "Rizzatto", "Tetrarc",
+"Wanders", "van der Meulen", "Joestar", "Abitbol", "Zepelli", "Speedwagon"];
+\end{minted}
+
+On importe depuis le .json artistes un tableau pour l'origine (de leur attribut nationality):
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+static LIST_NATIONALITY: &'static [&str] = &["nationality unknown", "American",
+"Spanish", "Danish", "Italian", "French", "Estonian", "Mexican", "Swedish",
+"Israeli", "British", "Finnish", "Polish", "Palestinian", "Japanese", "Guatemalan",
+"Colombian", "Romanian", "Russian", "German", "Argentine", "Kuwaiti", "Belgian",
+"Dutch", "Norwegian", "Chilean", "Swiss", "Costa Rican", "Czech", "Brazilian",
+"Austrian", "Canadian", "Australian", "Ukrainian", "Hungarian", "Haitian",
+"Congolese", "Bolivian", "Cuban", "Yugoslav", "Portuguese", "Indian", "Peruvian",
+"Icelandic", "Irish", "Guyanese", "Uruguayan", "Slovak", "Croatian", "Greek",
+"Chinese", "Venezuelan", "Turkish", "Panamanian", "Algerian", "Ecuadorian",
+"South African", "Iranian", "Korean", "Canadian Inuit", "Paraguayan",
+"Luxembourgish", "Nicaraguan", "Zimbabwean", "Moroccan", "Slovenian", "Tanzanian",
+"Bulgarian", "Tunisian", "Sudanese", "Taiwanese", "Ethiopian", "Scottish",
+"Latvian", "Senegalese", "Thai", "New Zealander", "Lithuanian", "Pakistani",
+"Bahamian", "Bosnian", "Malian", "Czechoslovakian", "Georgian", "Egyptian",
+"Kenyan", "Emirati", "Nigerian", "Cypriot", "Albanian", "Azerbaijani", "Ivorian",
+"Malaysian", "Serbian", "Singaporean", "Namibian", "Cambodian", "Ghanaian",
+"Afghan", "Native American", "Lebanese", "Kyrgyzstani", "Vietnamese", "Ugandan",
+"Cameroonian", "Welsh", "Macedonian", "Puerto Rican", "Catalan", "Filipino",
+"Sahrawi", "Bangladeshi", "Coptic", "Persian", "Burkinabe", "Beninese",
+"Sierra Leonean", "Salvadoran"];
+\end{minted}
+
+On créé un tableau pour les différents types globaux de medium.
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+static LIST_ARTWORK_TYPE: &'static [&str] = &["Sculture", "Paint", "Ceramics",
+"Graphic Art", "Illuminated Manuscripts", "Jewellery Art", "Metalwork Art",
+"Mosaic Art", "Photography", "Architecture", "Religious Art", "Rock Art",
+"Stained Glass Art"];
+\end{minted}
+
+On crée une multitude de methodes pour décrire tous les attributs des humains (\hyperref[sec:createAttr]{section 7.3}).
+On crée une méthode pour générer et insérer des humains (\hyperref[sec:insHumans]{section 7.4}).
+
+Un exemple d'appel pour créer amounth\_of\_each créanciers : 
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+
+pub fn create_requests(amount_of_each: i32) // -> Result<()>
+{
+    let mut request: String = "".to_string();
+
+    let mut number_of_creation: i32 = 0;
+    let creancier = create_insert_humans("creancier", amount_of_each, false, false, true);
+    number_of_creation +=amount_of_each;
+    request.push_str(&creancier);
+    
+    println!("humans created: {}", number_of_creation);
+    println!("--------create_.txt---------");
+
+    fs::write("E:/Code/projects_rust/art-manipulation/RENDU/humans.txt", request)
+        .expect("Unable to write file");
+\end{minted}
+
+\subsection{Organismes}
+
+Pour les organisations : Marché, Galerie, Musée.
+Nous utilisons les mêmes méthodes attributs (\hyperref[sec:createAttr]{section 7.3}).
+
+Le tableau (vide) qui peut contenir des associations (pour attr de galerie) :
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+static LIST_ASSOCIATION: &'static [&str] = &["", ""];
+\end{minted}
+
+Pour insérer les organismes on utilise le code en \hyperref[sec:insOrg]{section 7.5}
+
 \subsection{Relations}
 
+On utilise les codes de la \hyperref[sec:createRel]{Section 7.6}
+pour générer des fausses relations.
+
+Deux exemple de création de relations :
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+pub fn create_requests(amount_of_each: i32) // -> Result<()>
+{
+    let mut request: String = "".to_string();
+
+    let mut number_of_creation: i32 = 0;
+    
+    //--POSSEDE------------------------------------------------------------------
+    let own = create_possede("possede".to_string(), "creancier".to_string(),
+                             "art".to_string(), amount_of_each, 2);
+    number_of_creation +=amount_of_each;
+    request.push_str(&own);
+
+    //--RESTAURE-----------------------------------------------------------------
+    let restore = create_insert_relations("restaure".to_string(), "restaurateur".to_string(),
+                               "art".to_string(), amount_of_each, 18, true, false);
+    number_of_creation +=amount_of_each;
+    request.push_str(&restore);
+    
+    println!("inserts created: {}", number_of_creation);
+    println!("--------create_.sql---------");
+
+    fs::write("E:/Code/projects_rust/art-manipulation/RENDU/insertsFictiv.sql", request)
+        .expect("Unable to write file");
+}
+\end{minted}
 
 \section{Requetes SQL}
 
 \subsection{Projection}
 
-\LaTeX{} is great at typesetting mathematics. Let $X_1, X_2, \ldots, X_n$ be a sequence of independent and identically distributed random variables with $\text{E}[X_i] = \mu$ and $\text{Var}[X_i] = \sigma^2 < \infty$, and let
-\[S_n = \frac{X_1 + X_2 + \cdots + X_n}{n}
-      = \frac{1}{n}\sum_{i}^{n} X_i\]
-denote their mean. Then as $n$ approaches infinity, the random variables $\sqrt{n}(S_n - \mu)$ converge in distribution to a normal $\mathcal{N}(0, \sigma^2)$.
-
 
 \subsection{Jointure}
 
-Usually the template you're using will have the page margins and paper size set correctly for that use-case. For example, if you're using a journal article template provided by the journal publisher, that template will be formatted according to their requirements. In these cases, it's best not to alter the margins directly.
-
-If however you're using a more general template, such as this one, and would like to alter the margins, a common way to do so is via the geometry package. You can find the geometry package loaded in the preamble at the top of this example file, and if you'd like to learn more about how to adjust the settings, please visit this help article on \href{https://www.overleaf.com/learn/latex/page_size_and_margins}{page size and margins}.
-
 \subsection{Moyenne sur l'integralite d'un attribut}
-
-Overleaf supports many different languages, including multiple different languages within one document. 
-
-To configure the document language, simply edit the option provided to the babel package in the preamble at the top of this example project. To learn more about the different options, please visit this help article on \href{https://www.overleaf.com/learn/latex/International_language_support}{international language support}.
-
-To change the spell check language, simply open the Overleaf menu at the top left of the editor window, scroll down to the spell check setting, and adjust accordingly.
 
 \subsection{Regroupement par calcul}
 
-You can simply upload a \verb|.bib| file containing your BibTeX entries, created with a tool such as JabRef. You can then cite entries from it, like this: \cite{greenwade93}. Just remember to specify a bibliography style, as well as the filename of the \verb|.bib|. You can find a \href{https://www.overleaf.com/help/97-how-to-include-a-bibliography-using-bibtex}{video tutorial here} to learn more about BibTeX.
-
-If you have an \href{https://www.overleaf.com/user/subscription/plans}{upgraded account}, you can also import your Mendeley or Zotero library directly as a \verb|.bib| file, via the upload menu in the file-tree.
-
 \subsection{Différence}
-
-We hope you find Overleaf useful, and do take a look at our \href{https://www.overleaf.com/learn}{help library} for more tutorials and user guides! Please also let us know if you have any feedback using the Contact Us link at the bottom of the Overleaf menu --- or use the contact form at \url{https://www.overleaf.com/contact}.
 
 \subsection{Division}
 
 \subsection{Group By}
 
+\clearpage
+
 \section{Code}
 
 \subsection{convert\_artists()}
+\label{sec:convArtists}
 \begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
 {rust}
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -621,7 +911,7 @@ struct Artist {
 
 fn convert_artists() -> Result<()>
 {
-    let path = "E:/Code/projects Rust/MoMA/Artists-reformed.json";
+    let path = "E:/Code/projects_rust/MoMA/Artworks-reformed.json";
 
     let content = fs::read_to_string(path)
         .expect("Unable to read file");
@@ -633,7 +923,8 @@ fn convert_artists() -> Result<()>
     println!("--------create_request---------");
 
     let mut foo =
-    "INSERT INTO P1_ARTISTE (idartiste, nomartiste, webartiste, reputationartiste, nationaliteartiste)
+    "INSERT INTO P1_ARTISTE
+    (idartiste, nomartiste, webartiste, reputationartiste, nationaliteartiste)
     \n VALUES ".to_string();
 
     for artist in artists
@@ -644,9 +935,11 @@ fn convert_artists() -> Result<()>
 			None => "",
 		};
 
-        //
+
         let mut artist_web = artist.display_name
-            .replace(" ", ".").replace("'", "").replace(",","");
+            .replace(" ", ".")
+            .replace("'", "")
+            .replace(",","");
         artist_web.push_str(".org");
 
         let foobar =
@@ -654,7 +947,8 @@ fn convert_artists() -> Result<()>
         let mut artist_n = foobar.replace("id", &artist.constituent_id.to_string());
         artist_n = artist_n.replace("display_name", &artist.display_name.replace("'", " "));
         artist_n = artist_n.replace("site", &artist_web);
-        artist_n = artist_n.replace("reputation", &create_fictional_human::create_reputation(0,0).to_string());
+        artist_n = artist_n.replace("reputation",
+                            &create_fictional_human::create_reputation(0,0).to_string());
         artist_n = artist_n.replace("nationality", &artist_nationality.replace("'", " "));
         foo.push_str(&artist_n);
         
@@ -666,18 +960,521 @@ fn convert_artists() -> Result<()>
 
     println!("--------create_.sql---------");
 
-    // "/private/student/n/in/fepain/R/art-manipulation/RENDU/insert_artists.txt"
-    // "E:/Code/projects Rust/art-manipulation/RENDU/insert_artists.txt"
-	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/insert_artists.sql",
-			 foo)
-		.expect("Unable to write file");
+    fs::write("E:/Code/projects_rust/art-manipulation/RENDU/insert_artists.sql", foo)
+        .expect("Unable to write file");
 
     Ok(())
 }
 
 \end{minted}
 
+\subsection{convert\_artworks()}
+\label{sec:convArtworks}
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+
+fn convert_artworks() -> Result<()>
+{
+    let path = "E:/Code/projects_rust/MoMA/Artworks-reformed.json";
+	let content = fs::read_to_string(path)
+		.expect("Unable to read file");
+
+	println!("-----read_.json-----");
+	
+    let artworks: Vec<Artwork> = serde_json::from_str(&content).unwrap();
+
+	// println!("{:?}", artists);
+
+	println!("--------create_request---------");
+
+    let mut foo =
+    "INSERT INTO P1_ART (idart, titre, typeArt, cote, dateCreation)
+    \n VALUES ".to_string();
+
+    for artwork in artworks
+    {
+        let artwork_medium: &str =
+        match &artwork.medium {
+            Some(s) => s,
+            None => "",
+        };
+
+        let artwork_date: &str =
+        match &artwork.date {
+            Some(s) => {
+                s.to_string().push_str("-01-01");
+                s
+            },
+            None => "",
+        };
+
+        let artwork_title = artwork.title.replace("'", " ");
+
+        //TODO : find potential ' and replace them by a space
+
+        let foobar =
+        "\n (id,'title', 'medium', cote)"; //, date)";
+        let mut artwork_n = foobar.replace("id", &artwork.object_id.to_string());
+        artwork_n = artwork_n.replace("title", &artwork_title.replace("\\", ""));
+        // how on earth you can accept '\' in a user insertion... 
+        artwork_n = artwork_n.replace("medium", &artwork_medium.replace("'", " ").replace("\\", ""));
+        artwork_n = artwork_n.replace("cote", &create_fictional_human::create_reputation(0,0).to_string());
+        // artwork_n = artwork_n.replace("date", &artwork_date.to_string());
+        foo.push_str(&artwork_n);
+
+        foo.push(','); // have to remove the last one
+    }
+    
+    foo.push_str(";END"); //to end the SQL request
+    foo = foo.replace(",;END",";");
+
+    println!("--------create_.sql---------");
+
+    fs::write("E:/Code/projects_rust/art-manipulation/Part1/indv/insert_artworks.sql", foo)
+        .expect("Unable to write file");
+
+    Ok(())
+}
+
+\end{minted}
+
+\subsection{create all kind of attributes}
+\label{sec:createAttr}
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+pub fn create_reputation(_number_of_creation: i32, _base_reput: i32)->i32 {
+    let mut rng = thread_rng();
+    return rng.gen_range(1..2000);
+}
+
+fn create_name() -> String {
+    let mut rng = thread_rng();
+
+    let mut first_name: String =
+        match &LIST_FIRST_NAME.choose(&mut rng) {
+        Some(n) => n.to_string(),
+            None => "Foo".to_string()
+        };
+    let last_name: String =
+        match &LIST_LAST_NAME.choose(&mut rng) {
+            Some(n) => n.to_string(),
+            None => "Bar".to_string()
+        };
+
+    first_name.push_str(" ");
+    first_name.push_str(&last_name);
+
+    first_name
+}
+
+fn create_nationality() -> String {
+    let mut rng = thread_rng();
+
+    let nationality =
+        match &LIST_NATIONALITY.choose(&mut rng) {
+            Some(n) => n,
+            None => "nationality unknown"
+        };
+    
+    nationality.to_string()
+}
+
+fn create_type() -> String {
+    let mut rng = thread_rng();
+
+    let art_type: String = 
+        match &LIST_ARTWORK_TYPE.choose(&mut rng) {
+            Some(n) => n.to_string(),
+            None => "Undefined".to_string()
+        };
+
+    art_type
+}
+
+fn create_capital() -> i128 {
+    let mut rng = thread_rng();
+    
+    let capital: i128 = rng.gen_range(1..5000000)+1000000;
+
+    capital
+}
+
+/**
+ * @param past : 'a future date' -> false | 'a past date' -> true
+ * format : AAAA-MM-JJ
+ */
+fn create_date(past: bool) -> String{
+    let mut rng = thread_rng();
+
+    let mut date = "year-month-day".to_string();
+    let day = rng.gen_range(0..31); // dc about 31/02 or 31/04
+    let month = rng.gen_range(0..12);
+    let year; //= 1445;
+    if past {
+        year = rng.gen_range(2003..2021);
+    }
+    else {
+        year = rng.gen_range(2022..2030);
+    }
+    
+    date = date.replace("day", &day.to_string());
+    date = date.replace("month", &month.to_string());
+    date = date.replace("year", &year.to_string());
+
+    date.to_string()
+}
+
+fn create_price() -> i32{
+    let mut rng = thread_rng();
+    // placeholder
+    let price: i32 = rng.gen_range(0..50000);
+    price
+}
+
+fn create_association() -> String{
+    let mut rng = thread_rng();
+
+    let association: String = 
+        match &LIST_ASSOCIATION.choose(&mut rng) {
+            Some(n) => n.to_string(),
+            None => "Undefined".to_string()
+        };
+
+    association
+}
+\end{minted}
+
+\subsection{create\_insert\_humans()}
+\label{sec:insHumans}
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+/**
+ * create a sql request  to insert a good amount of data in your database
+ * respect my current sql structure
+ * should be great to import a example of struct with all table to auto all of this
+ */
+fn create_insert_humans(table_name: &str, amount: i32, art_type: bool,
+                  reputation: bool, capital: bool) -> String 
+{
+    let mut request: String =
+    "INSERT INTO P1_NAME (idname, nomname, "
+        .to_string();
+    if art_type {
+        request.push_str("typename, ");
+    }
+    if reputation {
+        request.push_str("reputationname, ");
+    }
+    if capital {
+        request.push_str("capitalname, ");
+    }
+    
+    request.push_str("nationalitename) \n VALUES");
+    request = request
+        .replace("NAME", &table_name.to_uppercase())
+        .replace("name", &table_name.to_lowercase());
+
+    for i in 0..amount {
+
+        let name = create_name();
+
+        let nationality = create_nationality();
+
+        let foobar =
+        "\n (id, 'display_name', ".to_string();
+
+        let mut human_n = foobar.replace("id", &i.to_string());
+        human_n = human_n.replace("display_name", &name);
+
+        if art_type{
+            human_n.push_str("'type', ");
+            human_n = human_n.replace("type", &create_type());
+        }
+        if reputation{
+            human_n.push_str("reputation, ");
+            human_n = human_n.replace("reputation", &create_reputation(0,0).to_string());
+        }
+        if capital{
+            human_n.push_str("capital, ");
+            human_n = human_n.replace("capital", &create_capital().to_string());
+        }
+
+        human_n.push_str("'nationality'),");
+        human_n = human_n.replace("nationality", &nationality);
+        
+        request.push_str(&human_n);
+
+    }
+
+    request.push_str(";END");
+    request = request.replace(",;END","; \n \n");
+
+    request
+}
+\end{minted}
+
+\subsection{create\_insert\_organisations()}
+\label{sec:insOrg}
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+/**
+ * if creation_date and rdv_date are true only creation_date will effect
+ * you can't bassicaly have those two attributs
+ */
+fn create_insert_organisations(table_name: String, amount: i32, creation_date: bool,
+                       rdv_date: bool, price: bool, association: bool) -> String
+{
+    let mut request: String =
+    "INSERT INTO P1_NAME (idname, nomname, "
+        .to_string();
+    if creation_date {
+        request.push_str("datedecreation, ");
+    }
+    // careful about this else which can conflict
+    // with future change on mocodoStructre
+    else if rdv_date { 
+        request.push_str("datename, ");
+    }
+    if price {
+        request.push_str("prixentryname, ");
+    }
+    request.push_str("adressename) \n VALUES");
+    request = request
+        .replace("NAME", &table_name.to_uppercase())
+        .replace("name", &table_name.to_lowercase());
+
+    for i in 0..amount {
+
+        let name = create_name();
+
+        let country = create_nationality();
+
+        let foobar =
+        "\n (id, 'display_name', ".to_string();
+
+        let mut orga_n = foobar.replace("id", &i.to_string());
+        orga_n = orga_n.replace("display_name", &name);
+        if creation_date | rdv_date {
+            //if rdv_date means !creation_date
+            
+            orga_n.push_str("date, ");   // same care here
+            orga_n = orga_n.replace("date", &create_date(creation_date));
+        }
+        if price{
+            orga_n.push_str("price, ");
+            orga_n = orga_n.replace("price", &create_price().to_string());
+        }
+        if association{
+            orga_n.push_str("association, ");
+            orga_n = orga_n.replace("association", &create_association());
+        }
+        orga_n.push_str("'country'),");
+        orga_n = orga_n.replace("country", &country);
+        
+        request.push_str(&orga_n);
+    }
+
+    request.push_str(";END");
+    request = request.replace(",;END","; \n \n");
+
+    request
+}
+\end{minted}
+
+\subsection{create\_insert\_relations()}
+\label{sec:createRel}
+
+I didn't manage to merge the possede and the other methods together,
+so there are two different methods.
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+/**
+ * frequence: if 0 -> no condition whatsoever (no filter),
+ *            if 8 -> condition 1/8 (only 1/8 will be associate)
+ * don't handle insert attributefor POSSEDE and PARTICIPE
+ */
+fn create_insert_relations(relation_name:String, table_name1: String,
+                    table_name2: String, amount: i32, frequence: i32,
+                    price: bool, duree: bool) -> String
+{
+    let mut request: String =
+    "INSERT INTO P1_NAME (idname1, idname2".to_string();
+    
+    request = request
+        .replace("NAME",  &relation_name.to_uppercase())
+        .replace("name1", &table_name1.to_lowercase())
+        .replace("name2", &table_name2.to_lowercase());
+    if price {
+        request.push_str(", prixNAME");
+        request = request.replace("NAME", &relation_name.to_lowercase());
+    }
+    if duree {
+        request.push_str(", dureedebutNAME, dureefinNAME");
+        request = request.replace("NAME", &relation_name.to_lowercase());
+    }
+    request.push_str(") \n VALUES");
+    
+    for i in 0..amount {
+        
+        if frequence != 0{
+        // only 1/frequence of all name1 and name2 will be associate
+            if i%frequence==0 {
+                let mut foo =
+                "\n (idname1, idname2".to_string();
+                if price {
+                    foo.push_str(", prix");
+                    foo = foo.replace("prix", &create_price().to_string());
+                }
+                if duree {
+                    foo.push_str(", dureeD, dureeF");
+                    foo = foo.replace("dureeD", &create_date(true).to_string());
+                    foo = foo.replace("dureeF", &create_date(false).to_string());
+                }
+                foo.push_str("),");
+                let mut foobar = foo.replace("idname1", &i.to_string());
+                foobar = foobar.replace("idname2", &i.to_string());
+                request.push_str(&foobar);
+            }
+        }
+        else {
+            let mut foo =
+            "\n (idname1, idname2".to_string();
+            if price {
+                foo.push_str(", prix");
+                foo = foo.replace("prix", &create_price().to_string());
+            }
+            if duree {
+                foo.push_str(", dureeD, dureeF");
+                foo = foo.replace("dureeD", &create_date(true).to_string());
+                foo = foo.replace("dureeF", &create_date(false).to_string());
+            }
+            foo.push_str("),");
+            let mut foobar = foo.replace("idname1", &i.to_string());
+            foobar = foobar.replace("idname2", &i.to_string());
+            request.push_str(&foobar);
+        }
+        
+    }
+    // end the request with a ';' and
+    // remove the last ',' which cause error
+    request.push_str(";END");
+    request = request.replace(",;END","; \n \n");
+
+    request
+}
+\end{minted}
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{rust}
+/**
+ * I use the frequence to also choose whenever a art is still owned or selled
+ */
+fn create_possede(relation_name:String, table_name1: String,
+                  table_name2: String, amount: i32, frequence: i32,) -> String
+{
+    let mut request: String =
+    "INSERT INTO P1_NAME (idname1, idname2, prixachat, prixvente, dureedebutNAME, dureefinNAME) \n VALUES".to_string();
+    request = request
+        .replace("NAME",  &relation_name.to_uppercase())
+        .replace("name1", &table_name1.to_lowercase())
+        .replace("name2", &table_name2.to_lowercase());
+    for i in 0..amount {
+        
+        if frequence != 0{
+        // only 1/frequence of all name1 and name2 will be associate
+            if i%frequence==0 {
+                let foo =
+                "\n (idname1, idname2, prixB, prixS, dureeD, dureeF),".to_string();
+                let mut foobar = foo.replace("idname1", &i.to_string());
+                foobar = foobar.replace("idname2", &i.to_string());
+                foobar = foobar.replace("prixB", &create_price().to_string());
+                foobar = foobar.replace("dureeD", &create_date(true).to_string());
+                if i%frequence==0 {
+                    foobar = foobar.replace("prixS", &create_price().to_string());
+                    foobar = foobar.replace("dureeF", &create_date(false).to_string());
+                }
+
+                request.push_str(&foobar);
+            }
+        }
+        else {
+            let foo =
+                "\n (idname1, idname2, prixB, prixS, dureeD, dureeF),".to_string();
+                let mut foobar = foo.replace("idname1", &i.to_string());
+                foobar = foobar.replace("idname2", &i.to_string());
+                foobar = foobar.replace("prixB", &create_price().to_string());
+                foobar = foobar.replace("dureeD", &create_date(true).to_string());
+                if i%frequence==0 {
+                    foobar = foobar.replace("prixS", &create_price().to_string());
+                    foobar = foobar.replace("dureeF", &create_date(false).to_string());
+                }                
+
+                request.push_str(&foobar);
+        }
+        
+    }
+    // end the request with a ';' and
+    // remove the last ',' which cause error
+    request.push_str(";END");
+    request = request.replace(",;END","; \n \n");
+
+    request
+}
+\end{minted}
+
 \bibliographystyle{alpha}
 \bibliography{sample}
+
 
 \end{document}
