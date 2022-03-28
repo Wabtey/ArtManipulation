@@ -276,7 +276,7 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
         request.push_str("datename, ");
     }
     if price {
-        request.push_str("prixentryname, ");
+        request.push_str("prixname, ");
     }
     if association {
         request.push_str("association, ");
@@ -347,14 +347,39 @@ fn create_insert_relations(relation_name:String, table_name1: String,
             request.push_str(", prixVente");
         }else {
             request.push_str(", prixNAME");
-            request = request.replace("NAME", &relation_name.to_lowercase());
         }
     }
     if duree {
-        request.push_str(", dureedebutNAME, dureefinNAME");
-        request = request.replace("NAME", &relation_name.to_lowercase());
+        request.push_str(", datedebutNAME, datefinNAME");
     }
     request.push_str(") \n VALUES");
+    request = request.replace("NAME", &relation_name.to_lowercase());
+    
+    // doesn't need to be mutable? let artworks: Vec<Artwork>;
+    // but the use below bring an error : may use the uninitialized one
+    // so we initialize with a empty vec :/
+    let mut artworks: Vec<Artwork> = Vec::new(); 
+    if table_name2 == "art" {
+        let path = "E:/Code/projects_rust/MoMA/Artworks-reformed.json";
+	
+	    let content = fs::read_to_string(path)
+	        .expect("Unable to read file");
+	    println!("-----read_artworks.json-----");
+
+        artworks = serde_json::from_str(&content).unwrap();
+    }
+
+    let mut artists: Vec<Artist> = Vec::new(); 
+    if table_name2 == "artiste" {
+        let path = "E:/Code/projects_rust/MoMA/Artists-reformed.json";
+	
+	    let content = fs::read_to_string(path)
+		    .expect("Unable to read file");
+
+	    println!("-----read_artists.json-----");
+	
+        artists = serde_json::from_str(&content).unwrap();
+    }
 
     for i in 0..amount {
         
@@ -405,31 +430,12 @@ fn create_insert_relations(relation_name:String, table_name1: String,
 
         // Select randomly a constituent_id which EXIST
         if table_name2 == "artiste" {
-            let path = "E:/Code/projects_rust/MoMA/Artists-reformed.json";
-	
-	        let content = fs::read_to_string(path)
-		        .expect("Unable to read file");
-
-	        println!("-----read_.json-----");
-	
-            let artists: Vec<Artist> = serde_json::from_str(&content).unwrap();
-
             foobar = foo.replace("idname1", &i.to_string());
             foobar = foobar.replace("idname2", &artists[rng.gen_range(0.. artists.len())]
                                                         .constituent_id
                                                         .to_string());
 
         }else if table_name2 == "art" {
-            let path = "E:/Code/projects_rust/MoMA/Artworks-reformed.json";
-	
-	        let content = fs::read_to_string(path)
-		        .expect("Unable to read file");
-
-	        println!("-----read_.json-----");
-	
-            let artworks: Vec<Artwork> = serde_json::from_str(&content).unwrap();
-
-
             foobar = foo.replace("idname1", &i.to_string());
             foobar = foobar.replace("idname2", &artworks[rng.gen_range(0.. artworks.len())]
                                                         .object_id
