@@ -28,7 +28,7 @@ static LIST_ARTWORK_TYPE: &'static [&str] = &["Sculture", "Paint", "Ceramics", "
 "Jewellery Art", "Metalwork Art", "Mosaic Art", "Photography", "Architecture", "Religious Art", "Rock Art",
 "Stained Glass Art"];
 
-static LIST_ASSOCIATION: &'static [&str] = &["", ""];
+static LIST_ASSOCIATION: &'static [&str] = &["None", ""];
 
 /*
  * cste to keep the unique propriety of id sql
@@ -226,7 +226,7 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
     "INSERT INTO P1_NAME (idname, nomname, "
         .to_string();
     if creation_date {
-        request.push_str("datedecreation, ");
+        request.push_str("datename, ");
     }
     // careful about this else which can conflict
     // with future change on mocodoStructre
@@ -235,6 +235,9 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
     }
     if price {
         request.push_str("prixentryname, ");
+    }
+    if association {
+        request.push_str("association, ");
     }
     request.push_str("adressename) \n VALUES");
     request = request
@@ -263,7 +266,7 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
             orga_n = orga_n.replace("price", &create_price().to_string());
         }
         if association{
-            orga_n.push_str("association, ");
+            orga_n.push_str("'association', ");
             orga_n = orga_n.replace("association", &create_association());
         }
         orga_n.push_str("'country'),");
@@ -281,12 +284,86 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
 /**
  * frequence: if 0 -> no condition whatsoever (no filter),
  *            if 8 -> condition 1/8 (only 1/8 will be associate)
+ * don't handle insert attributefor POSSEDE and PARTICIPE
  */
 fn create_insert_relations(relation_name:String, table_name1: String,
-                   table_name2: String, amount: i32, frequence: i32) -> String
+                    table_name2: String, amount: i32, frequence: i32,
+                    price: bool, duree: bool) -> String
 {
     let mut request: String =
-    "INSERT INTO P1_NAME (idname1, idname2) \n VALUES".to_string();
+    "INSERT INTO P1_NAME (idname1, idname2".to_string();
+    
+    request = request
+        .replace("NAME",  &relation_name.to_uppercase())
+        .replace("name1", &table_name1.to_lowercase())
+        .replace("name2", &table_name2.to_lowercase());
+    if price {
+        request.push_str(", prixNAME");
+        request = request.replace("NAME", &relation_name.to_lowercase());
+    }
+    if duree {
+        request.push_str(", dureedebutNAME, dureefinNAME");
+        request = request.replace("NAME", &relation_name.to_lowercase());
+    }
+    request.push_str(") \n VALUES");
+
+    for i in 0..amount {
+        
+        if frequence != 0{
+        // only 1/frequence of all name1 and name2 will be associate
+            if i%frequence==0 {
+                    let mut foo =
+                    "\n (idname1, idname2".to_string();
+                    if price {
+                        foo.push_str(", prix");
+                        foo = foo.replace("prix", &create_price().to_string());
+                    }
+                    if duree {
+                        foo.push_str(", dureeD, dureeF");
+                        foo = foo.replace("dureeD", &create_date(true).to_string());
+                        foo = foo.replace("dureeF", &create_date(false).to_string());
+                    }
+                    foo.push_str("),");
+                    let mut foobar = foo.replace("idname1", &(i+2).to_string());//or choose from idart directly // avoid none existant key (0 and 1 doesn't exist on idart)
+                    foobar = foobar.replace("idname2", &(i+2).to_string());
+                    request.push_str(&foobar);
+            }
+        }
+        else {
+            let mut foo =
+            "\n (idname1, idname2".to_string();
+            if price {
+                foo.push_str(", prix");
+                foo = foo.replace("prix", &create_price().to_string());
+            }
+            if duree {
+                foo.push_str(", dureeD, dureeF");
+                foo = foo.replace("dureeD", &create_date(true).to_string());
+                foo = foo.replace("dureeF", &create_date(false).to_string());
+            }
+            foo.push_str("),");
+            let mut foobar = foo.replace("idname1", &(i+2).to_string());//or choose from idart directly // avoid none existant key (0 and 1 doesn't exist on idart)
+            foobar = foobar.replace("idname2", &(i+2).to_string());
+            request.push_str(&foobar);
+        }
+        
+    }
+    // end the request with a ';' and
+    // remove the last ',' which cause error
+    request.push_str(";END");
+    request = request.replace(",;END","; \n \n");
+
+    request
+}
+
+/**
+ * I use the frequence to also choose whenever a art is still owned or selled
+ */
+fn create_possede(relation_name:String, table_name1: String,
+                  table_name2: String, amount: i32, frequence: i32,) -> String
+{
+    let mut request: String =
+    "INSERT INTO P1_NAME (idname1, idname2, prixachat, prixvente, datedebutNAME, datefinNAME) \n VALUES".to_string();
     request = request
         .replace("NAME",  &relation_name.to_uppercase())
         .replace("name1", &table_name1.to_lowercase())
@@ -296,19 +373,35 @@ fn create_insert_relations(relation_name:String, table_name1: String,
         if frequence != 0{
         // only 1/frequence of all name1 and name2 will be associate
             if i%frequence==0 {
-                let foo =
-                "\n (idname1, idname2),".to_string();
-                let mut foobar = foo.replace("idname1", &i.to_string());
-                foobar = foobar.replace("idname2", &i.to_string());
-                request.push_str(&foobar);
+                    let foo =
+                    "\n (idname1, idname2, prixB, prixS, dureeD, dureeF),".to_string();
+                    let mut foobar = foo.replace("idname1", &(i+2).to_string());//or choose from idart directly
+                    foobar = foobar.replace("idname2", &(i+2).to_string());
+                    foobar = foobar.replace("prixB", &create_price().to_string());
+                    foobar = foobar.replace("dureeD", &create_date(true).to_string());
+                    if i%frequence==0 {
+                        foobar = foobar.replace("prixS", &create_price().to_string());
+                        foobar = foobar.replace("dureeF", &create_date(false).to_string());
+                    }
+    
+                    request.push_str(&foobar);
+                
             }
         }
         else {
             let foo =
-            "\n (idname1, idname2),".to_string();
-            let mut foobar = foo.replace("idname1", &i.to_string());
-            foobar = foobar.replace("idname2", &i.to_string());
+            "\n (idname1, idname2, prixB, prixS, dureeD, dureeF),".to_string();
+            let mut foobar = foo.replace("idname1", &(i+2).to_string());//or choose from idart directly
+            foobar = foobar.replace("idname2", &(i+2).to_string());
+            foobar = foobar.replace("prixB", &create_price().to_string());
+            foobar = foobar.replace("dureeD", &create_date(true).to_string());
+            if i%frequence==0 {
+                foobar = foobar.replace("prixS", &create_price().to_string());
+                foobar = foobar.replace("dureeF", &create_date(false).to_string());
+            }
+
             request.push_str(&foobar);
+            
         }
         
     }
@@ -330,7 +423,7 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
 
     //--COMM-PRISEURS-------------------------------------------------------------------------------
 
-    let commissaire = create_insert_humans("commissaires-priseurs", amount_of_each, false, false, false);
+    let commissaire = create_insert_humans("commissaire_priseur", amount_of_each, false, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&commissaire);
 
@@ -379,6 +472,8 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
 
     //--MARCHE--------------------------------------------------------------------------------------
 
+//TODO: add idcommissaire into  marche atm, only 0 is ON
+
     let marche = create_insert_organisations("marche".to_string(), amount_of_each,
                                      false, true, true, false);
     number_of_creation +=amount_of_each;
@@ -396,69 +491,68 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
 
     //--AIDE---------------------------------------------------------------------
     let help = create_insert_relations("aide".to_string(), "mecene".to_string(),
-                               "artist".to_string(), amount_of_each, 8);
+                               "artiste".to_string(), amount_of_each, 8, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&help);
 
-    //--DIRIGE-------------------------------------------------------------------
-    let dirige = create_insert_relations("dirige".to_string(), "commissaires-priseurs".to_string(),
-                               "marche".to_string(), amount_of_each, 0);
-    number_of_creation +=amount_of_each;
-    request.push_str(&dirige);
+    // //--DIRIGE-------------------------------------------------------------------
+    // let dirige = create_insert_relations("dirige".to_string(), "commissaire_priseur".to_string(),
+    //                            "marche".to_string(), amount_of_each, 0, false, false);
+    // number_of_creation +=amount_of_each;
+    // request.push_str(&dirige);
 
     //--PARTICIPE----------------------------------------------------------------
     let participe = create_insert_relations("participe".to_string(), "creancier".to_string(),
-                               "marche".to_string(), amount_of_each, 4);
+                               "marche".to_string(), amount_of_each, 4, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&participe);
 
     //--POSSEDE------------------------------------------------------------------
     
-    // TODO : CONFLICT with vend
-    let own = create_insert_relations("possede".to_string(), "creancier".to_string(),
-                               "art".to_string(), amount_of_each, 2);
+    let own = create_possede("possede".to_string(), "creancier".to_string(),
+                             "art".to_string(), amount_of_each, 2);
     number_of_creation +=amount_of_each;
     request.push_str(&own);
 
     //--RESTAURE-----------------------------------------------------------------
     let restore = create_insert_relations("restaure".to_string(), "restaurateur".to_string(),
-                               "art".to_string(), amount_of_each, 18);
+                               "art".to_string(), amount_of_each, 18, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&restore);
 
     //--PRET---------------------------------------------------------------------
     let loan = create_insert_relations("pret".to_string(), "musee".to_string(),
-                               "art".to_string(), amount_of_each, 20);
+                               "art".to_string(), amount_of_each, 20, false, true);
     number_of_creation +=amount_of_each;
     request.push_str(&loan);
 
     //--EXPOSE-------------------------------------------------------------------
     let expose = create_insert_relations("expose".to_string(), "galerie".to_string(),
-                               "art".to_string(), amount_of_each, 25);
+                               "art".to_string(), amount_of_each, 25, false, true);
     number_of_creation +=amount_of_each;
     request.push_str(&expose);
 
     //--EXPERTISE----------------------------------------------------------------
     let expertise = create_insert_relations("expertise".to_string(), "expert".to_string(),
-                                    "art".to_string(), amount_of_each, 4);
+                                    "art".to_string(), amount_of_each, 4, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&expertise);
 
     //--JUGE---------------------------------------------------------------------
     let juge = create_insert_relations("juge".to_string(), "critique".to_string(),
-                               "art".to_string(), amount_of_each, 2);
+                               "art".to_string(), amount_of_each, 2, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&juge);
 
 
 //--WRITING------------------------------------------------------------------------------------
     
-    println!("humans created: {}", number_of_creation);
-    println!("--------create_.txt---------");
+    println!("inserts created: {}", number_of_creation);
+    println!("--------create_.sql---------");
 
     // /private/student/n/in/fepain/R/art-manipulation/RENDU/humans.txt
-    // E:/Code/projects_rust/art-manipulation/RENDU/humans.txt
-	fs::write("/Users/Shared/bureau/2) FLO/R/art-manipulation/Part1/requestINSERTbasicHumanRELATION.sql",
+    // E:/Code/projects_rust/art-manipulation/Part1/indv/insertFictivs.sql
+	fs::write("E:/Code/projects_rust/art-manipulation/Part1/indv/insertFictivs.sql",
 			  request)
 		.expect("Unable to write file");
 }

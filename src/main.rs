@@ -26,7 +26,7 @@ struct Artist {
 
 fn convert_artists() -> Result<()>
 {
-    let path = "E:/Code/projects Rust/MoMA/Artists-reformed.json";
+    let path = "E:/Code/projects_rust/MoMA/Artists-reformed.json";
 	// the file : E:/Code/projects Rust/MoMA/Artists-reformed.json
 	// the file : /private/student/n/in/fepain/R/art-manipulation/MoMA/Artists-reformed.json
 
@@ -76,9 +76,9 @@ fn convert_artists() -> Result<()>
     println!("--------create_.sql---------");
 
     // "/private/student/n/in/fepain/R/art-manipulation/RENDU/insert_artists.txt"
-    // "E:/Code/projects Rust/art-manipulation/RENDU/insert_artists.txt"
-	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/insert_artists.sql",
-			 foo)
+    // "E:/Code/projects Rust/art-manipulation/Part1/indv/insert_artists.sql"
+	fs::write("E:/Code/projects_rust/art-manipulation/Part1/indv/insert_artists.sql",
+	    	 foo)
 		.expect("Unable to write file");
 
     Ok(())
@@ -128,8 +128,10 @@ fn convert_artworks() -> Result<()>
 	println!("--------create_request---------");
 
     let mut foo =
-    "INSERT INTO P1_ART (idart, titre, typeArt, cote, dateCreation)
-    \n VALUES ".to_string();
+    "INSERT INTO P1_ART (idart, titre, typeArt, cote) 
+    \n VALUES ".to_string(); 
+    
+    //, dateCreation)
 
     for artwork in artworks
     {
@@ -153,13 +155,16 @@ fn convert_artworks() -> Result<()>
         //TODO : find potential ' and replace them by a space
 
         let foobar =
-        "\n (id,'title', 'medium', cote, date)";
+        "\n (id,'title', 'medium', cote)"; 
+        //, date)";
         let mut artwork_n = foobar.replace("id", &artwork.object_id.to_string());
         artwork_n = artwork_n.replace("title", &artwork_title.replace("\\", ""));
         // how on earth you can accept '\' in a user insertion... 
         artwork_n = artwork_n.replace("medium", &artwork_medium.replace("'", " ").replace("\\", ""));
         artwork_n = artwork_n.replace("cote", &create_fictional_human::create_reputation(0,0).to_string());
-        artwork_n = artwork_n.replace("date", &artwork_date.to_string());
+        
+        // artwork_n = artwork_n.replace("date", &artwork_date.to_string());
+        
         foo.push_str(&artwork_n);
 
         foo.push(','); // have to remove the last one
@@ -170,7 +175,7 @@ fn convert_artworks() -> Result<()>
 
     println!("--------create_.sql---------");
 
-	fs::write("E:/Code/projects_rust/art-manipulation/RENDU/insert_artworks.sql",
+	fs::write("E:/Code/projects_rust/art-manipulation/Part1/indv/insert_artworks.sql",
 			 foo)
 		.expect("Unable to write file");
 
@@ -206,7 +211,7 @@ fn convert_association() -> Result<()>
     println!("--association_artists_artworks--");
 
     let mut association =
-    "INSERT INTO CREE (idartiste, idart)
+    "INSERT INTO P1_CREE (idartiste, idart)
     \n VALUES ".to_string();
 
     println!("--idArt now--");
@@ -236,8 +241,7 @@ fn convert_association() -> Result<()>
 
     println!("--------create_.sql---------");
 
-    // "E:/Code/projects Rust/art-manipulation/RENDU/insert_artworks.txt"
-	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/insert_cree.sql",
+	fs::write("E:/Code/projects_rust/art-manipulation/Part1/indv/insert_cree.sql",
 			 association)
 		.expect("Unable to write file");
 
@@ -290,7 +294,7 @@ fn create_vec_nationality() -> Result<()>
 
     println!("--------create_.txt---------");
 
-	fs::write("E:/Code/projects Rust/art-manipulation/RENDU/nationality.txt",
+	fs::write("E:/Code/projects Rust/art-manipulation/PArt1/indv/nationality.txt",
 			 foo)
 		.expect("Unable to write file");
 
@@ -310,7 +314,7 @@ fn main() {
 
     println!("--artworks now--");
 
-    convert_artworks().unwrap();
+    // convert_artworks().unwrap();
 
     println!("--associations now--");
 
@@ -322,7 +326,7 @@ fn main() {
 
     println!("--creation_human--");
 
-    // create_fictional_human::create_requests(500);
+    create_fictional_human::create_requests(500);
 
     println!("--create arstist table--");
 
