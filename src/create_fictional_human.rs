@@ -1,7 +1,10 @@
 use rand::{thread_rng, Rng};
 use rand::prelude::SliceRandom;
 
+use serde::{Deserialize, Serialize};
+use serde_json::{Result};
 use std::fs;
+
 
 static LIST_FIRST_NAME: &'static [&str] = &["Adrien", "Nelson", "Benoit", "Morgan", "Florian",
 "Thomas", "Maeto", "Clementine", "Stephane", "Otto", "Jan", "Patrick", "Rudolf", "Pietra",
@@ -29,6 +32,45 @@ static LIST_ARTWORK_TYPE: &'static [&str] = &["Sculture", "Paint", "Ceramics", "
 "Stained Glass Art"];
 
 static LIST_ASSOCIATION: &'static [&str] = &["None", ""];
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Artist {
+	constituent_id: i128,
+	display_name: String,
+	artist_bio: Option<String>,
+	nationality: Option<String>,
+	gender: Option<String>,
+	begin_date: i16,
+	end_date: i16,
+	wiki_qid: Option<String>, 
+	ulan: Option<String>
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Artwork {
+  title: String,
+  artist: Vec<String>,
+  constituent_id: Vec<i32>,
+  artist_bio: Vec<String>,
+  nationality: Vec<String>,
+  begin_date: Vec<i32>,
+  end_date: Vec<i32>,
+  gender: Vec<String>,
+  date: Option<String>,
+  medium: Option<String>,
+  dimensions: Option<String>,
+  credit_line: Option<String>,
+  accession_number: Option<String>,
+  classification: Option<String>,
+  department: Option<String>,
+  date_acquired: Option<String>,
+  cataloged: Option<String>,
+  object_id: i32,
+  url: Option<String>,
+  thumbnail_url: Option<String>,
+//   height_cm: f32,
+//   width_cm: f32
+}
 
 /*
  * cste to keep the unique propriety of id sql
@@ -356,14 +398,53 @@ fn create_insert_relations(relation_name:String, table_name1: String,
             }
         }
 
-        // or choose from idart directly
-        // &(i+2) instead of &i avoid none existant key (0 and 1 doesn't exist on idart)
-        // atm there a 1/2 filter on this side too
-        let mut foobar = foo.replace("idname1", &(i+2).to_string());
-        foobar = foobar.replace("idname2", &(i+2).to_string());
+        // We're selecting directly from .json
+
+        let mut rng = thread_rng();
+        let mut foobar: String;
+
+        // Select randomly a constituent_id which EXIST
+        if table_name2 == "artiste" {
+            let path = "E:/Code/projects_rust/MoMA/Artists-reformed.json";
+	
+	        let content = fs::read_to_string(path)
+		        .expect("Unable to read file");
+
+	        println!("-----read_.json-----");
+	
+            let artists: Vec<Artist> = serde_json::from_str(&content).unwrap();
+
+            foobar = foo.replace("idname1", &i.to_string());
+            foobar = foobar.replace("idname2", &artists[rng.gen_range(0.. artists.len())]
+                                                        .constituent_id
+                                                        .to_string());
+
+        }else if table_name2 == "art" {
+            let path = "E:/Code/projects_rust/MoMA/Artworks-reformed.json";
+	
+	        let content = fs::read_to_string(path)
+		        .expect("Unable to read file");
+
+	        println!("-----read_.json-----");
+	
+            let artworks: Vec<Artwork> = serde_json::from_str(&content).unwrap();
+
+
+            foobar = foo.replace("idname1", &i.to_string());
+            foobar = foobar.replace("idname2", &artworks[rng.gen_range(0.. artworks.len())]
+                                                        .object_id
+                                                        .to_string());
+
+        }else {
+            foobar = foo.replace("idname1", &i.to_string());
+            foobar = foobar.replace("idname2", &i.to_string());
+        }
+
+
                     
         foobar.push_str("),");
 
+        // After creating the whole line, we decide if we keep it based on the frequency
         if (i%frequence)==0 {
             request.push_str(&foobar);
         }
