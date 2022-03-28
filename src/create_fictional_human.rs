@@ -282,13 +282,14 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
 }
 
 /**
- * frequence: if 0 -> no condition whatsoever (no filter),
+ * frequence: if 0 -> Err
+ *            if 1 -> no condition whatsoever (no filter),
  *            if 8 -> condition 1/8 (only 1/8 will be associate)
- * don't handle insert attributefor POSSEDE and PARTICIPE
+ * don't handle insert attribute for PARTICIPE
  */
 fn create_insert_relations(relation_name:String, table_name1: String,
                     table_name2: String, amount: i32, frequence: i32,
-                    price: bool, duree: bool) -> String
+                    price: bool, duree: bool, possede: bool) -> String
 {
     let mut request: String =
     "INSERT INTO P1_NAME (idname1, idname2".to_string();
@@ -298,8 +299,14 @@ fn create_insert_relations(relation_name:String, table_name1: String,
         .replace("name1", &table_name1.to_lowercase())
         .replace("name2", &table_name2.to_lowercase());
     if price {
-        request.push_str(", prixNAME");
-        request = request.replace("NAME", &relation_name.to_lowercase());
+
+        if possede {
+            request.push_str(", prixAchat");
+            request.push_str(", prixVente");
+        }else {
+            request.push_str(", prixNAME");
+            request = request.replace("NAME", &relation_name.to_lowercase());
+        }
     }
     if duree {
         request.push_str(", dureedebutNAME, dureefinNAME");
@@ -309,101 +316,57 @@ fn create_insert_relations(relation_name:String, table_name1: String,
 
     for i in 0..amount {
         
-        if frequence != 0{
         // only 1/frequence of all name1 and name2 will be associate
-            if i%frequence==0 {
-                    let mut foo =
-                    "\n (idname1, idname2".to_string();
-                    if price {
-                        foo.push_str(", prix");
-                        foo = foo.replace("prix", &create_price().to_string());
-                    }
-                    if duree {
-                        foo.push_str(", dureeD, dureeF");
-                        foo = foo.replace("dureeD", &create_date(true).to_string());
-                        foo = foo.replace("dureeF", &create_date(false).to_string());
-                    }
-                    foo.push_str("),");
-                    let mut foobar = foo.replace("idname1", &(i+2).to_string());//or choose from idart directly // avoid none existant key (0 and 1 doesn't exist on idart)
-                    foobar = foobar.replace("idname2", &(i+2).to_string());
-                    request.push_str(&foobar);
+
+        let mut foo =
+        "\n (idname1, idname2".to_string();
+
+
+        if price {
+            if possede {
+                foo.push_str(", prixAchat, prixVente");
+                foo = foo.replace("prixAchat", &create_price().to_string());
+                // I use the frequence to also choose whenever a art is still owned or selled atm : 1/1
+
+                if i%(frequence)==0 { 
+                    foo = foo.replace("prixVente", &create_price().to_string());
+                }else {
+                    foo = foo.replace("prixVente", " ");
+                }
             }
-        }
-        else {
-            let mut foo =
-            "\n (idname1, idname2".to_string();
-            if price {
+            else {
                 foo.push_str(", prix");
                 foo = foo.replace("prix", &create_price().to_string());
             }
-            if duree {
-                foo.push_str(", dureeD, dureeF");
-                foo = foo.replace("dureeD", &create_date(true).to_string());
-                foo = foo.replace("dureeF", &create_date(false).to_string());
-            }
-            foo.push_str("),");
-            let mut foobar = foo.replace("idname1", &(i+2).to_string());//or choose from idart directly // avoid none existant key (0 and 1 doesn't exist on idart)
-            foobar = foobar.replace("idname2", &(i+2).to_string());
-            request.push_str(&foobar);
-        }
-        
-    }
-    // end the request with a ';' and
-    // remove the last ',' which cause error
-    request.push_str(";END");
-    request = request.replace(",;END","; \n \n");
-
-    request
-}
-
-/**
- * I use the frequence to also choose whenever a art is still owned or selled
- */
-fn create_possede(relation_name:String, table_name1: String,
-                  table_name2: String, amount: i32, frequence: i32,) -> String
-{
-    let mut request: String =
-    "INSERT INTO P1_NAME (idname1, idname2, prixachat, prixvente, datedebutNAME, datefinNAME) \n VALUES".to_string();
-    request = request
-        .replace("NAME",  &relation_name.to_uppercase())
-        .replace("name1", &table_name1.to_lowercase())
-        .replace("name2", &table_name2.to_lowercase());
-    for i in 0..amount {
-        
-        if frequence != 0{
-        // only 1/frequence of all name1 and name2 will be associate
-            if i%frequence==0 {
-                    let foo =
-                    "\n (idname1, idname2, prixB, prixS, dureeD, dureeF),".to_string();
-                    let mut foobar = foo.replace("idname1", &(i+2).to_string());//or choose from idart directly
-                    foobar = foobar.replace("idname2", &(i+2).to_string());
-                    foobar = foobar.replace("prixB", &create_price().to_string());
-                    foobar = foobar.replace("dureeD", &create_date(true).to_string());
-                    if i%frequence==0 {
-                        foobar = foobar.replace("prixS", &create_price().to_string());
-                        foobar = foobar.replace("dureeF", &create_date(false).to_string());
-                    }
-    
-                    request.push_str(&foobar);
-                
-            }
-        }
-        else {
-            let foo =
-            "\n (idname1, idname2, prixB, prixS, dureeD, dureeF),".to_string();
-            let mut foobar = foo.replace("idname1", &(i+2).to_string());//or choose from idart directly
-            foobar = foobar.replace("idname2", &(i+2).to_string());
-            foobar = foobar.replace("prixB", &create_price().to_string());
-            foobar = foobar.replace("dureeD", &create_date(true).to_string());
-            if i%frequence==0 {
-                foobar = foobar.replace("prixS", &create_price().to_string());
-                foobar = foobar.replace("dureeF", &create_date(false).to_string());
-            }
-
-            request.push_str(&foobar);
             
         }
-        
+        if duree {
+            foo.push_str(", dateD, dateF");
+            foo = foo.replace("dateD", &create_date(true).to_string());
+            if possede {
+                // 1/1 des oeuvres ont déja été vendu
+                if (i%frequence)==0 { 
+                    // make it after dureeD but not in the FUTURE
+                    foo = foo.replace("dateF", &create_date(true).to_string()); 
+                }else {
+                    foo = foo.replace("dateF", " ");
+                }
+            }else {
+                foo = foo.replace("dateF", &create_date(false).to_string());
+            }
+        }
+
+        // or choose from idart directly
+        // &(i+2) instead of &i avoid none existant key (0 and 1 doesn't exist on idart)
+        // atm there a 1/2 filter on this side too
+        let mut foobar = foo.replace("idname1", &(i+2).to_string());
+        foobar = foobar.replace("idname2", &(i+2).to_string());
+                    
+        foobar.push_str("),");
+
+        if (i%frequence)==0 {
+            request.push_str(&foobar);
+        }
     }
     // end the request with a ';' and
     // remove the last ',' which cause error
@@ -491,7 +454,7 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
 
     //--AIDE---------------------------------------------------------------------
     let help = create_insert_relations("aide".to_string(), "mecene".to_string(),
-                               "artiste".to_string(), amount_of_each, 8, true, false);
+                               "artiste".to_string(), amount_of_each, 8, true, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&help);
 
@@ -503,44 +466,44 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
 
     //--PARTICIPE----------------------------------------------------------------
     let participe = create_insert_relations("participe".to_string(), "creancier".to_string(),
-                               "marche".to_string(), amount_of_each, 4, false, false);
+                               "marche".to_string(), amount_of_each, 4, false, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&participe);
 
     //--POSSEDE------------------------------------------------------------------
     
-    let own = create_possede("possede".to_string(), "creancier".to_string(),
-                             "art".to_string(), amount_of_each, 2);
+    let own = create_insert_relations("possede".to_string(), "creancier".to_string(),
+                             "art".to_string(), amount_of_each, 2, true, true, true);
     number_of_creation +=amount_of_each;
     request.push_str(&own);
 
     //--RESTAURE-----------------------------------------------------------------
     let restore = create_insert_relations("restaure".to_string(), "restaurateur".to_string(),
-                               "art".to_string(), amount_of_each, 18, true, false);
+                               "art".to_string(), amount_of_each, 18, true, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&restore);
 
     //--PRET---------------------------------------------------------------------
     let loan = create_insert_relations("pret".to_string(), "musee".to_string(),
-                               "art".to_string(), amount_of_each, 20, false, true);
+                               "art".to_string(), amount_of_each, 20, false, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&loan);
 
     //--EXPOSE-------------------------------------------------------------------
     let expose = create_insert_relations("expose".to_string(), "galerie".to_string(),
-                               "art".to_string(), amount_of_each, 25, false, true);
+                               "art".to_string(), amount_of_each, 25, false, true, false);
     number_of_creation +=amount_of_each;
     request.push_str(&expose);
 
     //--EXPERTISE----------------------------------------------------------------
     let expertise = create_insert_relations("expertise".to_string(), "expert".to_string(),
-                                    "art".to_string(), amount_of_each, 4, false, false);
+                                    "art".to_string(), amount_of_each, 4, false, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&expertise);
 
     //--JUGE---------------------------------------------------------------------
     let juge = create_insert_relations("juge".to_string(), "critique".to_string(),
-                               "art".to_string(), amount_of_each, 2, true, false);
+                               "art".to_string(), amount_of_each, 1, true, false, false);
     number_of_creation +=amount_of_each;
     request.push_str(&juge);
 
