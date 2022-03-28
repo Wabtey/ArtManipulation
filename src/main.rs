@@ -256,7 +256,7 @@ fn convert_association() -> Result<()>
 fn create_vec_nationality() -> Result<()>
 {
 
-    let path = "E:/Code/projects Rust/MoMA/Artists-reformed.json";
+    let path = "E:/Code/projects_rust/MoMA/Artists-reformed.json";
 	
 	let content = fs::read_to_string(path)
 		.expect("Unable to read file");
@@ -270,7 +270,6 @@ fn create_vec_nationality() -> Result<()>
     let mut foo =
     "static LIST_NATIONALITY: &'static [&str] = &[".to_string();
 
-    //pb : doublon
     for artist in artists
     {
         let artist_nationality: &str=
@@ -294,16 +293,13 @@ fn create_vec_nationality() -> Result<()>
 
     println!("--------create_.txt---------");
 
-	fs::write("E:/Code/projects Rust/art-manipulation/PArt1/indv/nationality.txt",
+	fs::write("E:/Code/projects_rust/art-manipulation/Part1/indv/nationality.txt",
 			 foo)
 		.expect("Unable to write file");
 
     Ok(())
 
 }
-
-
-
 
 fn main() {
     println!("Art is dead !");
@@ -314,7 +310,7 @@ fn main() {
 
     println!("--artworks now--");
 
-    convert_artworks().unwrap();
+    // convert_artworks().unwrap();
 
     println!("--associations now--");
 
@@ -326,7 +322,7 @@ fn main() {
 
     println!("--creation_human--");
 
-    // create_fictional_human::create_requests(500);
+    create_fictional_human::create_requests(500);
 
     println!("--create arstist table--");
 
