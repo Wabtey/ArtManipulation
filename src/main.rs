@@ -314,7 +314,7 @@ fn main() {
 
     println!("--artworks now--");
 
-    // convert_artworks().unwrap();
+    convert_artworks().unwrap();
 
     println!("--associations now--");
 
@@ -326,7 +326,7 @@ fn main() {
 
     println!("--creation_human--");
 
-    create_fictional_human::create_requests(500);
+    // create_fictional_human::create_requests(500);
 
     println!("--create arstist table--");
 
