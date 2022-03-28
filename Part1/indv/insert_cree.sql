@@ -1,4 +1,4 @@
-INSERT INTO CREE (idartiste, idart)
+INSERT INTO P1_CREE (idartiste, idart)
     
  VALUES 
  (6210, 2),
