@@ -173,6 +173,24 @@ fn create_capital() -> i128 {
 }
 
 /**
+ * turn every number less than 10 to two digit number
+ * skip other number
+ * cause 2016-5-12 or 2032-01-2 
+ *      isn't accepted in SQL format (TODO: change date format sql ?)
+ */
+fn convert_to_twodigit(number: i32) -> String {
+    let n = number.to_string();
+    let mut temp = "".to_string();
+    if n.len() == 1 {
+        temp = "0".to_string();
+    }
+    temp.push_str(&n);
+      
+    temp
+}
+  
+
+/**
  * @param past : 'a future date' -> false | 'a past date' -> true
  * format : AAAA-MM-JJ
  */
@@ -180,8 +198,11 @@ fn create_date(past: bool) -> String{
     let mut rng = thread_rng();
 
     let mut date = "year-month-day".to_string();
-    let day = rng.gen_range(0..31); // dc about 31/02 or 31/04
-    let month = rng.gen_range(0..12);
+    let day = convert_to_twodigit(rng.gen_range(0..31)); // dc about 31/02 or 31/04
+    // let day_reformed = (day).to_string().padStart(2,0);
+    
+
+    let month = convert_to_twodigit(rng.gen_range(0..12));
     let year; //= 1445;
     if past {
         year = rng.gen_range(2003..2021);
@@ -190,8 +211,8 @@ fn create_date(past: bool) -> String{
         year = rng.gen_range(2022..2030);
     }
     
-    date = date.replace("day", &day.to_string());
-    date = date.replace("month", &month.to_string());
+    date = date.replace("day", &day);
+    date = date.replace("month", &month);
     date = date.replace("year", &year.to_string());
 
     date.to_string()
