@@ -1,26 +1,26 @@
 P1_EXPERT : idExpert, nomExpert, typeExpert, nationaliteExpert
 P1_EXPERTISE, 1N P1_EXPERT, 0N P1_ART
-P1_POSSEDE, 0N P1_CREANCIER, 0N P1_ART : prixAchat, prixvente, dateDebut, dateFin
+P1_POSSEDE, 0N P1_CREANCIER, 0N P1_ART : prixAchat, prixVente, dateDebutPossede, dateFinPossede
 P1_CREANCIER : idCreancier, nomCreancier, capitalCreancier, nationaliteCreancier
 P1_PARTICIPE, 0N P1_CREANCIER, 0N P1_MARCHE
-P1_MARCHE : idMarche, nomMarche, dateMarche, prixEntryMarche, adresseMarche
+P1_MARCHE : idMarche, nomMarche, dateMarche, prixMarche, adresseMarche
 
 P1_RESTAURATEUR : idRestaurateur, nomRestaurateur, typeRestaurateur, nationaliteRestaurateur
-P1_RESTAURE, 1N P1_RESTAURATEUR, 0N P1_ART : prixRestauration
-P1_ART : idArt, titre, typeArt, cote, dateCreation
+P1_RESTAURE, 1N P1_RESTAURATEUR, 0N P1_ART : prixRestaure
+P1_ART : idArt, titre, typeArt, cote, dateArt
 P1_CREE, 0N P1_ARTISTE, 0N P1_ART
 P1_ARTISTE : idArtiste, nomArtiste, webArtiste, reputationArtiste, nationaliteArtiste
 P1_DIRIGE, 01 P1_COMMISSAIRES-PRISEURS, 11 P1_MARCHE
 
-P1_GALERIE : idGalerie, nomGalerie, dateGalerie, prixEntryExpo, association, adresseGalerie
-P1_EXPOSE, 0N P1_ART, NN P1_GALERIE : dureedebutExpo, dureefinExpo
-P1_PRET, 0N P1_ART, NN P1_MUSEE : dureedebutPret, dureefinPret
-P1_JUGE, 0N P1_CRITIQUE, 0N P1_ART : coteDonnee
-P1_AIDE, 0N P1_MECENE, 0N P1_ARTISTE : montantAide
-P1_COMMISSAIRES-PRISEURS : idCommissaire, nomCommissaire, nationaliteCommissaire
+P1_GALERIE : idGalerie, nomGalerie, dateGalerie, prixGalerie, association, adresseGalerie
+P1_EXPOSE, 0N P1_ART, NN P1_GALERIE : datedebutGalerie, datefinGalerie
+P1_PRET, 0N P1_ART, NN P1_MUSEE : datedebutPret, datefinPret
+P1_JUGE, 0N P1_CRITIQUE, 0N P1_ART : prixJuge
+P1_AIDE, 0N P1_MECENE, 0N P1_ARTISTE : prixAide
+P1_COMMISSAIRES-PRISEURS : idCommissaire_priseur, nomCommissaire_priseur, nationaliteCommissaire_priseur
 
 ::
-P1_MUSEE : idMusee, nomMusee, dateDeCreation, adresseMusee
+P1_MUSEE : idMusee, nomMusee, dateMusee, prixMusee, adresseMusee
 P1_CRITIQUE : idCritique, nomCritique, reputationCritique, nationaliteCritique
 P1_MECENE : idMecene, nomMecene, reputationMecene, capitalMecene, nationaliteMecene
 :
