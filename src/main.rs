@@ -55,7 +55,9 @@ fn convert_artists() -> Result<()>
 
         //
         let mut artist_web = artist.display_name
-            .replace(" ", ".").replace("'", "").replace(",","");
+            .replace(" ", ".")
+            .replace("'", "")
+            .replace(",","");
         artist_web.push_str(".org");
 
         let foobar =
@@ -67,10 +69,12 @@ fn convert_artists() -> Result<()>
         artist_n = artist_n.replace("nationality", &artist_nationality.replace("'", " "));
         foo.push_str(&artist_n);
         
-        foo.push(','); // have to remove the last one
+        // have to remove the last one
+        foo.push(',');
     }
     
-    foo.push_str(";END"); //to end the SQL request
+    // rm the last , and add a ; to end the SQL request
+    foo.push_str(";END");
     foo = foo.replace(",;END",";");
 
     println!("--------create_.sql---------");
@@ -131,7 +135,7 @@ fn convert_artworks() -> Result<()>
     "INSERT INTO P1_ART (idart, titre, typeArt, cote) 
     \n VALUES ".to_string(); 
     
-    //, dateCreation)
+    //, dateArt)
 
     for artwork in artworks
     {
@@ -152,8 +156,6 @@ fn convert_artworks() -> Result<()>
 
         let artwork_title = artwork.title.replace("'", " ");
 
-        //TODO : find potential ' and replace them by a space
-
         let foobar =
         "\n (id,'title', 'medium', cote)"; 
         //, date)";
@@ -163,14 +165,17 @@ fn convert_artworks() -> Result<()>
         artwork_n = artwork_n.replace("medium", &artwork_medium.replace("'", " ").replace("\\", ""));
         artwork_n = artwork_n.replace("cote", &create_fictional_human::create_reputation(0,0).to_string());
         
+        // atm the date attrb can contain sentences so ... no
         // artwork_n = artwork_n.replace("date", &artwork_date.to_string());
         
         foo.push_str(&artwork_n);
 
-        foo.push(','); // have to remove the last one
+        // have to remove the last one
+        foo.push(',');
     }
     
-    foo.push_str(";END"); //to end the SQL request
+    // rm the last , and add a ; to end the SQL request
+    foo.push_str(";END");
     foo = foo.replace(",;END",";");
 
     println!("--------create_.sql---------");
