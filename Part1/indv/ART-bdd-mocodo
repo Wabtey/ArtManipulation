@@ -162,16 +162,17 @@ WHERE nomArtiste NOT IN (SELECT DISTINCT nomArtiste
 ;
 
 -- Une Division : Noms des Creanciers ayant possedé toutes les oeuvres d'art
-	--peut faire la même chose avec les Musees (Création d'une nouvelle table
-	--pour se rappeler par quels musées une oeuvre est passée : relation pret works)
+	-- peut faire la même chose avec les Musees (Création d'une nouvelle table
+	-- pour se rappeler par quels musées une oeuvre est passée : relation pret works)
 
 SELECT nomCreancier
 FROM P1_CREANCIER
 WHERE (SELECT COUNT(DISTINCT *)
        FROM P1_POSSEDE
-       WHERE P1_POSSEDE.idART = P1_ART.idArt --P1_POSSEDE.#idArt
-       AND   P1_POSSEDE.idCreancier = P1_CREANCIER.idCreancier)
-      = (SELECT COUNT(DISTINCT *) from P1_ART)
+       WHERE P1_POSSEDE.idART = P1_ART.idArt -- P1_POSSEDE.#idArt
+       AND   P1_POSSEDE.idCreancier = P1_CREANCIER.idCreancier
+       GROUP BY P1_ART.idart)
+      = (SELECT COUNT(DISTINCT *) from P1_ART GROUP BY P1_ART.idart)
 ;
 
 -- Un Group By :
