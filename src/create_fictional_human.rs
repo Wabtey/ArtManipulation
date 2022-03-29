@@ -198,7 +198,8 @@ fn create_date(past: bool) -> String{
     let mut rng = thread_rng();
 
     let mut date = "year-month-day".to_string();
-    let day = convert_to_twodigit(rng.gen_range(0..31)); // dc about 31/02 or 31/04
+    // dc about 31/02 or 31/04
+    let day = convert_to_twodigit(rng.gen_range(0..31));
     // let day_reformed = (day).to_string().padStart(2,0);
     
 
@@ -315,12 +316,10 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
     let mut request: String =
     "INSERT INTO P1_NAME (idname, nomname, "
         .to_string();
-    if creation_date {
-        request.push_str("datename, ");
-    }
-    // careful about this else which can conflict
+
+    // careful about this condition which can conflict
     // with future change on mocodoStructre
-    else if rdv_date { 
+    if creation_date | rdv_date{
         request.push_str("datename, ");
     }
     if price {
@@ -356,7 +355,7 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
         if creation_date | rdv_date {
             //if rdv_date means !creation_date
             
-            orga_n.push_str("date, ");   // same care here
+            orga_n.push_str("'date', ");   // same care here
             orga_n = orga_n.replace("date", &create_date(creation_date));
         }
         if price{
@@ -438,7 +437,7 @@ fn create_insert_relations(relation_name:String, table_name1: String,
 
     for i in 0..amount {
         
-        // only 1/frequence of all name1 and name2 will be associate
+
 
         let mut foo =
         "\n (idname1, idname2".to_string();
@@ -463,12 +462,15 @@ fn create_insert_relations(relation_name:String, table_name1: String,
             
         }
         if duree {
-            foo.push_str(", dateD, dateF");
+            foo.push_str(", 'dateD', 'dateF'");
             foo = foo.replace("dateD", &create_date(true).to_string());
             if relation_name=="possede" {
-                // 1/1 des oeuvres ont déja été vendu
+
                 if (i%frequence)==0 { 
-                    // make it after dureeD but not in the FUTURE
+                // 1/1 des oeuvres ont déja été vendu car tjrs vraie
+                // (volontaire ou presque)
+
+                    // make it after dateD but not in the FUTURE
                     foo = foo.replace("dateF", &create_date(true).to_string()); 
                 }else {
                     foo = foo.replace("dateF", " ");
@@ -494,7 +496,12 @@ fn create_insert_relations(relation_name:String, table_name1: String,
 
         }else if table_name2.to_lowercase() == "art" {
             foobar = foo.replace("idname1", &i.to_string());
-            foobar = foobar.replace("idname2", &artworks[rng.gen_range(0.. artworks.len())]
+            
+            // if you can't import 400K artwork into sql (weird.............)
+            // switch artworks.len() to the max number-1 of artwork you imported
+            // to avoid error on import of relation :
+            //      foreign key (on id which didn't exists)
+            foobar = foobar.replace("idname2", &artworks[rng.gen_range(0.. artworks.len())] 
                                                         .object_id
                                                         .to_string());
 
@@ -507,7 +514,9 @@ fn create_insert_relations(relation_name:String, table_name1: String,
                     
         foobar.push_str("),");
 
-        // After creating the whole line, we decide if we keep it based on the frequency
+        
+        // After creating the whole line, we decide if we keep it, based on the frequency
+        // only 1/frequence of all name1 and name2 will be associate
         if (i%frequence)==0 {
             request.push_str(&foobar);
         }
