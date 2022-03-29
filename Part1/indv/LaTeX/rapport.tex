@@ -52,7 +52,7 @@
        \text{???@etudiant.univ-rennes1.fr}
        
        \vspace{0.5cm}
-       \text{March 23, 2022}
+       \text{March 21, 2022}
 
    \end{center}
    
@@ -103,7 +103,7 @@ Contre-intuitivement, d'ultra-riche individus peuvent gagner en rentabilité en 
     Pour le cas des US -se trouve également en France-, lorsqu'un de ces individus opère une donation d'art à un musée -à but non-lucratif- il obtient une déduction de taxe.
     
         Pour un don d'une oeuvre valant 10 millions de \$\, la déduction d'impôt s'applique pour 10 millions, qui en théorie devrait leur profiter de 4 millions.
-    Etant donné la difficulté de determiner la valeur d'oeuvre, l'IRS (\href{https://www.irs.gov/}{Internal Revenue Service} : organisme de taxation des Etats Unis vis-à-vis de l'art) se voit surpayer 38\%\ des déductions de taxes comparement à la valeur établie plus tard. (source manquante dans la vidéo)
+    Etant donné la difficulté de determiner la valeur d'oeuvre, l'IRS (\href{https://www.irs.gov/about-irs}{Internal Revenue Service} : organisme de taxation des Etats Unis vis-à-vis de l'art) se voit surpayer 38\%\ des déductions de taxes comparement à la valeur établie plus tard. (source manquante dans la vidéo)
     
         En résumé, un ultra-riche pourrait acheter un pièce d'art pour 4millions.
         L'apprécier pendant quelque année, négocier pour une évaluation favorable, augmenter sa valeur, se baser sur le fait que l'IRS n'audite (ne contrôle) qu'une infime partie des oeuvres, faire la donation pour 10millions et il aura déjà atteint le seuil de rentabilité.
@@ -130,9 +130,9 @@ Comme représenté sur ce shéma mocodo : \ref{fig:MCD_last}
 
 Une pièce d'oeuvre d'art possède:
 \begin{itemize}[label=\(\blacktriangleright\)]
-    \item un numéro d'objet (unique);
-    \item un titre;
-    \item un medium (type);
+    \item un numéro d'objet (idart unique);
+    \item un titre (titre);
+    \item un medium (typeArt);
     \item une cote (la valeur estimée de l'oeuvre).
 \end{itemize}
 Nous avons décidé de séparer le créateur de la pièce, étant donné que son créateur peut etre inconnu ou en avoir plusieurs.
@@ -174,15 +174,16 @@ Un Artwork peut etre créé par personne ou plusieurs artistes. Et un artiste pe
 
 Les Mecenes sont peu majoritaire dans le marche de l'art,
 il s'agit surtout de créancier qui achetent directement à l'artiste. 
-Ils possèdent les attributs humains fixes, une réputation (même ordre que celle des les artistes) et leur patrimoine supposé (capital).
-Ces Mecènes peuvent ou pas AIDE un ou des artistes, représenté par une somme d'argent : montantAide 
+Ils possèdent les attributs humains fixes, une réputation (même ordre que celle des les artistes) et leur patrimoine supposé (capitalMecene).
+Ces Mecènes peuvent ou pas AIDE un ou des artistes, représenté par une somme d'argent : prixAide 
 
     
 \begin{multicols}{2}[]
 Les Créanciers sont principalement des commerciaux plutôt que des collectionneurs d'art. 
-Ils ont les attributs fixes et un capital.
-Ils peuvent vendre de l'art, à un certain prix (prixVente), à un certain moment (dateDeVente).
-Ils peuvent participer à un seul marché à la fois, dans lequel ils peuvent acheter/vendre des oeuvres répertoriée dans la relation PARTICIPE
+Ils ont les attributs fixes et un capitalCreancier.
+Ils peuvent vendre de l'art, à un certain prix (prixVente), à un certain moment (dateFinPossede).
+Ils peuvent participer à un seul marché à la fois, dans lequel ils peuvent acheter/vendre des oeuvres.
+Leur passage est répertorié dans la relation PARTICIPE.
 Pour les achats de crénacier à créancier privé (sans marché public) on passe par possede.
 \\ \\
 
@@ -190,13 +191,13 @@ Les Commissaires-priseurs ont seulement les attributs fixes.
 Ils peuvent diriger un marché.
 
 Pour qu'une oeuvre monte en valeur, et s'affiche mieux dans un immense salon,
-les Restaurateurs travaillent avec les Musées, les galeries et les collectionneurs d'art (créancier).
-Ils ont une spécialité (typeRestaurateur) sur laquelle ils travaillent un medium
-Ils sont en contact direct avec les oeuvres (relation RESTAURE: pour un certain prix (prixRestauration)).
+les Restaurateurs travaillent avec les Musées, les galeries et les collectioneurs d'art (créanciers).
+Ils ont une spécialité (typeRestaurateur) sur laquelle ils travaillent un medium.
+Ils sont en contact direct avec les oeuvres (relation RESTAURE: pour un certain prix (prixRestaure)).
 \\
 
     Les Critiques sont des personnes publiques émettant un jugement sur certaine oeuvre, mouvement d'art.
-Ils jouent un rôle important dans la monter de prix des oeuvres (relation JUGE: en donnant une cote -coteDonnee-).
+Ils jouent un rôle important dans la monter de prix des oeuvres (relation JUGE: en donnant une cote -prixJUGE-).
 \end{multicols}
 
 \clearpage
@@ -206,8 +207,8 @@ Leur collaboration avec le corps des galeries et créanciers est essentielle pou
 Prouver qu'une pièce est l'original peut faire grimper sa cote de plusieurs millions. \cite{Christ's_Portrait}
 \\
 
-Le marché devra être dirigé par un commissaire-priseur et peut avoir aucun ou plusieurs créanciers participant.
-Il s'agit de galerie privée, où le prix d'entrée (prixEntryMarche) vise à resteindre les acheteurs (n'avoir que la même 'clientèle').
+Le marché devra être dirigé par un seul commissaire-priseur et peut avoir aucun ou plusieurs créanciers participant.
+Il s'agit de galerie privée, où le prix d'entrée (prixMarche) vise à resteindre les acheteurs (n'avoir que la même 'clientèle').
 Ils sont unique et ne durent que le jour dateMarche*.
 Ces marchés peuvent être heberger par des organismes privés ou avoir des locaux fixes comme \href{https://fr.wikipedia.org/wiki/Christie's}{Christies's} ou \href{https://fr.wikipedia.org/wiki/Sotheby's}{Sotheby's}.
 Il se déroule à un certain moment (dateMarche), rendez vous à ne pas manquer pour repérer les fluctuations de prix et certaines oeuvres qui peuvent se rentabiliser.
@@ -217,16 +218,16 @@ Les Galeries et les Musées sont des organismes présentant des oeuvres (EXPOSE 
 elles ne peuvent pas ouvrir si ces organismes n'ont pas assez d'oeuvres à exposer. 
 (cardinalité N N).
 Une oeuvre peut etre exposée / pretée plusieurs fois, pour garder l'historique.
-Les attributs dureedebut / dureefin (dureedebutExpo/dureefinExpo et dureedebutPret/dureefinPret resp) correspond à deux DATEs entre laquelle la galerie ou le musée dispose de l'oeuvre.
+Les attributs datedebut / datefin (datedebutExpose/datefinExpose et datedebutPret/dureefinPret resp) correspondent à deux dates entre laquelle la galerie ou le musée dispose de l'oeuvre.
 
 
 \href{https://fr.wikipedia.org/wiki/Musée}{D'après l'ICOM}, un musée est une institution permanente sans but lucratif au service de la société et de son développement ouverte au public, qui acquiert, conserve, étudie, expose et transmet le patrimoine matériel et immatériel de l’humanité et de son environnement à des fins d'études, d'éducation et de délectation. 
-Le musée doit avoir une dateCreation* et une adresseMusee*.
+Le musée doit avoir une date de Creation: dateMusee* et une adresseMusee*.
 
 Une galerie à une date de creation ou date d'evenement pour les galeries temporaires (dateGalerie).
-Un prixEntryExpo, pouvant dépassant les centaines de milliers de dollars.
+Un prix d'entré : prixGalerie, pouvant dépassant les centaines de milliers de dollars voire le million.
 Une galerie peut reverser les gains à une association. (smiley qui sourit)
-Une galerie peut être à l'extérieur, à l'intérieur dans des locaux fixes ou mobiles.
+Une galerie peut être à l'extérieur, à l'intérieur dans des locaux fixes ou mobiles : adresseGalerie.
 
 
 
@@ -236,7 +237,7 @@ Une galerie peut être à l'extérieur, à l'intérieur dans des locaux fixes ou
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=1\textwidth]{new_mocodo.png}
+\includegraphics[width=1\textwidth]{meilleur_blanc_new_du_new_mocodo.png}
 \caption{\label{fig:MCD_last}Schéma Mocodo Revisité.}
 \end{figure}
 
@@ -247,26 +248,28 @@ Une galerie peut être à l'extérieur, à l'intérieur dans des locaux fixes ou
 
 \section{Modèle relationnel}
 \subsection{Application règle 1}
-
-ART ( \underline{idArt}, titre, typeArt, cote, dateCreation ) \newline
+. \newline
+ART ( \underline{idArt}, titre, typeArt, cote, dateArt ) \newline
 %pb : l'importation de la BDD MoMA met 0 à la place du vide pour bcp d'attrib
-COMMISSAIRE-PRISEUR ( \underline{idCommissaire}, nomCommissaire*, nationaliteCommissaire )\newline
-RESTAURATEUR ( \underline{idRestaurateur}, nomRestaurateur*, typeRestaurateur*, nationaliteRestaurateur )\newline
-MUSEE ( \underline{idMusee}, nomMusee*, dateDeCreation*, adresseMusee )\newline
-GALERIE ( \underline{idGalerie}, nomGalerie*, dateGalerie*, prixEntryExpo, association, adresseGalerie* )\newline
-CRITIQUE ( \underline{idCritique}, nomCritique*, reputationCritique, nationaliteCritique )\newline
-MARCHE ( \underline{idMarche}, nomMarche*, dateMarche*, prixEntryMarche, adresseMarche*)\newline
-EXPERT ( \underline{idExpert}, nomExpert*, typeExpert*, nationaliteExpert )\newline
-MECENE ( \underline{idMecene}, nomMecene*, reputationMecene, capitalMecene, nationaliteMecene )\newline
-CREANCIER ( \underline{idCreancier}, nomCreancier*, capitalCreancier, nationaliteCreancier )\newline
 ARTISTE ( \underline{idArtiste}, nomArtiste, webArtiste, reputationArtiste, nationaliteArtiste )\newline
+CREANCIER ( \underline{idCreancier}, nomCreancier*, capitalCreancier, nationaliteCreancier* )\newline
+COMMISSAIRE-PRISEUR ( \underline{idcommissaire\_priseur}, nomcommissaire\_priseur*, nationalitecommissaire\_priseur* )\newline
+RESTAURATEUR ( \underline{idRestaurateur}, nomRestaurateur*, typeRestaurateur*, nationaliteRestaurateur* )\newline
+MUSEE ( \underline{idMusee}, nomMusee*, dateMusee*, prixmusee, adresseMusee* )\newline
+GALERIE ( \underline{idGalerie}, nomGalerie*, dateGalerie*, prixGalerie, association, adresseGalerie* )\newline
+CRITIQUE ( \underline{idCritique}, nomCritique*, reputationCritique, nationaliteCritique* )\newline
+MARCHE ( \underline{idMarche}, nomMarche*, dateMarche*, prixMarche, adresseMarche* )\newline
+EXPERT ( \underline{idExpert}, nomExpert*, typeExpert*, nationaliteExpert* )\newline
+MECENE ( \underline{idMecene}, nomMecene*, reputationMecene, capitalMecene, nationaliteMecene* )\newline
+
+
 
 \subsection{Application règle 2 et 2bis}
 
 Les 0 1 et 1 1 se transforment en clé étrangères et supprime la relation qui est alors inutile.
 Ici le marché étant unique, il n'est dirigé que par un seul commissaire-priseur, la relation dirige est alors incorporée dans la table marché.
 
-MARCHE ( \underline{idMarche}, nomMarche*, dateMarche*, prixEntryMarche, adresseMarche*, \underline{\underline{idcommissaire}})
+MARCHE ( \underline{idMarche}, nomMarche*, dateMarche*, prixMarche, adresseMarche*, \underline{\underline{idcommissaire}})
 
 \subsection{Application règle 3}
 
@@ -277,12 +280,12 @@ PARTCIPE(\underline{\underline{idMarche}}*, \underline{\underline{idCreancier}}*
 \\
 POSSEDE(\underline{\underline{idCreancier}}*, \underline{\underline{idArt}}*, prixAchat, prixVente, dateDebutPossede*, dateFinPossede) \newline
 
-Les deux relation POSSEDE et VEND sont fusionné afin d'éviter les conflits \newline
+Les deux relation POSSEDE et VEND (creancierXart) sont fusionnée afin d'éviter les conflits \newline
 Le prix peut etre privé (sans trop d'interet dans le milieu de la spéculation) \newline
 \\
 RESTAURE(\underline{\underline{idRestaurateur}}*, \underline{\underline{idArt}}*, prixRestaure) \newline
-PRET(\underline{\underline{idMusee}}*, \underline{\underline{idArt}}*, dureedebutPret*, dureefinPret*) \newline
-EXPOSE(\underline{\underline{idGalerie}}*, \underline{\underline{idArt}}*, dureedebutExpose*, dureefinExpose*) \newline
+PRET(\underline{\underline{idMusee}}*, \underline{\underline{idArt}}*, datedebutPret*, datefinPret*) \newline
+EXPOSE(\underline{\underline{idGalerie}}*, \underline{\underline{idArt}}*, datedebutExpose*, datefinExpose*) \newline
 JUGE(\underline{\underline{idCritique}}*, \underline{\underline{idArt}}*, prixJuge*) \newline
 EXPERTISE(\underline{\underline{idExpert}}*, \underline{\underline{idArt}}*) \newline
 CREE(\underline{\underline{idArtiste}}*, \underline{\underline{idArt}}*) \newline
@@ -304,6 +307,7 @@ CREATE DATABASE IF NOT EXISTS `MERISE`
 DEFAULT CHARACTER SET utf8
 COLLATE utf8_general_ci;
 USE `MERISE`;
+
 DROP TABLE IF EXISTS POSSEDE;
 DROP TABLE IF EXISTS CREE;
 DROP TABLE IF EXISTS PARTICIPE;
@@ -329,8 +333,8 @@ CREATE TABLE ART (
   idart INT NOT NULL,
   titre VARCHAR(1000),
   typeArt VARCHAR(1000),
-  cote VARCHAR(1000),
-  dateCreation VARCHAR(1000),
+  cote INT,
+  dateArt DATE,
   PRIMARY KEY (idart)
 );
 
@@ -344,30 +348,29 @@ CREATE TABLE ARTISTE (
 );
 
 CREATE TABLE COMMISSAIRE_PRISEUR (
-  idcommissaire INT NOT NULL,
-  nomcommissaire VARCHAR(1000) NOT NULL,
-  nationalitecommissaire VARCHAR(1000),
-  PRIMARY KEY (idcommissaire)
+  idcommissaire_priseur INT NOT NULL,
+  nomcommissaire_priseur VARCHAR(1000) NOT NULL,
+  nationalitecommissaire_priseur VARCHAR(1000) NOT NULL,
+  PRIMARY KEY (idcommissaire_priseur)
 );
 
 CREATE TABLE MARCHE (
   idmarche INT NOT NULL,
   nommarche VARCHAR(1000) NOT NULL,
   datemarche DATE NOT NULL,
-  prixentrymarche VARCHAR(1000),
+  prixmarche INT,
   adressemarche VARCHAR(1000) NOT NULL,
-  idcommissaire INT NOT NULL,
+  idcommissaire_priseur INT NOT NULL,
   PRIMARY KEY (idmarche),
-  FOREIGN KEY (idcommissaire)
-  REFERENCES COMMISSAIRE_PRISEUR(idcommissaire)
+  FOREIGN KEY (idcommissaire_priseur)
+  REFERENCES COMMISSAIRE_PRISEUR(idcommissaire_priseur)
 );
-
 
 CREATE TABLE RESTAURATEUR (
   idrestaurateur INT NOT NULL,
   nomrestaurateur VARCHAR(1000) NOT NULL,
   typerestaurateur VARCHAR(100) NOT NULL,
-  nationaliterestaurateur VARCHAR(42),
+  nationaliterestaurateur VARCHAR(1000) NOT NULL,
   PRIMARY KEY (idrestaurateur)
 );
 
@@ -375,7 +378,7 @@ CREATE TABLE MUSEE (
   idmusee INT NOT NULL,
   nommusee VARCHAR(1000) NOT NULL,
   datemusee DATE NOT NULL,
-  prixentrymusee INT,
+  prixmusee INT,
   adressemusee VARCHAR(1000) NOT NULL,
   PRIMARY KEY (idmusee)
 );
@@ -384,7 +387,7 @@ CREATE TABLE GALERIE (
   idgalerie INT NOT NULL,
   nomgalerie VARCHAR(1000) NOT NULL,
   dategalerie DATE NOT NULL,
-  prixentrygalerie INT,
+  prixgalerie INT,
   association VARCHAR(1000),
   adressegalerie VARCHAR(1000) NOT NULL,
   PRIMARY KEY (idgalerie)
@@ -394,7 +397,7 @@ CREATE TABLE CRITIQUE (
   idcritique INT NOT NULL,
   nomcritique VARCHAR(1000) NOT NULL,
   reputationcritique INT,
-  nationalitecritique VARCHAR(1000),
+  nationalitecritique VARCHAR(1000) NOT NULL,
   PRIMARY KEY (idcritique)
 );
 
@@ -402,7 +405,7 @@ CREATE TABLE EXPERT (
   idexpert INT NOT NULL,
   nomexpert VARCHAR(1000) NOT NULL,
   typeexpert VARCHAR(1000) NOT NULL,
-  nationaliteexpert VARCHAR(1000),
+  nationaliteexpert VARCHAR(1000) NOT NULL,
   PRIMARY KEY (idexpert)
 );
 
@@ -411,7 +414,7 @@ CREATE TABLE MECENE (
   nommecene VARCHAR(1000) NOT NULL,
   reputationmecene INT,
   capitalmecene INT,
-  nationalitemecene VARCHAR(1000),
+  nationalitemecene VARCHAR(1000) NOT NULL,
   PRIMARY KEY (idmecene)
 );
 
@@ -419,10 +422,9 @@ CREATE TABLE CREANCIER (
   idcreancier INT NOT NULL,
   nomcreancier VARCHAR(1000) NOT NULL,
   capitalcreancier INT,
-  nationalitecreancier VARCHAR(1000),
+  nationalitecreancier VARCHAR(1000) NOT NULL,
   PRIMARY KEY (idcreancier)
 );
-
 
 
 
@@ -464,8 +466,8 @@ CREATE TABLE PARTICIPE (
 CREATE TABLE EXPOSE (
   idart INT NOT NULL,
   idgalerie INT NOT NULL,
-  dureedebutexpose DATE NOT NULL,
-  dureefinexpose DATE NOT NULL,
+  datedebutexpose DATE NOT NULL,
+  datefinexpose DATE NOT NULL,
   PRIMARY KEY (idart, idgalerie),
   FOREIGN KEY (idart)
   REFERENCES ART(idart),
@@ -495,8 +497,8 @@ CREATE TABLE RESTAURE (
 CREATE TABLE PRET (
   idart INT NOT NULL,
   idmusee INT NOT NULL,
-  dureedebutpret DATE NOT NULL,
-  dureefinpret DATE NOT NULL,
+  datedebutpret DATE NOT NULL,
+  datefinpret DATE NOT NULL,
   PRIMARY KEY (idart, idmusee),
   FOREIGN KEY (idart)
   REFERENCES ART(idart),
@@ -544,6 +546,7 @@ CREATE TABLE AIDE (
 
 \href{https://github.com/MuseumofModernArt/collection}{Github: Museum of Modern Art}
 
+MoMA est un musée dans New York city, il nous partage sa base de données.
 Nous avons utilisé seulement quelque informations contenues dans la base de données MoMA :
 \\Pour les artistes :
 \begin{itemize}[label=\(\blacktriangleright\)]
@@ -564,8 +567,8 @@ n'est que pure supposition et imagination (cote d'une oeuvre / reputation d un a
 
 \subsection{Artistes}
 
-On importe depuis le .json du MoMA, la table artiste contenant 133038 individus/organismes.
-On utilise le code convert\_artists() (\hyperref[sec:convArtists]{section 7.1})
+On importe depuis le .json du MoMA, la table artiste contenant (id max: 133038) 15223 individus/organismes.
+On utilise le code convert\_artists() (\hyperref[sec:convArtists]{section 7.1}). %\hyperref[text:convArtistsExpl]{explication du code}).
 Deux exemples d'artiste : 
 \begin{minted}
 [
@@ -605,8 +608,8 @@ linenos
 
 \subsection{Artworks}
 
-On importe depuis le .json du MoMA, la table artwork contenant 419289 pièces d'art.
-On utilise le code convert\_artworks() (\hyperref[sec:convArtworks]{section 7.2})
+On importe depuis le .json du MoMA, la table artwork contenant (ifd max: 419289) 139904 pièces d'art.
+On utilise le code convert\_artworks() (\hyperref[sec:convArtworks]{section 7.2}) %même explication que pour \hyperref[text:convArtistsExpl]{convert\_artist()})
 Toutes les dates vont etre à 0 ou null car la base de donnée MoMA insere des phrases (Option<String>) dans l'attribut date de l'artwork.
 
 \newgeometry{left=1cm,right=0.5cm,top=0.5cm,bottom=1.5cm}
@@ -787,6 +790,7 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
     let mut request: String = "".to_string();
 
     let mut number_of_creation: i32 = 0;
+    
     let creancier = create_insert_humans("creancier", amount_of_each, false, false, true);
     number_of_creation +=amount_of_each;
     request.push_str(&creancier);
@@ -803,7 +807,7 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
 Pour les organisations : Marché, Galerie, Musée.
 Nous utilisons les mêmes méthodes attributs (\hyperref[sec:createAttr]{section 7.3}).
 
-Le tableau (vide) qui peut contenir des associations (pour attr de galerie) :
+De plus, le tableau (vide) qui peut contenir des associations (pour attr de galerie) :
 \begin{minted}
 [
 frame=lines,
@@ -817,7 +821,7 @@ linenos
 static LIST_ASSOCIATION: &'static [&str] = &["", ""];
 \end{minted}
 
-Pour insérer les organismes on utilise le code en \hyperref[sec:insOrg]{section 7.5}
+Pour créer la requête INSERT des organismes on utilise le code en \hyperref[sec:insOrg]{section 7.5}
 
 \subsection{Relations}
 
@@ -843,8 +847,9 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
     let mut number_of_creation: i32 = 0;
     
     //--POSSEDE------------------------------------------------------------------
-    let own = create_possede("possede".to_string(), "creancier".to_string(),
-                             "art".to_string(), amount_of_each, 2);
+    
+    let own = create_insert_relations("possede".to_string(), "creancier".to_string(),
+                             "art".to_string(), amount_of_each, 2, true, true);
     number_of_creation +=amount_of_each;
     request.push_str(&own);
 
@@ -862,29 +867,305 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
 }
 \end{minted}
 
+\clearpage
+
 \section{Requetes SQL}
 
 \subsection{Projection}
 
+Les noms des oeuvres d'art des Artistes avec un grand A (reputation > 1200) avec les artistes en questions. \\
+Algèbre relationnel : \\
+\(\pi_{nomArtiste, titre} ( \sigma_{reputationArtiste > 1200}\)(((\textbf{P1\_ARTISTE}) NATURAL JOIN (\textbf{P1\_CREE})) NATURAL JOIN (\textbf{P1\_ART}))) \\
+SQL : 
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{sql}
+
+SELECT P1_ARTISTE.nomartiste, P1_ART.titre
+FROM (P1_CREE JOIN P1_ARTISTE on P1_ARTISTE.idartiste = P1_CREE.idartiste )
+	      JOIN P1_ART on P1_ART.idart = P1_CREE.idart
+WHERE reputationArtiste > 1200
+;
+\end{minted}
 
 \subsection{Jointure}
 
+Les mecènes et les collectionneurs d'art (créanciers) qui partagent le même nom et prénom.
+\\
+Algèbre relationnel : \\
+(\textbf{P1\_MECENE}) \(JOIN_{nomMecene = nomCreancier}\) (\textbf{P1\_CREANCIER}) \\
+SQL : 
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{sql}
+
+SELECT *
+FROM P1_MECENE Join P1_CREANCIER on P1_CREANCIER.nomCreancier=P1_MECENE.nomMecene
+;
+\end{minted}
+
 \subsection{Moyenne sur l'integralite d'un attribut}
+
+La moyenne du capital supposé des créanciers.
+\\
+Algèbre relationnel : \\
+AVG (\textbf{P1\_CREANCIER}).capitalCreancier \\
+SQL : 
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{sql}
+
+SELECT AVG(capitalCreancier) as moy_capitalcreancier
+FROM P1_CREANCIER
+;
+\end{minted}
 
 \subsection{Regroupement par calcul}
 
+Les prix d'entree au Marche d'art les plus bas, actuel (qui ne sont pas expirée)
+\\
+Algèbre relationnel : \\
+\(\pi _{(MIN(prixMarche)}\)(\(\sigma _{dateMarche>dateActuelle}\)(\textbf{P1\_MARCHE})))\\
+SQL : 
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{sql}
+
+SELECT MIN(prixMarche)
+FROM P1_MARCHE
+WHERE dateMarche > CURDATE()
+;
+
+\end{minted}
+
+\clearpage
+
+Les Marches d'art dont leur billet d'entree sont en dessous de la moyenne
+\\
+Algèbre relationnel : \\
+RPrixMoyen: AVG(prixMarche)(\textbf{P1\_MARCHE}) \\
+\(\pi _{nomMarche}\)(\(\sigma _{dateMarche>dateActuelle}\)(\textbf{P1\_MARCHE}) AND \(\sigma _{prixMarche< RPrixMoyen }\))\\
+SQL : 
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{sql}
+
+SELECT nomMarche
+FROM P1_MARCHE
+WHERE dateMarche > CURDATE() AND
+      prixMarche < (SELECT AVG(prixMarche)
+			  FROM P1_MARCHE
+			  -- WHERE dateMarche > CURDATE()
+		    )
+;
+
+\end{minted}
+
 \subsection{Différence}
+
+Les artistes qui n'ont rien créé
+\\
+Algèbre relationnel : \\
+\(\pi _{nomArtiste}\)((\textbf{P1\_ARTISTE}) - (\textbf{P1\_ARTISTE}) NATURAL JOIN (\textbf{P1\_CREE})))\\
+SQL : 
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{sql}
+
+SELECT nomArtiste -- DISTINCT non nécéssaire
+FROM P1_ARTISTE
+WHERE idartiste NOT IN (SELECT DISTINCT idartiste
+                         FROM P1_CREE)
+;
+
+\end{minted}
 
 \subsection{Division}
 
+Nom et ID des Creanciers ayant possedé toutes les oeuvres d'art.
+\\
+Algèbre relationnel : \\
+\(\pi_{idCreancier, nomCreancier}\)((\textbf{P1\_CREANCIER}) DIVIDE (\textbf{P1\_POSSEDE}))  \\
+SQL : 
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{sql}
+
+SELECT idcreancier, nomCreancier
+FROM P1_CREANCIER
+WHERE (SELECT DISTINCT COUNT(*)
+       FROM P1_POSSEDE
+       WHERE P1_POSSEDE.idcreancier = P1_CREANCIER.idcreancier)
+          -- AND P1_POSSEDE.idart = P1_ART.idart -- P1_POSSEDE.#idArt
+      = (SELECT DISTINCT COUNT(*) from P1_ART)
+;
+
+\end{minted}
+
+Nom et ID des Musées ayant disposé de toutes les oeuvres d'art.
+\\
+Algèbre relationnel : \\
+\(\pi_{idMusee, nomMusee}\)((\textbf{P1\_MUSEE}) DIVIDE (\textbf{P1\_PRET}))  \\
+SQL : 
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{sql}
+
+SELECT idmusee, nommusee
+FROM P1_MUSEE
+WHERE (SELECT DISTINCT COUNT(*)
+       FROM P1_PRET
+       WHERE P1_PRET.idmusee = P1_MUSEE.idmusee)
+      = (SELECT DISTINCT COUNT(*) from P1_ART)
+;
+
+\end{minted}
+
 \subsection{Group By}
 
-\clearpage
+Nombre d'artiste par nationalité.
+On pourrait regrouper : '' et 'nationality unknown'.
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{sql}
+
+SELECT nationaliteArtiste, COUNT(*)
+FROM P1_ARTISTE
+GROUP BY nationaliteArtiste
+ORDER BY COUNT(*) DESC 
+;
+
+\end{minted}
+
+\iffalse
+Nombre d'humains par nationalité.
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+%baselinestretch=1.2,
+%bgcolor=LightGray,
+%fontsize=\footnotesize,
+linenos
+]
+{sql}
+
+SELECT nationaliteArtiste, COUNT(*)
+FROM P1_ARTISTE JOIN 
+GROUP BY nationaliteArtiste
+ORDER BY COUNT(*) DESC 
+;
+
+SELECT nationaliteMecene, COUNT(*)
+FROM P1_MECENE
+GROUP BY nationaliteMecene
+ORDER BY COUNT(*) DESC 
+;
+
+                     JOIN
+		P1_CREANCIER JOIN
+		P1_COMMISSAIRE_PRISEUR JOIN
+        P1_RESTAURATEUR JOIN 
+        P1_EXPERT JOIN
+        P1_CRITIQUE JOIN
+
+\end{minted}
+\fi
+
+
+% \clearpage
 
 \section{Code}
 
 \subsection{convert\_artists()}
 \label{sec:convArtists}
+
+\label{text:convArtistsExpl}
+% ne fonctionne pas
+
+On instaure une Structure json d'un artiste.
+Dans la fn convert\_artists(): 
+On stocke un tableau de cette structure (artists: Vec<Artist>) grâce à serde\_json import rust.
+On créé le début de la requête SQL INSERT, avec les attributs artiste.
+
+Pour chaque artiste dans le Vec<Artist>:
+\begin{itemize}[label=\(\blacktriangleright\)]
+    \item on créé une ligne de valeur;
+    \item on y place des apostrophes : '\emph{attribut à remplacer}' si la valeur est une date ou un varchar;
+    \item on retire les apostrophes, les espaces, les virgules du nom pour le siteWeb
+    \item on place à la virgule à la fin (on peut la placer lors du premier point mais la derniere doit etre retirer, on choisit donc cette ordre par logique)
+\end{itemize}
+
+On insère un point-virgule tout en retirant la denrière virgule.
+On écrit le résultât foo dans un fichier.
+
 \begin{minted}
 [
 frame=lines,
@@ -952,10 +1233,12 @@ fn convert_artists() -> Result<()>
         artist_n = artist_n.replace("nationality", &artist_nationality.replace("'", " "));
         foo.push_str(&artist_n);
         
-        foo.push(','); // have to remove the last one
+        // have to remove the last one
+        foo.push(',');
     }
     
-    foo.push_str(";END"); //to end the SQL request
+    // rm the last , and add a ; to end the SQL request
+    foo.push_str(";END");
     foo = foo.replace(",;END",";");
 
     println!("--------create_.sql---------");
@@ -968,8 +1251,25 @@ fn convert_artists() -> Result<()>
 
 \end{minted}
 
+\clearpage
+
 \subsection{convert\_artworks()}
 \label{sec:convArtworks}
+
+On instaure une Structure json d'un artwork.
+On ignore les dimensions.
+Dans la fn convert\_artworks(): 
+On stocke un tableau de cette structure (artists: Vec<Artwork>) grâce à serde\_json import rust.
+On créé le début de la requête SQL INSERT, avec les attributs art.
+On ignore la date (à cause des phrases contenues dedans).
+
+Pour chaque oeuvre d'art dans le Vec<Artwork>: \newline
+On créé la ligne de valeur.
+On y incorpore les attributs, en retirant les caractères génants (apostrophe, vrigule, backslash).
+
+On insère un point-virgule tout en retirant la denrière virgule.
+On écrit le résultât foo dans un fichier.
+
 
 \begin{minted}
 [
@@ -982,9 +1282,36 @@ linenos
 ]
 {rust}
 
+#[derive(Serialize, Deserialize, Debug)]
+struct Artwork {
+  title: String,
+  artist: Vec<String>,
+  constituent_id: Vec<i32>,
+  artist_bio: Vec<String>,
+  nationality: Vec<String>,
+  begin_date: Vec<i32>,
+  end_date: Vec<i32>,
+  gender: Vec<String>,
+  date: Option<String>,
+  medium: Option<String>,
+  dimensions: Option<String>,
+  credit_line: Option<String>,
+  accession_number: Option<String>,
+  classification: Option<String>,
+  department: Option<String>,
+  date_acquired: Option<String>,
+  cataloged: Option<String>,
+  object_id: i32,
+  url: Option<String>,
+  thumbnail_url: Option<String>,
+//   height_cm: f32,
+//   width_cm: f32
+}
+
 fn convert_artworks() -> Result<()>
 {
     let path = "E:/Code/projects_rust/MoMA/Artworks-reformed.json";
+
 	let content = fs::read_to_string(path)
 		.expect("Unable to read file");
 
@@ -997,8 +1324,10 @@ fn convert_artworks() -> Result<()>
 	println!("--------create_request---------");
 
     let mut foo =
-    "INSERT INTO P1_ART (idart, titre, typeArt, cote, dateCreation)
-    \n VALUES ".to_string();
+    "INSERT INTO P1_ART (idart, titre, typeArt, cote) 
+    \n VALUES ".to_string(); 
+    
+    //, dateArt)
 
     for artwork in artworks
     {
@@ -1019,33 +1348,39 @@ fn convert_artworks() -> Result<()>
 
         let artwork_title = artwork.title.replace("'", " ");
 
-        //TODO : find potential ' and replace them by a space
-
         let foobar =
-        "\n (id,'title', 'medium', cote)"; //, date)";
+        "\n (id,'title', 'medium', cote)"; 
+        //, date)";
         let mut artwork_n = foobar.replace("id", &artwork.object_id.to_string());
         artwork_n = artwork_n.replace("title", &artwork_title.replace("\\", ""));
         // how on earth you can accept '\' in a user insertion... 
         artwork_n = artwork_n.replace("medium", &artwork_medium.replace("'", " ").replace("\\", ""));
         artwork_n = artwork_n.replace("cote", &create_fictional_human::create_reputation(0,0).to_string());
+        
         // artwork_n = artwork_n.replace("date", &artwork_date.to_string());
+        
         foo.push_str(&artwork_n);
 
-        foo.push(','); // have to remove the last one
+        // have to remove the last one
+        foo.push(',');
     }
     
-    foo.push_str(";END"); //to end the SQL request
+    // rm the last , and add a ; to end the SQL request
+    foo.push_str(";END");
     foo = foo.replace(",;END",";");
 
     println!("--------create_.sql---------");
 
-    fs::write("E:/Code/projects_rust/art-manipulation/Part1/indv/insert_artworks.sql", foo)
-        .expect("Unable to write file");
+	fs::write("E:/Code/projects_rust/art-manipulation/RENDU/insert_artworks.sql",
+			 foo)
+		.expect("Unable to write file");
 
     Ok(())
 }
 
 \end{minted}
+
+\clearpage
 
 \subsection{create all kind of attributes}
 \label{sec:createAttr}
@@ -1117,6 +1452,23 @@ fn create_capital() -> i128 {
 }
 
 /**
+ * turn every number less than 10 to two digit number
+ * skip other number
+ * cause 2016-5-12 or 2032-01-2 
+ *      isn't accepted in SQL format (TODO: change date format sql ?)
+ */
+fn convert_to_twodigit(number: i32) -> String {
+    let n = number.to_string();
+    let mut temp = "".to_string();
+    if n.len() == 1 {
+        temp = "0".to_string();
+    }
+    temp.push_str(&n);
+      
+    temp
+}
+
+/**
  * @param past : 'a future date' -> false | 'a past date' -> true
  * format : AAAA-MM-JJ
  */
@@ -1124,8 +1476,11 @@ fn create_date(past: bool) -> String{
     let mut rng = thread_rng();
 
     let mut date = "year-month-day".to_string();
-    let day = rng.gen_range(0..31); // dc about 31/02 or 31/04
-    let month = rng.gen_range(0..12);
+    // dc about 31/02 or 31/04
+    let day = convert_to_twodigit(rng.gen_range(0..31));
+    // let day_reformed = (day).to_string().padStart(2,0);
+    
+    let month = convert_to_twodigit(rng.gen_range(0..12));
     let year; //= 1445;
     if past {
         year = rng.gen_range(2003..2021);
@@ -1134,10 +1489,9 @@ fn create_date(past: bool) -> String{
         year = rng.gen_range(2022..2030);
     }
     
-    date = date.replace("day", &day.to_string());
-    date = date.replace("month", &month.to_string());
+    date = date.replace("day", &day);
+    date = date.replace("month", &month);
     date = date.replace("year", &year.to_string());
-
     date.to_string()
 }
 
@@ -1156,10 +1510,11 @@ fn create_association() -> String{
             Some(n) => n.to_string(),
             None => "Undefined".to_string()
         };
-
     association
 }
 \end{minted}
+
+\newgeometry{top=0.5cm, bottom=1.5cm}
 
 \subsection{create\_insert\_humans()}
 \label{sec:insHumans}
@@ -1231,13 +1586,14 @@ fn create_insert_humans(table_name: &str, amount: i32, art_type: bool,
         request.push_str(&human_n);
 
     }
-
     request.push_str(";END");
     request = request.replace(",;END","; \n \n");
 
     request
 }
 \end{minted}
+
+\restoregeometry
 
 \subsection{create\_insert\_organisations()}
 \label{sec:insOrg}
@@ -1252,6 +1608,7 @@ framesep=2mm,
 linenos
 ]
 {rust}
+
 /**
  * if creation_date and rdv_date are true only creation_date will effect
  * you can't bassicaly have those two attributs
@@ -1262,18 +1619,27 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
     let mut request: String =
     "INSERT INTO P1_NAME (idname, nomname, "
         .to_string();
-    if creation_date {
-        request.push_str("datedecreation, ");
-    }
-    // careful about this else which can conflict
+
+    // careful about this condition which can conflict
     // with future change on mocodoStructre
-    else if rdv_date { 
+    if creation_date | rdv_date{
         request.push_str("datename, ");
     }
     if price {
-        request.push_str("prixentryname, ");
+        request.push_str("prixname, ");
     }
-    request.push_str("adressename) \n VALUES");
+    if association {
+        request.push_str("association, ");
+    }
+    request.push_str("adressename");
+
+    let mut rng = thread_rng();
+
+    if table_name.to_lowercase() == "marche"{
+        request.push_str(", idcommissaire_priseur");
+    }
+
+    request.push_str(") \n VALUES");
     request = request
         .replace("NAME", &table_name.to_uppercase())
         .replace("name", &table_name.to_lowercase());
@@ -1292,7 +1658,7 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
         if creation_date | rdv_date {
             //if rdv_date means !creation_date
             
-            orga_n.push_str("date, ");   // same care here
+            orga_n.push_str("'date', ");   // same care here
             orga_n = orga_n.replace("date", &create_date(creation_date));
         }
         if price{
@@ -1300,10 +1666,20 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
             orga_n = orga_n.replace("price", &create_price().to_string());
         }
         if association{
-            orga_n.push_str("association, ");
+            orga_n.push_str("'association', ");
             orga_n = orga_n.replace("association", &create_association());
         }
-        orga_n.push_str("'country'),");
+
+        
+        orga_n.push_str("'country'");
+
+        if table_name.to_lowercase() == "marche"{
+            orga_n.push_str(", idcommissaire_priseur");
+            // instead of a random just pick into commissaire table
+            orga_n = orga_n.replace("idcommissaire_priseur", &rng.gen_range(0..amount).to_string());
+        }
+
+        orga_n.push_str("),");
         orga_n = orga_n.replace("country", &country);
         
         request.push_str(&orga_n);
@@ -1319,8 +1695,6 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
 \subsection{create\_insert\_relations()}
 \label{sec:createRel}
 
-I didn't manage to merge the possede and the other methods together,
-so there are two different methods.
 \begin{minted}
 [
 frame=lines,
@@ -1332,14 +1706,16 @@ linenos
 ]
 {rust}
 /**
- * frequence: if 0 -> no condition whatsoever (no filter),
+ * frequence: if 0 -> Err
+ *            if 1 -> no condition whatsoever (no filter),
  *            if 8 -> condition 1/8 (only 1/8 will be associate)
- * don't handle insert attributefor POSSEDE and PARTICIPE
+ * don't handle insert attribute for PARTICIPE
  */
 fn create_insert_relations(relation_name:String, table_name1: String,
                     table_name2: String, amount: i32, frequence: i32,
                     price: bool, duree: bool) -> String
 {
+    println!("{}", relation_name);
     let mut request: String =
     "INSERT INTO P1_NAME (idname1, idname2".to_string();
     
@@ -1348,55 +1724,120 @@ fn create_insert_relations(relation_name:String, table_name1: String,
         .replace("name1", &table_name1.to_lowercase())
         .replace("name2", &table_name2.to_lowercase());
     if price {
-        request.push_str(", prixNAME");
-        request = request.replace("NAME", &relation_name.to_lowercase());
+
+        if relation_name=="possede" {
+            request.push_str(", prixAchat");
+            request.push_str(", prixVente");
+        }else {
+            request.push_str(", prixNAME");
+        }
     }
     if duree {
-        request.push_str(", dureedebutNAME, dureefinNAME");
-        request = request.replace("NAME", &relation_name.to_lowercase());
+        request.push_str(", datedebutNAME, datefinNAME");
+    }
+    if relation_name.to_lowercase()=="marche"{
+        request.push_str(", idcommissaire_priseur");
     }
     request.push_str(") \n VALUES");
-    
+    request = request.replace("NAME", &relation_name.to_lowercase());
+
+    // TODO: import thoses two elsewhere
+    let mut artists:Vec<Artist>=Vec::new();
+    let mut artworks:Vec<Artwork>=Vec::new();
+    if table_name2.to_lowercase() == "artiste" {
+        println!("--read artists-reformed.json--");
+        artists = import_artists();
+    }else if table_name2.to_lowercase() == "art" {
+        println!("--read artworks-reformed.json--");
+        artworks = import_artworks();
+    }
+
     for i in 0..amount {
         
-        if frequence != 0{
-        // only 1/frequence of all name1 and name2 will be associate
-            if i%frequence==0 {
-                let mut foo =
-                "\n (idname1, idname2".to_string();
-                if price {
-                    foo.push_str(", prix");
-                    foo = foo.replace("prix", &create_price().to_string());
+
+
+        let mut foo =
+        "\n (idname1, idname2".to_string();
+
+
+        if price {
+            if relation_name=="possede" {
+                foo.push_str(", prixAchat, prixVente");
+                foo = foo.replace("prixAchat", &create_price().to_string());
+                
+                // I use the frequence to also choose whenever a art is still owned or selled
+                // atm : 1/1
+                if i%(frequence)==0 { 
+                    foo = foo.replace("prixVente", &create_price().to_string());
+                }else {
+                    foo = foo.replace("prixVente", " ");
                 }
-                if duree {
-                    foo.push_str(", dureeD, dureeF");
-                    foo = foo.replace("dureeD", &create_date(true).to_string());
-                    foo = foo.replace("dureeF", &create_date(false).to_string());
-                }
-                foo.push_str("),");
-                let mut foobar = foo.replace("idname1", &i.to_string());
-                foobar = foobar.replace("idname2", &i.to_string());
-                request.push_str(&foobar);
             }
-        }
-        else {
-            let mut foo =
-            "\n (idname1, idname2".to_string();
-            if price {
+            else {
                 foo.push_str(", prix");
                 foo = foo.replace("prix", &create_price().to_string());
             }
-            if duree {
-                foo.push_str(", dureeD, dureeF");
-                foo = foo.replace("dureeD", &create_date(true).to_string());
-                foo = foo.replace("dureeF", &create_date(false).to_string());
+            
+        }
+        if duree {
+            foo.push_str(", 'dateD', 'dateF'");
+            foo = foo.replace("dateD", &create_date(true).to_string());
+            if relation_name=="possede" {
+                
+                if (i%frequence)==0 { 
+                // 1/1 des oeuvres ont déja été vendu car tjrs vraie
+                // (volontaire ou presque)
+                
+                    // make it after dateD but not in the FUTURE
+                    foo = foo.replace("dateF", &create_date(true).to_string()); 
+                }else {
+                    foo = foo.replace("dateF", " ");
+                }
+            }else {
+                foo = foo.replace("dateF", &create_date(false).to_string());
             }
-            foo.push_str("),");
-            let mut foobar = foo.replace("idname1", &i.to_string());
+        }
+
+
+
+        // We're selecting directly from .json
+
+        let mut rng = thread_rng();
+        let mut foobar: String;
+
+        // Select randomly a constituent_id which EXIST
+        if table_name2.to_lowercase() == "artiste" {
+            foobar = foo.replace("idname1", &i.to_string());
+            foobar = foobar.replace("idname2", &artists[rng.gen_range(0.. artists.len())]
+                                                        .constituent_id
+                                                        .to_string());
+
+        }else if table_name2.to_lowercase() == "art" {
+            foobar = foo.replace("idname1", &i.to_string());
+
+            // if you can't import 400K artwork into sql (weird.............)
+            // switch artworks.len() to the max number-1 of artwork you imported
+            // to avoid error on import of relation :
+            //      foreign key (on id which didn't exists)
+            foobar = foobar.replace("idname2", &artworks[rng.gen_range(0.. artworks.len())]
+                                                        .object_id
+                                                        .to_string());
+
+        }else {
+            foobar = foo.replace("idname1", &i.to_string());
             foobar = foobar.replace("idname2", &i.to_string());
+        }
+
+
+                    
+        foobar.push_str("),");
+
+        
+        // After creating the whole line, we decide if we keep it, based on the frequency
+        // only 1/frequence of all name1 and name2 will be associate
+        if (i%frequence)==0 {
             request.push_str(&foobar);
         }
-        
     }
     // end the request with a ';' and
     // remove the last ',' which cause error
@@ -1407,71 +1848,6 @@ fn create_insert_relations(relation_name:String, table_name1: String,
 }
 \end{minted}
 
-\begin{minted}
-[
-frame=lines,
-framesep=2mm,
-%baselinestretch=1.2,
-%bgcolor=LightGray,
-%fontsize=\footnotesize,
-linenos
-]
-{rust}
-/**
- * I use the frequence to also choose whenever a art is still owned or selled
- */
-fn create_possede(relation_name:String, table_name1: String,
-                  table_name2: String, amount: i32, frequence: i32,) -> String
-{
-    let mut request: String =
-    "INSERT INTO P1_NAME (idname1, idname2, prixachat, prixvente, dureedebutNAME, dureefinNAME) \n VALUES".to_string();
-    request = request
-        .replace("NAME",  &relation_name.to_uppercase())
-        .replace("name1", &table_name1.to_lowercase())
-        .replace("name2", &table_name2.to_lowercase());
-    for i in 0..amount {
-        
-        if frequence != 0{
-        // only 1/frequence of all name1 and name2 will be associate
-            if i%frequence==0 {
-                let foo =
-                "\n (idname1, idname2, prixB, prixS, dureeD, dureeF),".to_string();
-                let mut foobar = foo.replace("idname1", &i.to_string());
-                foobar = foobar.replace("idname2", &i.to_string());
-                foobar = foobar.replace("prixB", &create_price().to_string());
-                foobar = foobar.replace("dureeD", &create_date(true).to_string());
-                if i%frequence==0 {
-                    foobar = foobar.replace("prixS", &create_price().to_string());
-                    foobar = foobar.replace("dureeF", &create_date(false).to_string());
-                }
-
-                request.push_str(&foobar);
-            }
-        }
-        else {
-            let foo =
-                "\n (idname1, idname2, prixB, prixS, dureeD, dureeF),".to_string();
-                let mut foobar = foo.replace("idname1", &i.to_string());
-                foobar = foobar.replace("idname2", &i.to_string());
-                foobar = foobar.replace("prixB", &create_price().to_string());
-                foobar = foobar.replace("dureeD", &create_date(true).to_string());
-                if i%frequence==0 {
-                    foobar = foobar.replace("prixS", &create_price().to_string());
-                    foobar = foobar.replace("dureeF", &create_date(false).to_string());
-                }                
-
-                request.push_str(&foobar);
-        }
-        
-    }
-    // end the request with a ';' and
-    // remove the last ',' which cause error
-    request.push_str(";END");
-    request = request.replace(",;END","; \n \n");
-
-    request
-}
-\end{minted}
 
 \bibliographystyle{alpha}
 \bibliography{sample}
