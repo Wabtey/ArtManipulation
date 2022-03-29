@@ -46,6 +46,33 @@ struct Artist {
 	ulan: Option<String>
 }
 
+//-----------------------------------------------------------------------------
+
+// static artworks: Vec<Artwork> = import_artworks();
+
+// static artists: Vec<Artist> = serde_json::from_str(
+//     &(fs::read_to_string("E:/Code/projects_rust/MoMA/Artist-reformed.json"))
+//     .expect("Unable to read file"))
+//     .unwrap();
+
+fn import_artworks() -> Vec<Artwork>{
+    let vec_artworks = serde_json::from_str(
+        &(fs::read_to_string("E:/Code/projects_rust/MoMA/Artworks-reformed.json"))
+            .expect("Unable to read file"))
+            .unwrap();
+
+    vec_artworks
+}
+fn import_artists() -> Vec<Artist>{
+    let vec_artistes = serde_json::from_str(
+        &(fs::read_to_string("E:/Code/projects_rust/MoMA/Artists-reformed.json"))
+            .expect("Unable to read file"))
+            .unwrap();
+
+    vec_artistes
+}
+//-----------------------------------------------------------------------------
+
 #[derive(Serialize, Deserialize, Debug)]
 struct Artwork {
   title: String,
@@ -281,7 +308,15 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
     if association {
         request.push_str("association, ");
     }
-    request.push_str("adressename) \n VALUES");
+    request.push_str("adressename");
+
+    let mut rng = thread_rng();
+
+    if table_name.to_lowercase() == "marche"{
+        request.push_str(", idcommissaire_priseur");
+    }
+
+    request.push_str(") \n VALUES");
     request = request
         .replace("NAME", &table_name.to_uppercase())
         .replace("name", &table_name.to_lowercase());
@@ -311,7 +346,17 @@ fn create_insert_organisations(table_name: String, amount: i32, creation_date: b
             orga_n.push_str("'association', ");
             orga_n = orga_n.replace("association", &create_association());
         }
-        orga_n.push_str("'country'),");
+
+        
+        orga_n.push_str("'country'");
+
+        if table_name.to_lowercase() == "marche"{
+            orga_n.push_str(", idcommissaire_priseur");
+            // instead of a random just pick into commissaire table
+            orga_n = orga_n.replace("idcommissaire_priseur", &rng.gen_range(0..amount).to_string());
+        }
+
+        orga_n.push_str("),");
         orga_n = orga_n.replace("country", &country);
         
         request.push_str(&orga_n);
@@ -333,6 +378,7 @@ fn create_insert_relations(relation_name:String, table_name1: String,
                     table_name2: String, amount: i32, frequence: i32,
                     price: bool, duree: bool) -> String
 {
+    println!("{}", relation_name);
     let mut request: String =
     "INSERT INTO P1_NAME (idname1, idname2".to_string();
     
@@ -352,33 +398,21 @@ fn create_insert_relations(relation_name:String, table_name1: String,
     if duree {
         request.push_str(", datedebutNAME, datefinNAME");
     }
+    if relation_name.to_lowercase()=="marche"{
+        request.push_str(", idcommissaire_priseur");
+    }
     request.push_str(") \n VALUES");
     request = request.replace("NAME", &relation_name.to_lowercase());
-    
-    // doesn't need to be mutable? let artworks: Vec<Artwork>;
-    // but the use below bring an error : may use the uninitialized one
-    // so we initialize with a empty vec :/
-    let mut artworks: Vec<Artwork> = Vec::new(); 
-    if table_name2 == "art" {
-        let path = "E:/Code/projects_rust/MoMA/Artworks-reformed.json";
-	
-	    let content = fs::read_to_string(path)
-	        .expect("Unable to read file");
-	    println!("-----read_artworks.json-----");
 
-        artworks = serde_json::from_str(&content).unwrap();
-    }
-
-    let mut artists: Vec<Artist> = Vec::new(); 
-    if table_name2 == "artiste" {
-        let path = "E:/Code/projects_rust/MoMA/Artists-reformed.json";
-	
-	    let content = fs::read_to_string(path)
-		    .expect("Unable to read file");
-
-	    println!("-----read_artists.json-----");
-	
-        artists = serde_json::from_str(&content).unwrap();
+    // TODO: import thoses two elsewhere
+    let mut artists:Vec<Artist>=Vec::new();
+    let mut artworks:Vec<Artwork>=Vec::new();
+    if table_name2.to_lowercase() == "artiste" {
+        println!("--read artists-reformed.json--");
+        artists = import_artists();
+    }else if table_name2.to_lowercase() == "art" {
+        println!("--read artworks-reformed.json--");
+        artworks = import_artworks();
     }
 
     for i in 0..amount {
@@ -423,19 +457,21 @@ fn create_insert_relations(relation_name:String, table_name1: String,
             }
         }
 
+
+
         // We're selecting directly from .json
 
         let mut rng = thread_rng();
         let mut foobar: String;
 
         // Select randomly a constituent_id which EXIST
-        if table_name2 == "artiste" {
+        if table_name2.to_lowercase() == "artiste" {
             foobar = foo.replace("idname1", &i.to_string());
             foobar = foobar.replace("idname2", &artists[rng.gen_range(0.. artists.len())]
                                                         .constituent_id
                                                         .to_string());
 
-        }else if table_name2 == "art" {
+        }else if table_name2.to_lowercase() == "art" {
             foobar = foo.replace("idname1", &i.to_string());
             foobar = foobar.replace("idname2", &artworks[rng.gen_range(0.. artworks.len())]
                                                         .object_id
@@ -468,6 +504,11 @@ pub fn create_requests(amount_of_each: i32) // -> Result<()>
     let mut request: String = "".to_string();
 
     let mut number_of_creation: i32 = 0;
+
+    // Idk where to put those
+    // let artists: Vec<Artist> = import_artists();
+    // let artworks: Vec<Artwork> = import_artworks();
+
 
 //--HUMANS------------------------------------------------------------------------------------------
 
