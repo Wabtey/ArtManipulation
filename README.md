@@ -41,6 +41,12 @@ Nous avons utilisé seulement quelque informations contenues dans la base de don
 Toutes les autres informations contenues dans notre base de données  
 n est que pure supposition et imagination (cote d une oeuvre / reputation d un artiste / etc)  
 
+
+Site Web :
+----------
+
+http://testcgi.istic.univ-rennes1.fr/~fepain/Q9-HTMPL.html
+
 lien github :
 -------------
 
