@@ -222,7 +222,7 @@ fn create_date(past: bool) -> String{
 /**
  * 0 | 5 | 15 | 30 | 100 | 500 | 1000 | 5000 | 10 000 | 50 000
  */
-fn create_price() -> i32{
+pub fn create_price() -> i32{
     let mut rng = thread_rng();
     // placeholder
     let price: i32 = rng.gen_range(0..50000);

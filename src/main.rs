@@ -327,11 +327,15 @@ fn main() {
 
     println!("--creation_human--");
 
-    create_fictional_human::create_requests(500);
+    // create_fictional_human::create_requests(500);
 
     println!("--create arstist table--");
 
     // html_creator::create_table_artists().unwrap();
+
+    println!("--create artwork table--");
+
+    html_creator::create_table_artworks().unwrap();
 
     println!("--End--");
 }

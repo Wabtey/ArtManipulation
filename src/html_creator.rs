@@ -38,7 +38,7 @@ pub fn create_table_artists() -> Result<()>
 
 	// println!("{:?}", artists);
 	
-	println!("--------create_request---------");
+	println!("--------create_table---------");
 
     let mut foo =
     "<a href=\"http://testcgi.istic.univ-rennes1.fr/~fepain/Q9-HTMPL.html\">HOME PAGE</a>
@@ -91,6 +91,106 @@ pub fn create_table_artists() -> Result<()>
     // "/private/student/n/in/fepain/R/art-manipulation/RENDU/artists.html"
     // "E:/Code/projects_rust/art-manipulation/RENDU/artists.html<"
 	fs::write("/private/student/n/in/fepain/public_html/artists.html",
+			 foo)
+		.expect("Unable to write file");
+
+    Ok(())
+}
+
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Artwork {
+  title: String,
+  artist: Vec<String>,
+  constituent_id: Vec<i32>,
+  artist_bio: Vec<String>,
+  nationality: Vec<String>,
+  begin_date: Vec<i32>,
+  end_date: Vec<i32>,
+  gender: Vec<String>,
+  date: Option<String>,
+  medium: Option<String>,
+  dimensions: Option<String>,
+  credit_line: Option<String>,
+  accession_number: Option<String>,
+  classification: Option<String>,
+  department: Option<String>,
+  date_acquired: Option<String>,
+  cataloged: Option<String>,
+  object_id: i32,
+  url: Option<String>,
+  thumbnail_url: Option<String>,
+//   height_cm: f32,
+//   width_cm: f32
+}
+
+pub fn create_table_artworks() -> Result<()>
+{
+    let path = "/private/student/n/in/fepain/R/MoMA/Artworks-reformed.json";
+	// the file : E:/Code/projects_rust/MoMA/Artists-reformed.json
+	// the file : /private/student/n/in/fepain/R/art-manipulation/MoMA/Artists-reformed.json
+
+	let content = fs::read_to_string(path)
+		.expect("Unable to read file");
+
+	println!("-----read_.json-----");
+	
+    let artworks: Vec<Artwork> = serde_json::from_str(&content).unwrap();
+
+	// println!("{:?}", artists);
+	
+	println!("--------create_table---------");
+
+    let mut foo =
+    "<a href=\"http://testcgi.istic.univ-rennes1.fr/~fepain/Q9-HTMPL.html\">HOME PAGE</a>
+    <table>
+    \n    <tr> 
+    \n         <th>Object ID</th> 
+    \n         <th>Title</th> 
+    \n         <th>Medium</th> 
+    \n         <th>Cote</th> 
+    \n         <th>dateArt</th> 
+    \n    </tr>".to_string();
+
+    for artwork in artworks
+    {
+        let idart: String= artwork.object_id.to_string();
+
+        let medium = 
+            match artwork.medium {
+                Some(n) => n.replace(";", ""),
+                None => "".to_string()
+            };
+
+        let date = 
+            match artwork.date {
+                Some(n) => n.replace(";", ""),
+                None => "".to_string()
+            };
+
+        let foobar =
+        "\n <tr> 
+        \n     <td>id</td>
+        \n     <td>title</td>
+        \n     <td>medium</td>
+        \n     <td>cote</td>
+        \n     <td>date</td>
+        \n </tr>";
+        let mut artwork_n = foobar.replace("id", &idart);
+        artwork_n = artwork_n.replace("title", &artwork.title.replace("'", " "));
+        artwork_n = artwork_n.replace("medium", &medium);
+        artwork_n = artwork_n.replace("cote", &create_fictional_human::create_price().to_string());
+        artwork_n = artwork_n.replace("date", &date);
+        foo.push_str(&artwork_n);
+    }
+    
+    foo.push_str("\n</table>");
+
+    println!("--------create_.html---------");
+
+    // "/private/student/n/in/fepain/R/art-manipulation/RENDU/artworks.html"
+    // "E:/Code/projects_rust/art-manipulation/RENDU/artworks.html<"
+	fs::write("/private/student/n/in/fepain/public_html/artworks.html",
 			 foo)
 		.expect("Unable to write file");
 
